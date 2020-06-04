@@ -1,0 +1,19 @@
+language: node_js
+node_js:
+  - "stable"
+cache:
+  directories:
+  - node_modules
+script:
+  - "CI=false npm run build" #disable using CI env variable
+
+after_failure:
+  - "cat /home/travis/.npm/_logs/*.log"
+deploy:
+  provider: pages
+  verbose: true
+  skip_cleanup: true
+  github_token: $TripPlanner_Github_Token
+  local_dir: build
+  on:
+    branch: master
