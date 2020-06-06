@@ -5,7 +5,8 @@ cache:
   directories:
   - node_modules
 script:
-  - "CI=false npm run build" #disable using CI env variable
+  - "CI=false" #disable using CI env variable
+  - "npm run build"
 
 after_failure:
   - "cat /home/travis/.npm/_logs/*.log"
