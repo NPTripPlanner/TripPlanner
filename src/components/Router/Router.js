@@ -8,7 +8,7 @@ function Router() {
   return (
     <Switch>
       <Route exact path="/" component={Landing} />
-      <Route path='*' component={Landing} />
+      <Route path='*' component={Landing} >
     </Switch>
   );
 }
