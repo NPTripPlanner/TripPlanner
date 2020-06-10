@@ -6,7 +6,7 @@ import AlarmIcon from '@material-ui/icons/Alarm';
 import Home from '@material-ui/icons/Home';
 import PlaceRounded from '@material-ui/icons/PlaceRounded';
 import {ThemeProvider} from '@material-ui/core/styles';
-import {ReactComponent as Logo} from '../../assets/images/Logo.svg';
+import {ReactComponent as Logo} from '../../assets/images/Logo/logo.svg';
 
 import theme from '../../themes/defaultTheme';
 

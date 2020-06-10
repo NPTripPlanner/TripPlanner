@@ -2,7 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 import { BrowserRouter } from "react-router-dom";
 import "./index.css";
-import Router from "./components/Router/Router";
+import Router from "./Router/Router";
 import {ThemeProvider} from '@material-ui/core/styles';
 import theme from './themes/defaultTheme';
 import * as serviceWorker from "./serviceWorker";

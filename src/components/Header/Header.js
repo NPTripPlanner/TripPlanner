@@ -58,7 +58,7 @@ const Header = React.forwardRef(({
                     <div className={classes.title}>
                         <Typography 
                         className={classes.titleTypo} 
-                        variant='h3'>
+                        variant='h4'>
                         {title}
                         </Typography>
                     </div>

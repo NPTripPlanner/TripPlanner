@@ -7,7 +7,7 @@ const theme = createMuiTheme({
             'Merienda,cursive',
             'Merienda One,cursive'
         ].join(','),
-        h3:{
+        h4:{
             fontFamily:'Merienda,cursive',
             '@media (max-width:430px)': {
                 fontSize: '1.3rem',

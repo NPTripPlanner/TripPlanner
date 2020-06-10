@@ -2,14 +2,12 @@ import React from "react";
 
 import { Switch, Route } from "react-router-dom";
 
-import Header from '../Header/Header';
-import Landing from "../../pages/Landing";
+import Header from '../components/Header/Header';
+import Landing from "../pages/Landing";
 
 import {Avatar, IconButton} from '@material-ui/core';
-import AlarmIcon from '@material-ui/icons/Alarm';
-import Home from '@material-ui/icons/Home';
-import PlaceRounded from '@material-ui/icons/PlaceRounded';
-import {ReactComponent as Logo} from '../../assets/images/Logo.svg';
+import {ReactComponent as Logo} from '../assets/images/Logo/logo.svg';
+import {ReactComponent as Signin} from '../assets/images/Landing/sign-in.svg';
 
 
 function Router() {
@@ -19,13 +17,12 @@ function Router() {
     brand={<Avatar variant='rounded'><Logo /></Avatar>} 
     title='Trip Planner'
     rightButtons={[
-        <IconButton><AlarmIcon /></IconButton>,
-        <IconButton><PlaceRounded /></IconButton>,
-        <IconButton><Home /></IconButton>,
+        <IconButton><Signin /></IconButton>,
     ]} 
     />
     )
   }
+  
   return (
     <React.Fragment>
       {renderHeader()}
