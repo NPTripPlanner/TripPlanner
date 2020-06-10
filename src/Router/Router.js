@@ -5,7 +5,11 @@ import { Switch, Route } from "react-router-dom";
 import Header from '../components/Header/Header';
 import Landing from "../pages/Landing";
 
-import {Avatar, IconButton} from '@material-ui/core';
+import {
+  Avatar, 
+  IconButton, 
+  Toolbar
+} from '@material-ui/core';
 import {ReactComponent as Logo} from '../assets/images/Logo/logo.svg';
 import {ReactComponent as Signin} from '../assets/images/Landing/sign-in.svg';
 
@@ -22,10 +26,11 @@ function Router() {
     />
     )
   }
-  
+
   return (
     <React.Fragment>
       {renderHeader()}
+      <Toolbar />
       <Switch>
         <Route exact path="/" component={Landing} />
         <Route path='*' component={Landing} />
