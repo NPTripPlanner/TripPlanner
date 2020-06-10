@@ -25,8 +25,7 @@ const style = {
         flex:'1',
     },
     titleTypo:{
-        fontSize:'2.2rem',
-        fontWeight:'900'
+        // fontWeight:'900'
     }
 }
 

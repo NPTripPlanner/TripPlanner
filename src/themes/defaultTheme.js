@@ -1,13 +1,17 @@
-import {createMuiTheme} from '@material-ui/core/styles';
+import {createMuiTheme, responsiveFontSizes} from '@material-ui/core/styles';
 
-export default createMuiTheme({
+const theme = createMuiTheme({
     typography:{
         fontFamily:[
             'Open Sans,sans-serif',
             'Merienda,cursive',
-            'Merienda One,cursive'].join(','),
+            'Merienda One,cursive'
+        ].join(','),
         h3:{
             fontFamily:'Merienda,cursive',
+            '@media (max-width:430px)': {
+                fontSize: '1.3rem',
+            }
         }
     },
     palette:{
@@ -23,3 +27,6 @@ export default createMuiTheme({
         }
     }
 });
+
+
+export default responsiveFontSizes(theme);
