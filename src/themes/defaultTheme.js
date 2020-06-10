@@ -16,8 +16,9 @@ const theme = createMuiTheme({
     },
     palette:{
         primary:{
-            main:'#bbded6'
-        }
+            main:'#bbded6',
+            light:'#fff'
+        },
     },
     overrides:{
         MuiAvatar:{
