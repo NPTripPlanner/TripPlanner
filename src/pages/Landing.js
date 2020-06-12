@@ -12,15 +12,14 @@ import {ReactComponent as Plans} from '../assets/images/Landing/travel-plans.svg
 import heroImageUrl from '../assets/images/Landing/hero-img.png';
 
 const getIntro = ()=>(
-  `
-Plan itinerary ahead has never been an easy task for majority of people. Have a list of places you want to visit but don’t know where to begin with?  Spend too much time on planning for a trip that you can enjoy and never forgot?
+`Plan itinerary ahead has never been an easy task for majority of people. Have a list of places you want to visit but don’t know where to begin with?  Spend too much time on planning for a trip that you can enjoy and never forgot?
 
 Trip planner is here to assist and help you to create a itinerary easily. Trip planner can help you to
 
 - Manage your trips
 - Orginize places
 - Schedule for each day
-  `
+`
 )
 
 const Landing = () => {
