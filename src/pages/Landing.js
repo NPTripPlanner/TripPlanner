@@ -28,12 +28,12 @@ const Landing = () => {
       <Hero imageUrl={heroImageUrl} title='Plan your journey'/>
       <Section title='Organize trip & Start your adventure' content={
         <Grid container spacing={4}>
-            <Grid item md={12} lg={6}>
+            <Grid item sm={12} md={6}>
                 <div>
                     <FTypography text={getIntro()} variant='body1' />
                 </div>
             </Grid>
-            <Grid item xs={12} md={12} lg={6}>
+            <Grid item xs={12} md={6}>
                 <div style={{textAlign:'center'}}>
                     <Plans />
                 </div>
