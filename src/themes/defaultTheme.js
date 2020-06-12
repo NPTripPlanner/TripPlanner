@@ -19,11 +19,19 @@ const theme = createMuiTheme({
             main:'#bbded6',
             light:'#fff'
         },
+        secondary:{
+            main:'#6C63FF'
+        }
     },
     overrides:{
         MuiAvatar:{
             colorDefault:{
                 backgroundColor:'transparent'
+            }
+        },
+        MuiButton:{
+            root:{
+                borderRadius:100
             }
         }
     }
