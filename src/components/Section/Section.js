@@ -26,6 +26,9 @@ const Section = React.forwardRef(({
             textAlign:'center',
             padding:'1% 1%',
             backgroundColor:theme.palette.primary.main
+        },
+        content:{
+            paddingTop:'1%'
         }
     })
     const classes = makeStyles(style)();
@@ -35,7 +38,7 @@ const Section = React.forwardRef(({
                 <div className={classes.title}>
                     <Typography variant='h4'>{title}</Typography>
                 </div>
-                <div>
+                <div className={classes.content}>
                 {content}
                 </div>
             </div>
