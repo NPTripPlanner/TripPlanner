@@ -1,8 +1,7 @@
 import React from 'react';
 
 import {
-    Grid,
-    Typography
+    Grid
 } from '@material-ui/core';
 import Section from './Section';
 import FTypography from '../FTypography/FTypography';
