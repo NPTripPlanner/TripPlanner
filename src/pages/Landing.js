@@ -5,8 +5,14 @@ import Section from '../components/Section/Section';
 import FTypography from '../components/FTypography/FTypography';
 
 import {
-  Grid
+  Grid,
+  Button,
+  Typography
 } from '@material-ui/core';
+
+import {makeStyles} from '@material-ui/core/styles';
+
+import style from './Landing.style';
 
 import {ReactComponent as Plans} from '../assets/images/Landing/travel-plans.svg';
 import heroImageUrl from '../assets/images/Landing/hero-img.png';
@@ -23,6 +29,8 @@ Trip planner is here to assist and help you to create a itinerary easily. Trip p
 )
 
 const Landing = () => {
+  const classes = makeStyles(style)();
+
   return( 
     <div>
       <Hero imageUrl={heroImageUrl} title='Plan your journey'/>
@@ -34,8 +42,15 @@ const Landing = () => {
                 </div>
             </Grid>
             <Grid item xs={12} md={6}>
-                <div style={{textAlign:'center'}}>
+                <div className={classes.hCenter}>
                     <Plans />
+                </div>
+            </Grid>
+            <Grid item xs={12}>
+                <div className={classes.hCenter}>
+                    <Button variant='contained' color='secondary' size='large'>
+                      <Typography variant='h6'>Get Started</Typography>
+                    </Button>
                 </div>
             </Grid>
         </Grid>
