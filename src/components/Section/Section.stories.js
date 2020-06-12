@@ -5,6 +5,7 @@ import {
     Typography
 } from '@material-ui/core';
 import Section from './Section';
+import FTypography from '../FTypography/FTypography';
 import {ThemeProvider} from '@material-ui/core/styles';
 import theme from '../../themes/defaultTheme';
 import {ReactComponent as Plans} from '../../assets/images/Landing/travel-plans.svg';
@@ -39,7 +40,7 @@ export const Content = ()=>{
         <Grid container spacing={4}>
             <Grid item md={12} lg={6}>
                 <div>
-                    <pre style={{whiteSpace:'pre-wrap', margin:'0 0'}}><Typography variant='body1'>{getText()}</Typography></pre>
+                    <FTypography text={getText()} variant='body1' />
                 </div>
             </Grid>
             <Grid item  md={12} lg={6}>
