@@ -33,7 +33,14 @@ const theme = createMuiTheme({
             root:{
                 borderRadius:100
             }
-        }
+        },
+        MuiStepLabel:{
+            iconContainer:{
+                display:'flex',
+                justifyContent:'center',
+                alignItems:'center'
+            },
+        },
     }
 });
 
