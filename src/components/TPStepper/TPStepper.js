@@ -37,9 +37,9 @@ const TPStepper = React.forwardRef(({
         <div className={classes.main}>
             <Stepper ref={ref} activeStep={activeStep} {...rest}>
             {
-                steps.map((label)=>{
+                steps.map((step)=>{
                   return(
-                    <Step key={label}>
+                    <Step key={step.label}>
                       <StepLabel StepIconComponent={stepIcon} />
                     </Step>
                   );

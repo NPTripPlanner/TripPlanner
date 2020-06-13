@@ -37,14 +37,6 @@ const icons = {
     }
 }
 
-const animWithContent = (content)=>{
-    return(
-        <Zoom in>
-        {content}
-        </Zoom>
-    );
-}
-
 const getContent = (comp, title)=>{
     const classes = makeStyles(style)();
 
@@ -68,9 +60,9 @@ const SVGStepIcon = ({
         const comp = icons[icon].comp;
         const title = icons[icon].title;
         if(icon > 1){
-            return animWithContent(getContent(comp, title));
+            return <Zoom in>{getContent(comp, title)}</Zoom>;
         }
-        return getContent(comp, title);
+        return(getContent(comp, title));
     }
     return (<div></div>)
 };
