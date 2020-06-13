@@ -10,7 +10,7 @@ const style = (theme)=>createStyles({
     active: {
         '& $line': {
             visibility:'visible',
-            backgroundColor:'black',
+            backgroundColor:theme.palette.primary.main,
             width:'0%'
         },
     },
@@ -26,7 +26,7 @@ const style = (theme)=>createStyles({
         visibility:'hidden',
         height: 3,
         border: 0,
-        backgroundColor: '#eaeaf0',
+        backgroundColor: theme.palette.primary.main,
         borderRadius: 1,
     },
 });
