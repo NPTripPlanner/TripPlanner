@@ -1,7 +1,7 @@
 import {StepConnector} from '@material-ui/core';
-import {withStyles} from '@material-ui/core/styles';
+import {withStyles, createStyles} from '@material-ui/core/styles';
 
-export default withStyles({
+const style = (theme)=>createStyles({
     alternativeLabel: {
         top: '50%',
         left: 'calc(-50% + 110px)',
@@ -17,7 +17,7 @@ export default withStyles({
     completed: {
         '& $line': {
             visibility:'visible',
-            backgroundColor:'black',
+            backgroundColor:theme.palette.primary.main,
             width:'100%',
             transition: 'width 1s ease-in-out'
         },
@@ -29,4 +29,5 @@ export default withStyles({
         backgroundColor: '#eaeaf0',
         borderRadius: 1,
     },
-})(StepConnector);
+});
+export default withStyles(style)(StepConnector);
