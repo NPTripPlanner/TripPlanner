@@ -8,13 +8,13 @@ import theme from './themes/defaultTheme';
 import * as serviceWorker from "./serviceWorker";
 
 ReactDOM.render(
-  <React.StrictMode>
+  
     <BrowserRouter basename={process.env.PUBLIC_URL}>
       <ThemeProvider theme={theme}>
         <Router />
       </ThemeProvider>
     </BrowserRouter>
-  </React.StrictMode>,
+  ,
   document.getElementById("root")
 );
 

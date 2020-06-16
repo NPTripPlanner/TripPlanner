@@ -59,7 +59,7 @@ const Landing = () => {
     <div>
       <Hero imageUrl={heroImageUrl} title='Plan your journey'/>
       <Section title='Organize trip & Start your adventure' content={
-        <Grid container spacing={4}>
+        <Grid container spacing={0}>
             <Grid item sm={12} md={6}>
                 <div>
                     <FTypography text={getIntro()} variant='body1' />

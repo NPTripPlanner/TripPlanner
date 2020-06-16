@@ -17,7 +17,7 @@ const theme = createMuiTheme({
     palette:{
         primary:{
             main:'#bbded6',
-            light:'#fff'
+            light:'#73706f'
         },
         secondary:{
             main:'#6C63FF'
@@ -41,6 +41,11 @@ const theme = createMuiTheme({
                 alignItems:'center'
             },
         },
+        MuiLink:{
+            root:{
+                color:'#73706f'
+            }
+        }
     }
 });
 
