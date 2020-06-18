@@ -8,7 +8,8 @@ const style={
         padding:'1%'
     },
     error:{
-        textAlign:'center'
+        textAlign:'center',
+        paddingBottom:'1%'
     },
     fieldGroup:{
         display:'flex',
@@ -39,6 +40,7 @@ const TPLoginForm = React.forwardRef(({
     error,
     formData,
     formFields,
+    errorFields,
     submitButton,
     clearButton,
     onSubmit,
@@ -56,7 +58,7 @@ const TPLoginForm = React.forwardRef(({
         const oldData = {...data};
         const newData = {...data, [name]:value};
         setData(newData);
-        
+
         if(onFormDataChanged) onFormDataChanged(oldData, newData);
     }
 
@@ -67,7 +69,9 @@ const TPLoginForm = React.forwardRef(({
 
     const handleFormSubmit = (event)=>{
         event.preventDefault();
-        let pass = true;
+
+        let pass = true && !error && (!errorFields || errorFields.length===0);
+
         if(onValidateForm){
             pass = onValidateForm({...data});
         } 
@@ -90,6 +94,7 @@ const TPLoginForm = React.forwardRef(({
                         key:`${field.id}-${i}`,
                         name:field.id,
                         value:data[field.id],
+                        error:errorFields?errorFields.includes(field.id):false,
                         onChange:handleChange
                     })
                 })

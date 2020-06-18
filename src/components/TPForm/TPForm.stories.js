@@ -34,6 +34,7 @@ const loginFormFields = ()=>([
             type='email'
             placeholder='awesome@gmail.com'
             endAdornment={<Email />}
+            required
             />
         ),
     },
@@ -47,6 +48,7 @@ const loginFormFields = ()=>([
             type='password'
             placeholder='123456'
             endAdornment={<Https />}
+            required
             />
         ),
     },
@@ -68,6 +70,7 @@ const signupFormFields = ()=>([
             type='email'
             placeholder='awesome@gmail.com'
             endAdornment={<Email />}
+            required
             />
         ),
     },
@@ -81,6 +84,7 @@ const signupFormFields = ()=>([
             type='text'
             placeholder='John Smith'
             endAdornment={<Person />}
+            required
             />
         ),
     },
@@ -94,6 +98,7 @@ const signupFormFields = ()=>([
             type='password'
             placeholder='123456'
             endAdornment={<Https />}
+            required
             />
         ),
     },
@@ -107,6 +112,7 @@ const signupFormFields = ()=>([
             type='password'
             placeholder='Re-enter password'
             endAdornment={<Https />}
+            required
             />
         ),
     },
@@ -140,17 +146,32 @@ export const Login = ()=>{
 }
 
 export const Register = ()=>{
+    const [data, setData] = React.useState(signupFormData);
+    const [passNotMatch, setPassNotMatch] = React.useState(null);
+
+    const handleDataChanged = (_, nData)=>{
+        setData(nData);
+        if(nData.password !== nData.cPassword && nData.cPassword){
+            setPassNotMatch('Password not match');
+        }
+        else{
+            setPassNotMatch(null);
+        }
+    }
     return (
         <ThemeProvider theme={theme}>
             <TPForm
-            formData={signupFormData} 
+            error={passNotMatch}
+            formData={data} 
             formFields={signupFormFields()}
+            errorFields={passNotMatch?['password', 'cPassword']:null}
             submitButton={
                 <Button variant='contained' color='secondary'>
                     <Typography variant='h6'>Sign up</Typography>
                 </Button>
             }
             onSubmit={(data)=>action('data')(data)}
+            onFormDataChanged={handleDataChanged}
             />
         </ThemeProvider>
     )
