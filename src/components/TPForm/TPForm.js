@@ -3,6 +3,8 @@ import React from 'react';
 import {makeStyles} from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
 
+import {addPropsToComponent} from '../../utils/react.utils';
+
 const style={
     form:{
         padding:'1%'
@@ -30,10 +32,6 @@ const style={
     button:{
         padding:'0 1%'
     }
-}
-
-const addPropsToComponent = (component, props)=>{
-    return React.cloneElement(component, props);
 }
 
 const TPLoginForm = React.forwardRef(({
