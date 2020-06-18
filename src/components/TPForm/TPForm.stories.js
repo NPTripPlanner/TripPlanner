@@ -58,7 +58,8 @@ const formData ={
 export const Login = ()=>{
     return (
         <ThemeProvider theme={theme}>
-            <TPForm 
+            <TPForm
+            error='this is error' 
             formData={formData} 
             formFields={loginFormFields()}
             submitButton={

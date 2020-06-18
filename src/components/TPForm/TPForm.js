@@ -1,10 +1,14 @@
 import React from 'react';
 
 import {makeStyles} from '@material-ui/core/styles';
+import { Typography } from '@material-ui/core';
 
 const style={
     form:{
         padding:'1%'
+    },
+    error:{
+        textAlign:'center'
     },
     fieldGroup:{
         display:'flex',
@@ -32,6 +36,7 @@ const addPropsToComponent = (component, props)=>{
 }
 
 const TPLoginForm = React.forwardRef(({
+    error,
     formData,
     formFields,
     submitButton,
@@ -61,6 +66,13 @@ const TPLoginForm = React.forwardRef(({
 
     return (
         <form ref={ref} className={classes.form} onSubmit={handleFormSubmit}>
+            {
+                !error?null
+                :
+                <div className={classes.error}>
+                    <Typography variant='h6' color='error'>{error}</Typography>
+                </div>
+            }
             <div className={classes.fieldGroup}>
             {
                 formFields.map((field, i)=>{
