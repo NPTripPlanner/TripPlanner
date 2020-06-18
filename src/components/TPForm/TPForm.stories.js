@@ -23,7 +23,7 @@ export default {
     title:'TPForm'
 }
 
-const loginFormFields = ()=>([
+const loginFormFields = [
     {
         id:'email',
         inputField:(
@@ -52,14 +52,14 @@ const loginFormFields = ()=>([
             />
         ),
     },
-])
+]
 
 const loginFormData ={
     email:'',
     password:'',
 }
 
-const signupFormFields = ()=>([
+const signupFormFields = [
     {
         id:'email',
         inputField:(
@@ -116,7 +116,7 @@ const signupFormFields = ()=>([
             />
         ),
     },
-])
+]
 
 const signupFormData ={
     email:'',
@@ -125,12 +125,33 @@ const signupFormData ={
     cPassword:''
 }
 
+const forgotPassFormFields =[
+    {
+        id:'email',
+        inputField:(
+            <InputField 
+            id='email'
+            labelText='E-mail'
+            variant='outlined' 
+            type='email'
+            placeholder='iForgot@gmail.com'
+            endAdornment={<Email />}
+            required
+            />
+        ),
+    },
+]
+
+const forgotPassFormData ={
+    email:'',
+}
+
 export const Login = ()=>{
     return (
         <ThemeProvider theme={theme}>
             <TPForm
             formData={loginFormData} 
-            formFields={loginFormFields()}
+            formFields={loginFormFields}
             submitButton={
                 <Button variant='contained' color='secondary'>
                     <Typography variant='h6'>Login</Typography>
@@ -163,7 +184,7 @@ export const Register = ()=>{
             <TPForm
             error={passNotMatch}
             formData={data} 
-            formFields={signupFormFields()}
+            formFields={signupFormFields}
             errorFields={passNotMatch?['password', 'cPassword']:null}
             submitButton={
                 <Button variant='contained' color='secondary'>
@@ -172,6 +193,26 @@ export const Register = ()=>{
             }
             onSubmit={(data)=>action('data')(data)}
             onFormDataChanged={handleDataChanged}
+            />
+        </ThemeProvider>
+    )
+}
+
+export const ForgotPassword = ()=>{
+    return (
+        <ThemeProvider theme={theme}>
+            <TPForm
+            formData={forgotPassFormData} 
+            formFields={forgotPassFormFields}
+            submitButton={
+                <Button variant='contained' color='secondary'>
+                    <Typography variant='h6'>Submit</Typography>
+                </Button>
+            }
+            onSubmit={(data)=>action('data')(data)}
+            onFormDataChanged={(oldData, nData)=>{
+                action('changed data')(oldData, nData);
+            }}
             />
         </ThemeProvider>
     )
