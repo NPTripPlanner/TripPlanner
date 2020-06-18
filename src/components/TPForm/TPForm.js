@@ -7,11 +7,17 @@ import {addPropsToComponent} from '../../utils/react.utils';
 
 const style={
     form:{
+        width:'100%',
+        height:'100%',
+        display:'flex',
+        flexDirection:'column',
+        justifyContent:'center',
+        alignItems:'center',
         padding:'1%'
     },
     error:{
         textAlign:'center',
-        paddingBottom:'1%'
+        paddingBottom:'2%'
     },
     fieldGroup:{
         display:'flex',
@@ -19,18 +25,19 @@ const style={
         justifyContent:'space-between',
         alignItems:'center',
         '& .MuiFormControl-root:not(:last-child)':{
-            marginBottom:'1%'
+            marginBottom:'5%'
         },
-        marginBottom:'1%'
+        marginBottom:'3%'
     },
     buttonGroup:{
+        width:'100%',
         display:'flex',
         flexWrap:'wrap',
         justifyContent:'center',
         alignItems:'center'
     },
     button:{
-        padding:'0 1%'
+        margin:'0 1%'
     }
 }
 

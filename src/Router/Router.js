@@ -4,7 +4,7 @@ import { Switch, Route } from "react-router-dom";
 
 import Header from '../components/Header/Header';
 import Footer from '../components/Footer/Footer';
-import Landing from "../pages/Landing";
+import Landing from "../pages/Landing/Landing";
 
 import {
   Avatar, 

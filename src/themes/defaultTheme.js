@@ -51,6 +51,9 @@ const theme = createMuiTheme({
         MuiLink:{
             root:{
                 color:hyperLinkColor,
+                '&:hover':{
+                    cursor:'pointer'
+                }
             }
         },
         MuiDialogTitle:{
@@ -59,8 +62,17 @@ const theme = createMuiTheme({
                 boxShadow:'0 2px 10px 0 #000'
             }
         },
+        MuiDialogContent:{
+            root:{
+                display:'flex',
+                flexDirection:'column',
+                justifyContent:'center',
+                alignItems:'center'
+            }
+        },
         MuiDialogActions:{
             root:{
+                flex:'1 1 auto',
                 display:'flex',
                 justifyContent:'space-evenly',
                 alignItems:'center'
@@ -76,7 +88,7 @@ const theme = createMuiTheme({
             root:{
                 '&$focused':{
                     color:primaryDarkColor,
-                }
+                },
             },
         },
         MuiOutlinedInput:{
