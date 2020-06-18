@@ -3,7 +3,8 @@ import {createMuiTheme, responsiveFontSizes} from '@material-ui/core/styles';
 const primaryMainColor = '#bbded6';
 const primaryLightColor = '#d1f2e5';
 const primaryDarkColor = '#aeccc3';
-const secondaryMainColor = '#73706f';
+const secondaryMainColor = '#6C63FF';
+const hyperLinkColor = '#6b6664';
 
 const theme = createMuiTheme({
     typography:{
@@ -49,7 +50,7 @@ const theme = createMuiTheme({
         },
         MuiLink:{
             root:{
-                color:secondaryMainColor,
+                color:hyperLinkColor,
             }
         },
         MuiDialogTitle:{
@@ -66,7 +67,6 @@ const theme = createMuiTheme({
             }
         },
         MuiInputLabel:{
-            
             asterisk:{
                 color:'red',
                 fontSize:'2rem'
