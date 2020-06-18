@@ -42,7 +42,9 @@ const TPLoginForm = React.forwardRef(({
     submitButton,
     clearButton,
     onSubmit,
-    onClear
+    onClear,
+    onValidateForm,
+    onFormDataChanged
 },ref) => {
     const classes = makeStyles(style)();
 
@@ -51,7 +53,11 @@ const TPLoginForm = React.forwardRef(({
     const handleChange = (event)=>{
         const name = event.target.name;
         const value = event.target.value;
-        setData({...data, [name]:value})
+        const oldData = {...data};
+        const newData = {...data, [name]:value};
+        setData(newData);
+        
+        if(onFormDataChanged) onFormDataChanged(oldData, newData);
     }
 
     const handleClear = ()=>{
@@ -61,7 +67,11 @@ const TPLoginForm = React.forwardRef(({
 
     const handleFormSubmit = (event)=>{
         event.preventDefault();
-        if(onSubmit) onSubmit({...data});
+        let pass = true;
+        if(onValidateForm){
+            pass = onValidateForm({...data});
+        } 
+        if(onSubmit && pass) onSubmit({...data});
     }
 
     return (
