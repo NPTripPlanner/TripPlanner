@@ -2,6 +2,12 @@ import React from 'react';
 
 import InputField from './InputField';
 
+import {IconButton} from '@material-ui/core';
+import {AcUnit, Accessibility} from '@material-ui/icons';
+
+import {ThemeProvider} from '@material-ui/core/styles';
+import theme from '../../themes/defaultTheme';
+
 import {action} from '@storybook/addon-actions';
 
 export default {
@@ -9,13 +15,40 @@ export default {
 }
 
 export const Default = ()=>{
-    return <InputField labelText='Name' onChange={(event)=>action(event.target.value)()} />
+    return (
+        <ThemeProvider theme={theme}>
+            <InputField labelText='Name' onChange={(event)=>action(event.target.value)()} />
+        </ThemeProvider>
+    )
 }
 
 export const outlined = ()=>{
-    return <InputField labelText='Name' variant='outlined' onChange={(event)=>action(event.target.value)()} />
+    return (
+        <ThemeProvider theme={theme}>
+            <InputField labelText='Name' variant='outlined' onChange={(event)=>action(event.target.value)()} />
+        </ThemeProvider>
+    )
 }
 
 export const filled = ()=>{
-    return <InputField labelText='Name' variant='filled' onChange={(event)=>action(event.target.value)()} />
+    return (
+        <ThemeProvider theme={theme}>
+            <InputField labelText='Name' variant='filled' onChange={(event)=>action(event.target.value)()} />
+        </ThemeProvider>
+    )
+}
+
+export const adornment = ()=>{
+    return (
+        <ThemeProvider theme={theme}>
+            <InputField 
+            labelText='Name' 
+            variant='outlined'
+            required 
+            onChange={(event)=>action(event.target.value)()}
+            startAdornment={<IconButton><AcUnit /></IconButton>}
+            endAdornment={<Accessibility />} 
+            />
+        </ThemeProvider>
+    )
 }

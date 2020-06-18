@@ -23,6 +23,7 @@ const InputField = React.forwardRef(({
     labelText='Input label',
     labelBgColor='#fff',
     htmlFor='input-field',
+    required=false,
     startAdornment,
     endAdornment,
     ...rest
@@ -36,56 +37,24 @@ const InputField = React.forwardRef(({
     }
     const classes = makeStyles(newStyle)();
 
-    const standerInput = ()=>(
-        <Input
-            id={htmlFor}
-            startAdornment={
-                !startAdornment?null
-                :
-                <InputAdornment position='start'>{startAdornment}</InputAdornment>
-            }
-            endAdornment={
-                !endAdornment?null
-                :
-                <InputAdornment position='end'>{endAdornment}</InputAdornment>
-            }
-            {...rest}
-        />
-    )
+    const inputProps = {
+        id:htmlFor,
+        startAdornment:(
+            !startAdornment?null
+            :
+            <InputAdornment position='start'>{startAdornment}</InputAdornment>
+        ),
+        endAdornment:(
+            !endAdornment?null
+            :
+            <InputAdornment position='end'>{endAdornment}</InputAdornment>
+        ),
+        ...rest
+    };
 
-    const filledInput = ()=>(
-        <FilledInput
-            id={htmlFor}
-            startAdornment={
-                !startAdornment?null
-                :
-                <InputAdornment position='start'>{startAdornment}</InputAdornment>
-            }
-            endAdornment={
-                !endAdornment?null
-                :
-                <InputAdornment position='end'>{endAdornment}</InputAdornment>
-            }
-            {...rest}
-        />
-    )
-
-    const outlinedInput = ()=>(
-        <OutlinedInput
-            id={htmlFor}
-            startAdornment={
-                !startAdornment?null
-                :
-                <InputAdornment position='start'>{startAdornment}</InputAdornment>
-            }
-            endAdornment={
-                !endAdornment?null
-                :
-                <InputAdornment position='end'>{endAdornment}</InputAdornment>
-            }
-            {...rest}
-        />
-    )
+    const standerInput = ()=> <Input {...inputProps} />
+    const filledInput = ()=> <FilledInput {...inputProps} />
+    const outlinedInput = ()=> <OutlinedInput {...inputProps} />
 
     const renderInput = ()=>{
         switch (variant) {
@@ -100,7 +69,7 @@ const InputField = React.forwardRef(({
 
     return (
         <FormControl ref={ref} variant={variant}>
-            <InputLabel htmlFor={htmlFor}>
+            <InputLabel htmlFor={htmlFor} required={required}>
                 <div className={classes.label}>{labelText}</div>
             </InputLabel>
             {renderInput()}
