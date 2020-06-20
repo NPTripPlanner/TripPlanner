@@ -2,16 +2,20 @@ import React from "react";
 import ReactDOM from "react-dom";
 import { BrowserRouter } from "react-router-dom";
 import "./index.css";
-import Router from "./Router/Router";
+import Router from "./router/Router";
 import {ThemeProvider} from '@material-ui/core/styles';
 import theme from './themes/defaultTheme';
+import {Provider} from 'react-redux';
+import store from './redux/Store';
 import * as serviceWorker from "./serviceWorker";
 
 ReactDOM.render(
   
     <BrowserRouter basename={process.env.PUBLIC_URL}>
       <ThemeProvider theme={theme}>
-        <Router />
+        <Provider store={store}>
+          <Router />
+        </Provider>
       </ThemeProvider>
     </BrowserRouter>
   ,

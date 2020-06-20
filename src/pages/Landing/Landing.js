@@ -8,9 +8,9 @@ import Connector from '../../components/TPStepper/Connector/Connector';
 import SVGStepIcon from '../../components/TPStepper/SVGStepIcon/SVGStepIcon';
 import TPMobileStepper from '../../components/TPMobileStepper/TPMobileStepper';
 import TPDialog from '../../components/TPDialog/TPDialog';
-import LoginForm from '../../Forms/LoginForm';
-import SignupForm from '../../Forms/SignupForm';
-import ForgotPassForm from '../../Forms/ForgotPassForm';
+import LoginForm from '../../forms/LoginForm';
+import SignupForm from '../../forms/SignupForm';
+import ForgotPassForm from '../../forms/ForgotPassForm';
 
 import steps  from './Steps';
 import dialogId from './DialogId';
