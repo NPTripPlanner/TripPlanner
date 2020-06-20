@@ -6,6 +6,7 @@ cache:
   - node_modules
 script:
   - "CI=false" #disable using CI env variable
+  - "npm run test"
   - "npm run build"
 
 after_failure:

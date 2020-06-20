@@ -20,7 +20,7 @@ const style = theme =>({
         display:'flex',
         justifyContent:'center',
         alignItems:'center',
-        color:theme.palette.primary.light,
+        color:theme.palette.text.primary,
         padding:'0% 1% 0.8% 1%'
     }
 })
