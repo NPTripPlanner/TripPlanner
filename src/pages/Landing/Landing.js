@@ -1,5 +1,9 @@
 import React from "react";
 
+import {useDispatch} from 'react-redux';
+
+import {Login} from '../../redux/dialog/dialog.actions';
+
 import Hero from '../../components/Hero/Hero';
 import Section from '../../components/Section/Section';
 import FTypography from '../../components/FTypography/FTypography';
@@ -7,13 +11,9 @@ import TPStepper from '../../components/TPStepper/TPStepper';
 import Connector from '../../components/TPStepper/Connector/Connector';
 import SVGStepIcon from '../../components/TPStepper/SVGStepIcon/SVGStepIcon';
 import TPMobileStepper from '../../components/TPMobileStepper/TPMobileStepper';
-import TPDialog from '../../components/TPDialog/TPDialog';
-import LoginForm from '../../forms/LoginForm';
-import SignupForm from '../../forms/SignupForm';
-import ForgotPassForm from '../../forms/ForgotPassForm';
+import DialogControl from '../../dialogs/DialogControl';
 
 import steps  from './Steps';
-import dialogId from './DialogId';
 
 import heroImageUrl from '../../assets/images/Landing/hero-img.png';
 import {ReactComponent as Plans} from '../../assets/images/Landing/travel-plans.svg';
@@ -23,7 +23,6 @@ import {
   Button,
   Typography,
   Hidden,
-  Link
 } from '@material-ui/core';
 
 import {makeStyles} from '@material-ui/core/styles';
@@ -45,21 +44,9 @@ Trip planner is here to assist and help you to create a itinerary easily. Trip p
 const Landing = () => {
   const classes = makeStyles(style)();
 
-  const [presentDialog, setPresentDialog] = React.useState('');
+  const dispatch = useDispatch();
 
-  const handleDialog = (id, title, content, links)=>(presentId)=>(
-    <TPDialog title={title} 
-    open={id===presentId} 
-    fullWidth={true} 
-    maxWidth='lg' 
-    footers={links}
-    onClose={()=>setPresentDialog('')}
-    >
-    {content}
-    </TPDialog>
-  )
-
-  const handleLogin = ()=>setPresentDialog(dialogId.login);
+  const handleLogin = ()=>dispatch(Login());
 
   return(
     <React.Fragment> 
@@ -97,23 +84,7 @@ const Landing = () => {
         </div>
       } />
     </div>
-    {
-      handleDialog(dialogId.login, 'Login', <LoginForm />, [
-        <Link key='1' onClick={()=>setPresentDialog(dialogId.signup)}>I dont have an account</Link>,
-        <Link key='2' onClick={()=>setPresentDialog(dialogId.forgotPass)}>Forgot password?</Link>,
-      ])(presentDialog)
-    }
-    {
-      handleDialog(dialogId.signup, 'Signup', <SignupForm />, [
-        <Link key='1' onClick={()=>setPresentDialog(dialogId.login)}>I have an account</Link>,
-      ])(presentDialog)
-    }
-    {
-      handleDialog(dialogId.forgotPass, 'Forgot Password', <ForgotPassForm />, [
-        <Link key='1' onClick={()=>setPresentDialog(dialogId.login)}>I have an account</Link>,
-        <Link key='2' onClick={()=>setPresentDialog(dialogId.signup)}>I dont have an account</Link>,
-      ])(presentDialog)
-    }
+    <DialogControl />
     </React.Fragment>
   );
   

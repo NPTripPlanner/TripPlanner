@@ -1,5 +1,9 @@
 import React from "react";
 
+import {useDispatch} from 'react-redux';
+
+import {Login} from '../redux/dialog/dialog.actions';
+
 import { Switch, Route } from "react-router-dom";
 
 import Header from '../components/Header/Header';
@@ -46,13 +50,15 @@ const renderFooter = ()=>{
 }
 
 function Router() {
+  const dispatch = useDispatch();
+
   const renderHeader = ()=>{
     return (
     <Header
     brand={<Avatar variant='rounded'><Logo /></Avatar>} 
     title='Trip Planner'
     rightButtons={[
-        <IconButton><Signin /></IconButton>,
+        <IconButton onClick={()=>dispatch(Login())}><Signin /></IconButton>,
     ]} 
     />
     )
