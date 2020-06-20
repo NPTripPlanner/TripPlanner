@@ -1,9 +1,12 @@
 import store from '../Store';
-import {setMessage} from './test.action';
+import {setMessageSaga} from './test.saga';
+import { expectSaga } from 'redux-saga-test-plan';
 
-describe('Redux test', ()=>{
-    it('set message ', () => {
-        store.dispatch(setMessage('hello it is redux'));
-        expect(store.getState().test.message).toBe('hello it is redux');
+describe('Redux saga test', ()=>{
+    it('set message saga', async () => {
+       return expectSaga(setMessageSaga)
+       .put({type:'SET_MESSAGE', payload:'This is from saga'})
+       .dispatch({type:'SET_MESSAGE', payload:'This is from saga'})
+       .run();
     });
 })
