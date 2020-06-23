@@ -1,6 +1,9 @@
 import React from 'react';
 import {useSelector, useDispatch} from 'react-redux';
 import {SignupStart} from '../redux/user/user.actions';
+import {
+    selectSignupFail
+} from '../redux/user/user.selector';
 
 import TPForm from '../components/TPForm/TPForm';
 
@@ -17,9 +20,7 @@ import {
 const SignupForm = ()=>{
     const [data, setData] = React.useState(signupFormData);
     const [passNotMatch, setPassNotMatch] = React.useState(null);
-    const signupError = useSelector(state=>{
-        return state.user.signupFail?state.user.signupFail.message:null;
-    });
+    const signupError = useSelector(selectSignupFail);
     const dispatch = useDispatch();
 
     const handleDataChanged = (_, nData)=>{

@@ -5,10 +5,9 @@ import {
     SignupFail,
 } from './user.actions';
 
-import {takeLatest, call, put, all} from 'redux-saga/effects';
+import {call, put, all, takeLeading} from 'redux-saga/effects';
 
 import {
-    GetCurrentUser,
     SignUpWithEmailAndPassword,
     LoginWithEmailAndPassword
 } from '../../utils/firebase.utils';
@@ -28,7 +27,7 @@ function* loginSuccessful(user){
 }
 
 function* loginStart(){
-    yield takeLatest(actionTypes.LOGIN_START, userLogin);
+    yield takeLeading(actionTypes.LOGIN_START, userLogin);
 }
 
 function* userSignup({payload:{email, password, displayName}}){
@@ -42,7 +41,7 @@ function* userSignup({payload:{email, password, displayName}}){
 }
 
 function* signupStart(){
-    yield takeLatest(actionTypes.SIGNUP_START, userSignup);
+    yield takeLeading(actionTypes.SIGNUP_START, userSignup);
 }
 
 export default function* UserSaga(){

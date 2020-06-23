@@ -1,4 +1,5 @@
 import React from 'react';
+import {selectUserInfo} from '../redux/user/user.selector';
 import {useSelector, useDispatch} from 'react-redux';
 import {
     Login,
@@ -22,6 +23,7 @@ import TPDialog from '../components/TPDialog/TPDialog';
 const DialogControl = () => {
 
     const dialogName = useSelector(state=>state.dialog.dialogName);
+    const user = useSelector(selectUserInfo);
     const dispatch = useDispatch();
 
     const handleDialog = (id, title, content, links)=>(presentId)=>(
@@ -36,27 +38,32 @@ const DialogControl = () => {
         </TPDialog>
     )
 
-    return (
-        <React.Fragment>
-        {
-        handleDialog(DialogTypes.Login, 'Login', <LoginForm />, [
-            <Link key='1' onClick={()=>dispatch(Signup())}>I dont have an account</Link>,
-            <Link key='2' onClick={()=>dispatch(ForgotPassword())}>Forgot password?</Link>,
-        ])(dialogName)
-        }
-        {
-        handleDialog(DialogTypes.Singup, 'Signup', <SignupForm />, [
-            <Link key='1' onClick={()=>dispatch(Login())}>I have an account</Link>,
-        ])(dialogName)
-        }
-        {
-        handleDialog(DialogTypes.ForgotPass, 'Forgot Password', <ForgotPassForm />, [
-            <Link key='1' onClick={()=>dispatch(Signup())}>I have an account</Link>,
-            <Link key='2' onClick={()=>dispatch(Signup())}>I dont have an account</Link>,
-        ])(dialogName)
-        }
-        </React.Fragment>
-    );
+    if(!user){
+        return (
+            <React.Fragment>
+            {
+            handleDialog(DialogTypes.Login, 'Login', <LoginForm />, [
+                <Link key='1' onClick={()=>dispatch(Signup())}>I dont have an account</Link>,
+                <Link key='2' onClick={()=>dispatch(ForgotPassword())}>Forgot password?</Link>,
+            ])(dialogName)
+            }
+            {
+            handleDialog(DialogTypes.Singup, 'Signup', <SignupForm />, [
+                <Link key='1' onClick={()=>dispatch(Login())}>I have an account</Link>,
+            ])(dialogName)
+            }
+            {
+            handleDialog(DialogTypes.ForgotPass, 'Forgot Password', <ForgotPassForm />, [
+                <Link key='1' onClick={()=>dispatch(Signup())}>I have an account</Link>,
+                <Link key='2' onClick={()=>dispatch(Signup())}>I dont have an account</Link>,
+            ])(dialogName)
+            }
+            </React.Fragment>
+        );
+    }
+
+    return null;
+    
 };
 
 export default DialogControl;

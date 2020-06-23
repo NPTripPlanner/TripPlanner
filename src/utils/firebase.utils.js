@@ -57,6 +57,7 @@ export const LoginWithEmailAndPassword = async (email, password)=>{
         return await GetCurrentUser();
     }
     catch(err){
+        console.log(err);
         throw Error(getErrorMsg(err.code));
     }
 }

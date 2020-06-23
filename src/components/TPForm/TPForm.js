@@ -75,7 +75,7 @@ const TPLoginForm = React.forwardRef(({
     const handleFormSubmit = (event)=>{
         event.preventDefault();
 
-        let pass = true && !error && (!errorFields || errorFields.length===0);
+        let pass = true;
 
         if(onValidateForm){
             pass = onValidateForm({...data});
