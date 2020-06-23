@@ -1,4 +1,6 @@
 import React from 'react';
+import {useSelector, useDispatch} from 'react-redux';
+import {SignupStart} from '../redux/user/user.actions';
 
 import TPForm from '../components/TPForm/TPForm';
 
@@ -15,6 +17,10 @@ import {
 const SignupForm = ()=>{
     const [data, setData] = React.useState(signupFormData);
     const [passNotMatch, setPassNotMatch] = React.useState(null);
+    const signupError = useSelector(state=>{
+        return state.user.signupFail?state.user.signupFail.message:null;
+    });
+    const dispatch = useDispatch();
 
     const handleDataChanged = (_, nData)=>{
         setData(nData);
@@ -27,12 +33,12 @@ const SignupForm = ()=>{
     }
 
     const handleFormSubmit = (data)=>{
-        console.log(data);
+        dispatch(SignupStart(data.email, data.password, data.displayName));
     }
 
     return (
         <TPForm
-        error={passNotMatch}
+        error={passNotMatch || signupError}
         formData={data} 
         formFields={signupFormFields}
         errorFields={passNotMatch?['password', 'cPassword']:null}

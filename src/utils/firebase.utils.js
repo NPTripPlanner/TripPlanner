@@ -46,7 +46,7 @@ export const SignUpWithEmailAndPassword = async (email, password, displayName)=>
         return await GetCurrentUser();
     }
     catch(err){
-        return err;
+        throw err;
     }
 }
 
@@ -56,6 +56,6 @@ export const LoginWithEmailAndPassword = async (email, password)=>{
         return await GetCurrentUser();
     }
     catch(err){
-        return err;
+        throw err;
     }
 }

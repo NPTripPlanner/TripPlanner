@@ -1,0 +1,28 @@
+import actionTypes from './user.actionTypes';
+
+const initState = {
+    user:null,
+    loginFail:null,
+    signupFail:null,
+}
+
+const UserReducer = (state=initState, action)=>{
+
+    switch(action.type){
+        case actionTypes.LOGIN_START:
+            return {...state, loginFail:null};
+        case actionTypes.LOGIN_SUCCESSFUL:
+            return {...state, loginFail:null, user:action.payload};
+        case actionTypes.LOGIN_FAIL:
+            return {...state, loginFail:action.payload};
+        case actionTypes.SIGNUP_START:
+            return {...state, signupFail:null};
+        case actionTypes.SIGNUP_FAIL:
+            return {...state, signupFail:action.payload, 
+                user:action.payload};
+        default:
+            return state;
+    }
+}
+
+export default UserReducer;
