@@ -1,5 +1,6 @@
 import firebase from 'firebase';
 import {auth} from 'firebase';
+import getErrorMsg from './firebase.errors.utils';
 
 const firebaseConfig = {
     apiKey: process.env.REACT_APP_FB_API_KEY,
@@ -33,7 +34,7 @@ export const Logout  = async ()=>{
         return GetCurrentUser();
     }
     catch(err){
-        return err;
+        throw Error(getErrorMsg(err.code));
     }
 }
 
@@ -46,7 +47,7 @@ export const SignUpWithEmailAndPassword = async (email, password, displayName)=>
         return await GetCurrentUser();
     }
     catch(err){
-        throw err;
+        throw Error(getErrorMsg(err.code));
     }
 }
 
@@ -56,6 +57,6 @@ export const LoginWithEmailAndPassword = async (email, password)=>{
         return await GetCurrentUser();
     }
     catch(err){
-        throw err;
+        throw Error(getErrorMsg(err.code));
     }
 }
