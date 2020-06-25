@@ -60,3 +60,12 @@ export const LoginWithEmailAndPassword = async (email, password)=>{
         throw Error(getErrorMsg(err.code));
     }
 }
+
+export const SendForgotPasswordMail = async (email)=>{
+    try{
+        await firebaseAuth.sendPasswordResetEmail(email);
+    }
+    catch(err){
+        throw Error(getErrorMsg(err.code));
+    }
+}

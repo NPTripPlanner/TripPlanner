@@ -4,6 +4,8 @@ const initState = {
     user:null,
     loginFail:null,
     signupFail:null,
+    forgotPassMailSentFail:null,
+    forgotPassMailSent:false,
 }
 
 const UserReducer = (state=initState, action)=>{
@@ -20,6 +22,12 @@ const UserReducer = (state=initState, action)=>{
         case actionTypes.SIGNUP_FAIL:
             return {...state, signupFail:action.payload, 
                 user:action.payload};
+        case actionTypes.SEND_FORGOTPASS_MAIL_START:
+            return {...state, forgotPassMailSent:false, forgotPassMailSentFail:null};
+        case actionTypes.SEND_FORGOTPASS_MAIL_SUCCESSFUL:
+            return {...state, forgotPassMailSent:true, forgotPassMailSentFail:null};
+        case actionTypes.SEND_FORGOTPASS_MAIL_FAIL:
+            return {...state, forgotPassMailSentFail:action.payload, forgotPassMailSent:false}
         default:
             return state;
     }
