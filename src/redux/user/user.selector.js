@@ -19,3 +19,15 @@ export const selectSignupFail = createSelector(
 
     user=>user.signupFail?user.signupFail.message:null
 );
+
+export const selectSendForgotPassMailSuccess = createSelector(
+    [selectUser],
+
+    user=>user.forgotPassMailSent
+);
+
+export const selectSendForgotPassMailFail = createSelector(
+    [selectUser],
+
+    user=>user.forgotPassMailSentFail?user.forgotPassMailSentFail.message:null
+);

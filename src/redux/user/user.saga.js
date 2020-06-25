@@ -5,9 +5,10 @@ import {
     SignupFail,
     sendForgotPassMailSuccessful,
     sendForgotPassMailFail,
+    sendForgotPassMailReset
 } from './user.actions';
 
-import {call, put, all, takeLeading} from 'redux-saga/effects';
+import {call, put, all, takeLeading, takeEvery} from 'redux-saga/effects';
 
 import {
     SignUpWithEmailAndPassword,
@@ -58,12 +59,21 @@ function* sendForgotPassMail({payload:{email}}){
 }
 
 function* sendForgotPassMailStart(){
-    yield takeLeading(actionTypes.SEND_FORGOTPASS_MAIL_START, )
+    yield takeLeading(actionTypes.SEND_FORGOTPASS_MAIL_START, sendForgotPassMail);
+}
+
+function* doSendForgotPassMailReset(){
+    yield put(sendForgotPassMailReset());
+}
+function* sendForgotPassMailResetStart(){
+    yield takeEvery(actionTypes.SEND_FORGOTPASS_MAIL_RESET, doSendForgotPassMailReset);
 }
 
 export default function* UserSaga(){
     yield all([
         call(loginStart),
         call(signupStart),
+        call(sendForgotPassMailStart),
+        call(sendForgotPassMailResetStart),
     ]);
 } 

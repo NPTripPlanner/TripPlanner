@@ -43,3 +43,7 @@ export const sendForgotPassMailFail = (error)=>({
     type:actionTypes.SEND_FORGOTPASS_MAIL_FAIL,
     payload:error
 });
+
+export const sendForgotPassMailReset = ()=>({
+    type:actionTypes.SEND_FORGOTPASS_MAIL_FAIL
+});
