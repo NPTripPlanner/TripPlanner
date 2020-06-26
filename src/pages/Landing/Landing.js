@@ -11,7 +11,6 @@ import TPStepper from '../../components/TPStepper/TPStepper';
 import Connector from '../../components/TPStepper/Connector/Connector';
 import SVGStepIcon from '../../components/TPStepper/SVGStepIcon/SVGStepIcon';
 import TPMobileStepper from '../../components/TPMobileStepper/TPMobileStepper';
-import DialogControl from '../../dialogs/DialogControl';
 
 import steps  from './Steps';
 
@@ -49,7 +48,6 @@ const Landing = () => {
   const handleLogin = ()=>dispatch(Login());
 
   return(
-    <React.Fragment> 
     <div>
       <Hero imageUrl={heroImageUrl} title='Plan your journey'/>
       <Section title='Organize trip & Start your adventure' content={
@@ -84,8 +82,6 @@ const Landing = () => {
         </div>
       } />
     </div>
-    <DialogControl />
-    </React.Fragment>
   );
   
 };

@@ -1,6 +1,6 @@
 import React from "react";
-
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
+import {selectUserInfo} from '../redux/user/user.selector';
 
 import {Login} from '../redux/dialog/dialog.actions';
 
@@ -9,18 +9,32 @@ import { Switch, Route } from "react-router-dom";
 import Header from '../components/Header/Header';
 import Footer from '../components/Footer/Footer';
 import Landing from "../pages/Landing/Landing";
+import DialogControl from '../dialogs/DialogControl';
 
 import {
   Avatar, 
   IconButton, 
   Toolbar,
   Link,
+  Typography
 } from '@material-ui/core';
+
+import {makeStyles} from '@material-ui/core/styles';
+
 import {ReactComponent as Logo} from '../assets/images/Logo/logo.svg';
 import {ReactComponent as Signin} from '../assets/images/Landing/sign-in.svg';
 import {ReactComponent as Facebook} from '../assets/images/Landing/facebook-brands.svg';
 import {ReactComponent as Twitter} from '../assets/images/Landing/twitter-brands.svg';
 import {ReactComponent as Youtube} from '../assets/images/Landing/youtube-brands.svg';
+
+const style = theme=>({
+  avatar:{
+    backgroundColor:theme.palette.secondary.main,
+    '&:hover':{
+      cursor:'pointer',
+    }
+  }
+});
 
 const footerContent = ()=>{
   return [
@@ -50,18 +64,35 @@ const renderFooter = ()=>{
 }
 
 function Router() {
+  const classes = makeStyles(style)();
+
+  const user = useSelector(selectUserInfo);
   const dispatch = useDispatch();
 
   const renderHeader = ()=>{
+    if(!user){
+      return (
+        <Header
+        brand={<Avatar variant='rounded'><Logo /></Avatar>} 
+        title='Trip Planner'
+        rightButtons={[
+            <IconButton onClick={()=>dispatch(Login())}><Signin /></IconButton>,
+        ]} 
+        />
+      );
+    }
+    
     return (
-    <Header
-    brand={<Avatar variant='rounded'><Logo /></Avatar>} 
-    title='Trip Planner'
-    rightButtons={[
-        <IconButton onClick={()=>dispatch(Login())}><Signin /></IconButton>,
-    ]} 
-    />
-    )
+      <Header
+      brand={<Avatar variant='rounded'><Logo /></Avatar>} 
+      title='Trip Planner'
+      rightButtons={[
+          <Avatar className={classes.avatar}>
+            <Typography variant='h6'>{user.displayName.charAt(0)}</Typography>
+          </Avatar>,
+      ]} 
+      />
+    );
   }
 
   return (
@@ -73,6 +104,7 @@ function Router() {
         <Route path='*' component={Landing} />
       </Switch>
       {renderFooter()}
+      <DialogControl />
     </React.Fragment>
   );
 }
