@@ -1,6 +1,6 @@
 import React from 'react';
 import {useSelector, useDispatch} from 'react-redux';
-import {sendForgotPassMailStart} from '../redux/user/user.actions';
+import {SendForgotPassMailStart} from '../redux/user/user.actions';
 import {
     selectSendForgotPassMailSuccess, 
     selectSendForgotPassMailFail
@@ -26,7 +26,7 @@ const ForgotPasswordForm = ()=>{
 
     const handleFormSubmit = (data)=>{
         setSent(true);
-        dispatch(sendForgotPassMailStart(data.email));
+        dispatch(SendForgotPassMailStart(data.email));
     }
 
     if(sentMailSuccess && sent){

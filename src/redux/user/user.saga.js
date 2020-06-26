@@ -3,9 +3,10 @@ import {
     LoginSuccessful,
     LoginFail,
     SignupFail,
-    sendForgotPassMailSuccessful,
-    sendForgotPassMailFail,
-    sendForgotPassMailReset
+    SendForgotPassMailSuccessful,
+    SendForgotPassMailFail,
+    SendForgotPassMailReset,
+    UserLogout
 } from './user.actions';
 
 import {call, put, all, takeLeading, takeEvery} from 'redux-saga/effects';
@@ -13,7 +14,8 @@ import {call, put, all, takeLeading, takeEvery} from 'redux-saga/effects';
 import {
     SignUpWithEmailAndPassword,
     LoginWithEmailAndPassword,
-    SendForgotPasswordMail
+    SendForgotPasswordMail,
+    Logout
 } from '../../utils/firebase.utils';
 
 function* userLogin({payload:{email, password}}){
@@ -51,10 +53,10 @@ function* signupStart(){
 function* sendForgotPassMail({payload:{email}}){
     try{
         yield call(SendForgotPasswordMail, email);
-        yield put(sendForgotPassMailSuccessful());
+        yield put(SendForgotPassMailSuccessful());
     }
     catch(err){
-        yield put(sendForgotPassMailFail(err));
+        yield put(SendForgotPassMailFail(err));
     }
 }
 
@@ -63,10 +65,20 @@ function* sendForgotPassMailStart(){
 }
 
 function* doSendForgotPassMailReset(){
-    yield put(sendForgotPassMailReset());
+    yield put(SendForgotPassMailReset());
 }
+
 function* sendForgotPassMailResetStart(){
     yield takeEvery(actionTypes.SEND_FORGOTPASS_MAIL_RESET, doSendForgotPassMailReset);
+}
+
+function* doLogout(){
+    yield call(Logout);
+    yield put(UserLogout());
+}
+
+function* logout(){
+    yield takeLeading(actionTypes.LOG_OUT, doLogout);
 }
 
 export default function* UserSaga(){
@@ -75,5 +87,6 @@ export default function* UserSaga(){
         call(signupStart),
         call(sendForgotPassMailStart),
         call(sendForgotPassMailResetStart),
+        call(logout)
     ]);
 } 

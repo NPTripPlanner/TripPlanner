@@ -1,6 +1,7 @@
 import React from "react";
 import {useDispatch, useSelector} from 'react-redux';
 import {selectUserInfo} from '../redux/user/user.selector';
+import {UserLogout} from '../redux/user/user.actions';
 
 import {Login} from '../redux/dialog/dialog.actions';
 
@@ -10,6 +11,7 @@ import Header from '../components/Header/Header';
 import Footer from '../components/Footer/Footer';
 import Landing from "../pages/Landing/Landing";
 import DialogControl from '../dialogs/DialogControl';
+import DropDown from '../components/DropDown/DropDown';
 
 import {
   Avatar, 
@@ -59,6 +61,40 @@ const footerContent = ()=>{
   ]
 }
 
+
+
+const avatarDropDown = (user, dispatch, classes)=>{
+
+  const items = [
+    {
+        title:'Setting',
+        onClick:()=>{console.log('go to setting page')}
+    },
+    {
+        title:'Logout',
+        onClick:()=>{dispatch(UserLogout())}
+    }
+  ]
+
+  const handleItemClick= (index)=>{
+    items[index].onClick();
+  }
+
+  return (
+    <DropDown
+    icon={
+        <Avatar className={classes.avatar}>
+            <Typography variant='h6'>
+            {user.displayName?user.displayName.charAt(0).toUpperCase():' '}
+            </Typography>
+        </Avatar>
+    }
+    dropdownItems={items}
+    onItemClicked={handleItemClick}
+    />
+  );
+}
+
 const renderFooter = ()=>{
   return <Footer sections={footerContent()} />
 }
@@ -87,9 +123,7 @@ function Router() {
       brand={<Avatar variant='rounded'><Logo /></Avatar>} 
       title='Trip Planner'
       rightButtons={[
-          <Avatar className={classes.avatar}>
-            <Typography variant='h6'>{user.displayName.charAt(0)}</Typography>
-          </Avatar>,
+        avatarDropDown(user, dispatch, classes),
       ]} 
       />
     );

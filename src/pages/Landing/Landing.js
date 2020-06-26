@@ -1,6 +1,7 @@
 import React from "react";
 
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
+import {selectUserInfo} from '../../redux/user/user.selector';
 
 import {Login} from '../../redux/dialog/dialog.actions';
 
@@ -43,9 +44,16 @@ Trip planner is here to assist and help you to create a itinerary easily. Trip p
 const Landing = () => {
   const classes = makeStyles(style)();
 
+  const user = useSelector(selectUserInfo);
   const dispatch = useDispatch();
 
-  const handleLogin = ()=>dispatch(Login());
+  const handleGetStart = ()=>{
+    if(!user){
+      dispatch(Login());
+      return;
+    }
+    console.log('Go to app');
+  }
 
   return(
     <div>
@@ -64,7 +72,7 @@ const Landing = () => {
             </Grid>
             <Grid item xs={12}>
                 <div className={classes.hCenter}>
-                    <Button variant='contained' color='secondary' size='large' onClick={handleLogin}>
+                    <Button variant='contained' color='secondary' size='large' onClick={handleGetStart}>
                       <Typography variant='h6'>Get Started</Typography>
                     </Button>
                 </div>

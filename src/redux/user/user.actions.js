@@ -30,20 +30,24 @@ export const SignupFail = (error)=>({
     payload:error
 });
 
-export const sendForgotPassMailStart = (email)=>({
+export const SendForgotPassMailStart = (email)=>({
     type:actionTypes.SEND_FORGOTPASS_MAIL_START,
     payload:{email}
 });
 
-export const sendForgotPassMailSuccessful = ()=>({
+export const SendForgotPassMailSuccessful = ()=>({
     type:actionTypes.SEND_FORGOTPASS_MAIL_SUCCESSFUL
 });
 
-export const sendForgotPassMailFail = (error)=>({
+export const SendForgotPassMailFail = (error)=>({
     type:actionTypes.SEND_FORGOTPASS_MAIL_FAIL,
     payload:error
 });
 
-export const sendForgotPassMailReset = ()=>({
+export const SendForgotPassMailReset = ()=>({
     type:actionTypes.SEND_FORGOTPASS_MAIL_FAIL
 });
+
+export const UserLogout = ()=>({
+    type:actionTypes.LOG_OUT
+})

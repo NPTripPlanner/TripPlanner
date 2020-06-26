@@ -28,16 +28,6 @@ export const GetCurrentUser = async ()=>{
     }
 }
 
-export const Logout  = async ()=>{
-    try{
-        await firebaseAuth.signOut();
-        return GetCurrentUser();
-    }
-    catch(err){
-        throw Error(getErrorMsg(err.code));
-    }
-}
-
 export const SignUpWithEmailAndPassword = async (email, password, displayName)=>{
     try{
         await firebaseAuth.createUserWithEmailAndPassword(email, password);
@@ -68,4 +58,8 @@ export const SendForgotPasswordMail = async (email)=>{
     catch(err){
         throw Error(getErrorMsg(err.code));
     }
+}
+
+export const Logout = async ()=>{
+    await firebaseAuth.signOut();
 }

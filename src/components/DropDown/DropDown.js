@@ -6,12 +6,15 @@ import {
     Popover,
     Paper,
     MenuList,
-    MenuItem
+    MenuItem,
+    Typography,
+    
 } from '@material-ui/core';
 
 const DropDown = React.forwardRef(({
     icon,
-    dropdownItems
+    dropdownItems,
+    onItemClicked
 },ref) => {
     const [open, setOpen] = React.useState(false);
     const [anchorEl, setAnchorEl] = React.useState(null);
@@ -24,6 +27,11 @@ const DropDown = React.forwardRef(({
     const handleClose = () => {
         setOpen(false);
         setAnchorEl(null);
+    }
+
+    const handleItemClick = (index)=>{
+        handleClose();
+        if(onItemClicked) onItemClicked(index);
     }
 
     return (
@@ -44,7 +52,17 @@ const DropDown = React.forwardRef(({
             >
                 <Paper>
                     <MenuList>
-                        <MenuItem>Item 1</MenuItem>
+                    {
+                        dropdownItems.map((item, i)=>{
+                            return (
+                                <MenuItem 
+                                key={i}
+                                onClick={()=>handleItemClick(i)}>
+                                    <Typography variant='h6'>{item.title}</Typography>
+                                </MenuItem>
+                            )
+                        })
+                    }
                     </MenuList>
                 </Paper>
             </Popover>

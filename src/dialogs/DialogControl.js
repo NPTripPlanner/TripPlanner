@@ -61,7 +61,7 @@ const DialogControl = () => {
             </React.Fragment>
         );
     }
-
+    if(user && dialogName) dispatch(Close());
     return null;
     
 };
