@@ -48,6 +48,14 @@ export const SendForgotPassMailReset = ()=>({
     type:actionTypes.SEND_FORGOTPASS_MAIL_FAIL
 });
 
+export const CheckUserSessionStart = ()=>({
+    type:actionTypes.CHECK_USER_SESSION_START,
+});
+
+export const CheckUserSessionFail = ()=>({
+    type:actionTypes.CHECK_USER_SESSION_FAIL
+});
+
 export const UserLogout = ()=>({
     type:actionTypes.LOG_OUT
-})
+});

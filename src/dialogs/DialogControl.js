@@ -38,6 +38,8 @@ const DialogControl = () => {
         </TPDialog>
     )
 
+    if(user && dialogName) dispatch(Close());
+    
     if(!user){
         return (
             <React.Fragment>
@@ -61,7 +63,6 @@ const DialogControl = () => {
             </React.Fragment>
         );
     }
-    if(user && dialogName) dispatch(Close());
     return null;
     
 };

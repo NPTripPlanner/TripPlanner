@@ -6,6 +6,7 @@ import {
     SendForgotPassMailSuccessful,
     SendForgotPassMailFail,
     SendForgotPassMailReset,
+    CheckUserSessionFail,
     UserLogout
 } from './user.actions';
 
@@ -15,6 +16,7 @@ import {
     SignUpWithEmailAndPassword,
     LoginWithEmailAndPassword,
     SendForgotPasswordMail,
+    GetCurrentUser,
     Logout
 } from '../../utils/firebase.utils';
 
@@ -72,6 +74,20 @@ function* sendForgotPassMailResetStart(){
     yield takeEvery(actionTypes.SEND_FORGOTPASS_MAIL_RESET, doSendForgotPassMailReset);
 }
 
+function* doCheckUserSession(){
+    const user = yield GetCurrentUser();
+    if(user){
+        yield call(loginSuccessful, user);
+    }
+    else{
+        yield put(CheckUserSessionFail());
+    }
+}
+
+function* checkUserSessionStart(){
+    yield takeLeading(actionTypes.CHECK_USER_SESSION_START, doCheckUserSession);
+}
+
 function* doLogout(){
     yield call(Logout);
     yield put(UserLogout());
@@ -87,6 +103,7 @@ export default function* UserSaga(){
         call(signupStart),
         call(sendForgotPassMailStart),
         call(sendForgotPassMailResetStart),
+        call(checkUserSessionStart),
         call(logout)
     ]);
 } 

@@ -16,16 +16,25 @@ const firebaseConfig = {
 const firebaseApp = firebase.initializeApp(firebaseConfig);
 const firebaseAuth = auth(firebaseApp);
 
-export const GetCurrentUser = async ()=>{
-    const user = firebaseAuth.currentUser;
-    if(!user) return null;
+export const GetCurrentUser = ()=>{
+    return new Promise((resolve, reject)=>{
 
-    return {
-        uid:user.uid,
-        email:user.email,
-        displayName:user.displayName,
-        verified:user.emailVerified,
-    }
+        const unsubscribe = firebaseAuth.onAuthStateChanged(user=>{
+            unsubscribe();
+            if(user){
+                resolve({
+                    uid:user.uid,
+                    email:user.email,
+                    displayName:user.displayName,
+                    verified:user.emailVerified,
+                });
+            }
+            else{
+                return resolve(null);
+            }
+            
+        }, reject);
+    });
 }
 
 export const SignUpWithEmailAndPassword = async (email, password, displayName)=>{

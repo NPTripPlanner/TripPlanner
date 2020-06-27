@@ -29,6 +29,9 @@ const UserReducer = (state=initState, action)=>{
             return {...state, forgotPassMailSent:true, forgotPassMailSentFail:null};
         case actionTypes.SEND_FORGOTPASS_MAIL_FAIL:
             return {...state, forgotPassMailSentFail:action.payload, forgotPassMailSent:false};
+        case actionTypes.CHECK_USER_SESSION_FAIL:
+        case actionTypes.CHECK_USER_SESSION_START:
+            return {...state, user:null};
         case actionTypes.LOG_OUT:
             return {...state, user:null};
         default:

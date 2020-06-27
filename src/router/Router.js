@@ -1,7 +1,10 @@
 import React from "react";
 import {useDispatch, useSelector} from 'react-redux';
 import {selectUserInfo} from '../redux/user/user.selector';
-import {UserLogout} from '../redux/user/user.actions';
+import {
+  UserLogout,
+  CheckUserSessionStart
+} from '../redux/user/user.actions';
 
 import {Login} from '../redux/dialog/dialog.actions';
 
@@ -104,6 +107,8 @@ function Router() {
 
   const user = useSelector(selectUserInfo);
   const dispatch = useDispatch();
+
+  if(!user) dispatch(CheckUserSessionStart());
 
   const renderHeader = ()=>{
     if(!user){
