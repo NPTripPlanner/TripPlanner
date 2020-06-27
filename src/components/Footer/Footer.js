@@ -5,9 +5,10 @@ import {makeStyles} from '@material-ui/core/styles';
 
 const style = theme =>({
     main:{
-        position:'absolute',
+        position:'relative',
         backgroundColor:theme.palette.primary.main,
         left:0,
+        right:0,
         bottom:0
     },
     section:{
