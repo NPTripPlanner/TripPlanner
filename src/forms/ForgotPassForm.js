@@ -31,7 +31,11 @@ const ForgotPasswordForm = ()=>{
 
     if(sentMailSuccess && sent){
         return (
-            <div>A password reset mail has been sent to your mail box</div>
+            <div>
+                <Typography variant='h6'>
+                A password reset mail has been sent to your mail box
+                </Typography>
+            </div>
         );
     }
 
