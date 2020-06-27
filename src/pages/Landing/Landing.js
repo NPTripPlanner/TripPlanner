@@ -1,6 +1,8 @@
 import React from "react";
+import {useHistory} from 'react-router-dom';
 
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
+import {selectUserInfo} from '../../redux/user/user.selector';
 
 import {Login} from '../../redux/dialog/dialog.actions';
 
@@ -11,7 +13,6 @@ import TPStepper from '../../components/TPStepper/TPStepper';
 import Connector from '../../components/TPStepper/Connector/Connector';
 import SVGStepIcon from '../../components/TPStepper/SVGStepIcon/SVGStepIcon';
 import TPMobileStepper from '../../components/TPMobileStepper/TPMobileStepper';
-import DialogControl from '../../dialogs/DialogControl';
 
 import steps  from './Steps';
 
@@ -44,12 +45,20 @@ Trip planner is here to assist and help you to create a itinerary easily. Trip p
 const Landing = () => {
   const classes = makeStyles(style)();
 
+  const user = useSelector(selectUserInfo);
   const dispatch = useDispatch();
+  const history = useHistory();
 
-  const handleLogin = ()=>dispatch(Login());
+  const handleGetStartClick = ()=>{
+    if(!user){
+      dispatch(Login());
+      return;
+    }
+    
+    history.push('/TripManager');
+  }
 
   return(
-    <React.Fragment> 
     <div>
       <Hero imageUrl={heroImageUrl} title='Plan your journey'/>
       <Section title='Organize trip & Start your adventure' content={
@@ -66,7 +75,7 @@ const Landing = () => {
             </Grid>
             <Grid item xs={12}>
                 <div className={classes.hCenter}>
-                    <Button variant='contained' color='secondary' size='large' onClick={handleLogin}>
+                    <Button variant='contained' color='secondary' size='large' onClick={handleGetStartClick}>
                       <Typography variant='h6'>Get Started</Typography>
                     </Button>
                 </div>
@@ -84,8 +93,6 @@ const Landing = () => {
         </div>
       } />
     </div>
-    <DialogControl />
-    </React.Fragment>
   );
   
 };

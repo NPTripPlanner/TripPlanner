@@ -34,6 +34,7 @@ export const loginFormFields = [
             placeholder='123456'
             endAdornment={<Https />}
             required
+            inputProps={{minLength:6}}
             />
         ),
     },
@@ -84,6 +85,7 @@ export const signupFormFields = [
             placeholder='123456'
             endAdornment={<Https />}
             required
+            inputProps={{minLength:6}}
             />
         ),
     },
@@ -98,6 +100,7 @@ export const signupFormFields = [
             placeholder='Re-enter password'
             endAdornment={<Https />}
             required
+            inputProps={{minLength:6}}
             />
         ),
     },
