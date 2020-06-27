@@ -13,6 +13,7 @@ import { Switch, Route } from "react-router-dom";
 import Header from '../components/Header/Header';
 import Footer from '../components/Footer/Footer';
 import Landing from "../pages/Landing/Landing";
+import TripManager from '../pages/TripManager/TripManager';
 import DialogControl from '../dialogs/DialogControl';
 import DropDown from '../components/DropDown/DropDown';
 
@@ -140,6 +141,7 @@ function Router() {
       <Toolbar />
       <Switch>
         <Route exact path="/" component={Landing} />
+        <Route exact path='/TripManager' component={TripManager} />
         <Route path='*' component={Landing} />
       </Switch>
       {renderFooter()}

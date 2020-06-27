@@ -1,4 +1,5 @@
 import React from "react";
+import {useHistory} from 'react-router-dom';
 
 import {useDispatch, useSelector} from 'react-redux';
 import {selectUserInfo} from '../../redux/user/user.selector';
@@ -46,13 +47,15 @@ const Landing = () => {
 
   const user = useSelector(selectUserInfo);
   const dispatch = useDispatch();
+  const history = useHistory();
 
-  const handleGetStart = ()=>{
+  const handleGetStartClick = ()=>{
     if(!user){
       dispatch(Login());
       return;
     }
-    console.log('Go to app');
+    
+    history.push('/TripManager');
   }
 
   return(
@@ -72,7 +75,7 @@ const Landing = () => {
             </Grid>
             <Grid item xs={12}>
                 <div className={classes.hCenter}>
-                    <Button variant='contained' color='secondary' size='large' onClick={handleGetStart}>
+                    <Button variant='contained' color='secondary' size='large' onClick={handleGetStartClick}>
                       <Typography variant='h6'>Get Started</Typography>
                     </Button>
                 </div>
