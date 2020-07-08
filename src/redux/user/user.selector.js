@@ -1,33 +1,34 @@
-import {createSelector} from 'reselect';
+import { createSelector } from "reselect";
 
-const selectUser = (state)=>state.user;
+const selectUser = (state) => state.user;
 
 export const selectUserInfo = createSelector(
-    [selectUser],
+  [selectUser],
 
-    user=>user.user
+  (user) => user.user
 );
 
 export const selectLoginFail = createSelector(
-    [selectUser],
+  [selectUser],
 
-    user=>user.loginFail?user.loginFail.message:null
+  (user) => (user.loginFail ? user.loginFail.message : null)
 );
 
 export const selectSignupFail = createSelector(
-    [selectUser],
+  [selectUser],
 
-    user=>user.signupFail?user.signupFail.message:null
+  (user) => (user.signupFail ? user.signupFail.message : null)
 );
 
 export const selectSendForgotPassMailSuccess = createSelector(
-    [selectUser],
+  [selectUser],
 
-    user=>user.forgotPassMailSent
+  (user) => user.forgotPassMailSent
 );
 
 export const selectSendForgotPassMailFail = createSelector(
-    [selectUser],
+  [selectUser],
 
-    user=>user.forgotPassMailSentFail?user.forgotPassMailSentFail.message:null
+  (user) =>
+    user.forgotPassMailSentFail ? user.forgotPassMailSentFail.message : null
 );

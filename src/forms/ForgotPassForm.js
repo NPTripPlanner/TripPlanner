@@ -1,57 +1,54 @@
-import React from 'react';
-import {useSelector, useDispatch} from 'react-redux';
-import {SendForgotPassMailStart} from '../redux/user/user.actions';
+import React from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { SendForgotPassMailStart } from "../redux/user/user.actions";
 import {
-    selectSendForgotPassMailSuccess, 
-    selectSendForgotPassMailFail
-} from '../redux/user/user.selector';
+  selectSendForgotPassMailSuccess,
+  selectSendForgotPassMailFail,
+} from "../redux/user/user.selector";
 
-import TPForm from '../components/TPForm/TPForm';
+import TPForm from "../components/TPForm/TPForm";
+import TPSpinner from "../components/TPSpinner/TPSpinner";
 
-import {
-    forgotPassFormData,
-    forgotPassFormFields
-} from './FormData';
+import { forgotPassFormData, forgotPassFormFields } from "./FormData";
 
-import {
-    Button,
-    Typography
-} from '@material-ui/core';
+import { Button, Typography } from "@material-ui/core";
 
-const ForgotPasswordForm = ()=>{
-    const [sent, setSent] = React.useState(false);
-    const sentMailSuccess = useSelector(selectSendForgotPassMailSuccess);
-    const sentMailError = useSelector(selectSendForgotPassMailFail);
-    const dispatch = useDispatch();
+const ForgotPasswordForm = () => {
+  const [sent, setSent] = React.useState(false);
+  const sentMailSuccess = useSelector(selectSendForgotPassMailSuccess);
+  const sentMailError = useSelector(selectSendForgotPassMailFail);
+  const dispatch = useDispatch();
 
-    const handleFormSubmit = (data)=>{
-        setSent(true);
-        dispatch(SendForgotPassMailStart(data.email));
-    }
+  const handleFormSubmit = (data) => {
+    setSent(true);
+    dispatch(SendForgotPassMailStart(data.email));
+  };
 
-    if(sentMailSuccess && sent){
-        return (
-            <div>
-                <Typography variant='h6'>
-                A password reset mail has been sent to your mail box
-                </Typography>
-            </div>
-        );
-    }
-
+  if (sentMailSuccess && sent) {
     return (
-        <TPForm
+      <div>
+        <Typography variant="h6">
+          A password reset mail has been sent to your mail box
+        </Typography>
+      </div>
+    );
+  } else if (sentMailError && sent) setSent(false);
+
+  return (
+    <TPSpinner spinTitle="Requesting password reset..." isLoading={sent}>
+      <TPForm
         error={sentMailError}
-        formData={forgotPassFormData} 
+        formData={forgotPassFormData}
         formFields={forgotPassFormFields}
         submitButton={
-            <Button variant='contained' color='secondary'>
-                <Typography variant='h6'>Submit</Typography>
-            </Button>
+          <Button variant="contained" color="secondary">
+            <Typography variant="h6">Submit</Typography>
+          </Button>
         }
         onSubmit={handleFormSubmit}
-        />
-    )
-}
+      />
+    </TPSpinner>
+  );
+};
 
 export default ForgotPasswordForm;

@@ -1,9 +1,9 @@
-import {put,call,take} from 'redux-saga/effects';
+import { put, call, take } from "redux-saga/effects";
 
-function* setMessage(action){
-    yield put(action);
+function* setMessage(action) {
+  yield put(action);
 }
-export function* setMessageSaga(){
-    const action = yield take('SET_MESSAGE');
-    yield call(setMessage, action);
+export function* setMessageSaga() {
+  const action = yield take("SET_MESSAGE");
+  yield call(setMessage, action);
 }
