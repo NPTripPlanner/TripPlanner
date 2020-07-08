@@ -84,10 +84,10 @@ const Landing = () => {
       } /> 
       <Section title='How does it work' content={
         <div>
-          <Hidden mdDown>
+          <Hidden smDown>
             <TPStepper steps={steps} connector={<Connector />} stepIcon={SVGStepIcon} />
           </Hidden>
-          <Hidden lgUp>
+          <Hidden mdUp>
             <TPMobileStepper steps={steps} />
           </Hidden>
         </div>

@@ -48,6 +48,12 @@ const theme = createMuiTheme({
                 alignItems:'center'
             },
         },
+        MuiStep:{
+            horizontal:{
+                paddingLeft:0,
+                paddingRight:0,
+            }
+        },
         MuiLink:{
             root:{
                 color:hyperLinkColor,
