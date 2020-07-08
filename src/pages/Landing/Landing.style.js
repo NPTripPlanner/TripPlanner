@@ -1,7 +1,7 @@
 const style = {
-    hCenter:{
-        textAlign:'center'
-    }
-}
+  hCenter: {
+    textAlign: "center",
+  },
+};
 
 export default style;
