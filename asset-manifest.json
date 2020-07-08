@@ -1,0 +1,33 @@
+{
+  "files": {
+    "main.css": "/TripPlanner/static/css/main.5e2d1b54.chunk.css",
+    "main.js": "/TripPlanner/static/js/main.19795931.chunk.js",
+    "main.js.map": "/TripPlanner/static/js/main.19795931.chunk.js.map",
+    "runtime-main.js": "/TripPlanner/static/js/runtime-main.d49ca867.js",
+    "runtime-main.js.map": "/TripPlanner/static/js/runtime-main.d49ca867.js.map",
+    "static/js/2.28ea3f61.chunk.js": "/TripPlanner/static/js/2.28ea3f61.chunk.js",
+    "static/js/2.28ea3f61.chunk.js.map": "/TripPlanner/static/js/2.28ea3f61.chunk.js.map",
+    "index.html": "/TripPlanner/index.html",
+    "precache-manifest.90b1c40a7e89ce57c308d71933dd4f5b.js": "/TripPlanner/precache-manifest.90b1c40a7e89ce57c308d71933dd4f5b.js",
+    "service-worker.js": "/TripPlanner/service-worker.js",
+    "static/css/main.5e2d1b54.chunk.css.map": "/TripPlanner/static/css/main.5e2d1b54.chunk.css.map",
+    "static/js/2.28ea3f61.chunk.js.LICENSE.txt": "/TripPlanner/static/js/2.28ea3f61.chunk.js.LICENSE.txt",
+    "static/media/close-button.7b2b237f.svg": "/TripPlanner/static/media/close-button.7b2b237f.svg",
+    "static/media/create-journey.8d7b1a89.svg": "/TripPlanner/static/media/create-journey.8d7b1a89.svg",
+    "static/media/facebook-brands.1ce76387.svg": "/TripPlanner/static/media/facebook-brands.1ce76387.svg",
+    "static/media/hero-img.png": "/TripPlanner/static/media/hero-img.2564feac.png",
+    "static/media/logo.352e4da8.svg": "/TripPlanner/static/media/logo.352e4da8.svg",
+    "static/media/organize-locations.3851302c.svg": "/TripPlanner/static/media/organize-locations.3851302c.svg",
+    "static/media/sign-in.cdbe71c9.svg": "/TripPlanner/static/media/sign-in.cdbe71c9.svg",
+    "static/media/start-journey.c3420b10.svg": "/TripPlanner/static/media/start-journey.c3420b10.svg",
+    "static/media/travel-plans.3558bc3a.svg": "/TripPlanner/static/media/travel-plans.3558bc3a.svg",
+    "static/media/twitter-brands.a6b6e357.svg": "/TripPlanner/static/media/twitter-brands.a6b6e357.svg",
+    "static/media/youtube-brands.c47054a6.svg": "/TripPlanner/static/media/youtube-brands.c47054a6.svg"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.d49ca867.js",
+    "static/js/2.28ea3f61.chunk.js",
+    "static/css/main.5e2d1b54.chunk.css",
+    "static/js/main.19795931.chunk.js"
+  ]
+}
