@@ -2,6 +2,7 @@ import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { selectUserInfo } from "../redux/user/user.selector";
 import { UserLogout, CheckUserSessionStart } from "../redux/user/user.actions";
+import { useHistory } from "react-router-dom";
 
 import { Login } from "../redux/dialog/dialog.actions";
 
@@ -21,6 +22,8 @@ import {
   Link,
   Typography,
 } from "@material-ui/core";
+
+import { Apps } from "@material-ui/icons";
 
 import { makeStyles } from "@material-ui/core/styles";
 
@@ -112,6 +115,7 @@ function Router() {
 
   const user = useSelector(selectUserInfo);
   const dispatch = useDispatch();
+  const history = useHistory();
 
   if (!user) dispatch(CheckUserSessionStart());
 
@@ -142,7 +146,12 @@ function Router() {
           </Avatar>
         }
         title="Trip Planner"
-        rightButtons={[avatarDropDown(user, dispatch, classes)]}
+        rightButtons={[
+          <IconButton onClick={() => history.push("/TripManager")}>
+            <Apps />
+          </IconButton>,
+          avatarDropDown(user, dispatch, classes),
+        ]}
       />
     );
   };
