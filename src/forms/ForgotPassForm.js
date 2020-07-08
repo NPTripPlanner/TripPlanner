@@ -7,6 +7,7 @@ import {
 } from '../redux/user/user.selector';
 
 import TPForm from '../components/TPForm/TPForm';
+import TPSpinner from '../components/TPSpinner/TPSpinner';
 
 import {
     forgotPassFormData,
@@ -38,19 +39,22 @@ const ForgotPasswordForm = ()=>{
             </div>
         );
     }
+    else if(sentMailError && sent) setSent(false);
 
     return (
-        <TPForm
-        error={sentMailError}
-        formData={forgotPassFormData} 
-        formFields={forgotPassFormFields}
-        submitButton={
-            <Button variant='contained' color='secondary'>
-                <Typography variant='h6'>Submit</Typography>
-            </Button>
-        }
-        onSubmit={handleFormSubmit}
-        />
+        <TPSpinner spinTitle='Requesting password reset...' isLoading={sent}>
+            <TPForm
+            error={sentMailError}
+            formData={forgotPassFormData} 
+            formFields={forgotPassFormFields}
+            submitButton={
+                <Button variant='contained' color='secondary'>
+                    <Typography variant='h6'>Submit</Typography>
+                </Button>
+            }
+            onSubmit={handleFormSubmit}
+            />
+        </TPSpinner>
     )
 }
 

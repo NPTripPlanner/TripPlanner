@@ -56,7 +56,7 @@ const DialogControl = () => {
             }
             {
             handleDialog(DialogTypes.ForgotPass, 'Forgot Password', <ForgotPassForm />, [
-                <Link key='1' onClick={()=>dispatch(Signup())}>I have an account</Link>,
+                <Link key='1' onClick={()=>dispatch(Login())}>I have an account</Link>,
                 <Link key='2' onClick={()=>dispatch(Signup())}>I dont have an account</Link>,
             ])(dialogName)
             }

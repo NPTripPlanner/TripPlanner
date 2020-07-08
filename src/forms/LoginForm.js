@@ -3,6 +3,11 @@ import {useSelector, useDispatch} from 'react-redux';
 import {LoginStart} from '../redux/user/user.actions';
 
 import TPForm from '../components/TPForm/TPForm';
+import TPSpinner from '../components/TPSpinner/TPSpinner';
+
+import {
+    selectLoginFail
+} from '../redux/user/user.selector';
 
 import {
     loginFormData,
@@ -16,28 +21,31 @@ import {
 
 
 const LoginForm = ()=>{
-
-    const loginError = useSelector(state=>{
-        return state.user.loginFail?state.user.loginFail.message:null;
-    });
+    const [sent, setSent] = React.useState(false);
+    const loginError = useSelector(selectLoginFail);
     const dispatch = useDispatch();
 
     const handleFormSubmit = (data)=>{
+        setSent(true);
         dispatch(LoginStart(data.email, data.password));
     }
 
+    if(loginError && sent) setSent(false);
+
     return (
-        <TPForm
-        error={loginError}
-        formData={loginFormData} 
-        formFields={loginFormFields}
-        submitButton={
-            <Button variant='contained' color='secondary'>
-                <Typography variant='h6'>Login</Typography>
-            </Button>
-        }
-        onSubmit={handleFormSubmit}
-        />
+        <TPSpinner spinTitle='Logging in...' isLoading={sent}>
+            <TPForm
+            error={loginError}
+            formData={loginFormData} 
+            formFields={loginFormFields}
+            submitButton={
+                <Button variant='contained' color='secondary'>
+                    <Typography variant='h6'>Login</Typography>
+                </Button>
+            }
+            onSubmit={handleFormSubmit}
+            />
+        </TPSpinner>
     )
 }
 

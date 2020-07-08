@@ -6,6 +6,7 @@ import {
 } from '../redux/user/user.selector';
 
 import TPForm from '../components/TPForm/TPForm';
+import TPSpinner from '../components/TPSpinner/TPSpinner';
 
 import {
     signupFormData,
@@ -18,6 +19,7 @@ import {
 } from '@material-ui/core';
 
 const SignupForm = ()=>{
+    const [sent, setSent] = React.useState(false);
     const [data, setData] = React.useState(signupFormData);
     const [passNotMatch, setPassNotMatch] = React.useState(null);
     const signupError = useSelector(selectSignupFail);
@@ -34,23 +36,28 @@ const SignupForm = ()=>{
     }
 
     const handleFormSubmit = (data)=>{
+        setSent(true);
         dispatch(SignupStart(data.email, data.password, data.displayName));
     }
 
+    if((passNotMatch || signupError) && sent) setSent(false);
+
     return (
-        <TPForm
-        error={passNotMatch || signupError}
-        formData={data} 
-        formFields={signupFormFields}
-        errorFields={passNotMatch?['password', 'cPassword']:null}
-        submitButton={
-            <Button variant='contained' color='secondary'>
-                <Typography variant='h6'>Sign up</Typography>
-            </Button>
-        }
-        onSubmit={handleFormSubmit}
-        onFormDataChanged={handleDataChanged}
-        />
+        <TPSpinner spinTitle='Signing you up...' isLoading={sent}>
+            <TPForm
+            error={passNotMatch || signupError}
+            formData={data} 
+            formFields={signupFormFields}
+            errorFields={passNotMatch?['password', 'cPassword']:null}
+            submitButton={
+                <Button variant='contained' color='secondary'>
+                    <Typography variant='h6'>Sign up</Typography>
+                </Button>
+            }
+            onSubmit={handleFormSubmit}
+            onFormDataChanged={handleDataChanged}
+            />
+        </TPSpinner>
     )
 }
 

@@ -16,12 +16,11 @@ const UserReducer = (state=initState, action)=>{
         case actionTypes.LOGIN_SUCCESSFUL:
             return {...state, loginFail:null, user:action.payload};
         case actionTypes.LOGIN_FAIL:
-            return {...state, loginFail:action.payload};
+            return {...state, loginFail:action.payload, user:null};
         case actionTypes.SIGNUP_START:
             return {...state, signupFail:null};
         case actionTypes.SIGNUP_FAIL:
-            return {...state, signupFail:action.payload, 
-                user:action.payload};
+            return {...state, signupFail:action.payload, user:null};
         case actionTypes.SEND_FORGOTPASS_MAIL_RESET:
         case actionTypes.SEND_FORGOTPASS_MAIL_START:
             return {...state, forgotPassMailSent:false, forgotPassMailSentFail:null};
