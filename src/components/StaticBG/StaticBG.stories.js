@@ -14,7 +14,7 @@ export const Default = () => {
   return (
     <ThemeProvider theme={theme}>
     
-      <StaticBG src={imgUrl} rgbaColor='rgba(255,255,255,0.7)'>
+      <StaticBG src={imgUrl} backgroundColor='rgba(255,255,255,0.7)'>
       <h1>The background-attachment Property</h1>
 
       <p>The background-image is fixed. Try to scroll down the page.</p>
@@ -51,7 +51,7 @@ export const imageURL = () => {
     return (
       <ThemeProvider theme={theme}>
       
-        <StaticBG src={imgUrl} rgbaColor='rgba(255,255,255,0.3)'>
+        <StaticBG src={imgUrl} backgroundColor='rgba(255,255,255,0.3)'>
         <h1>The background-attachment Property</h1>
   
         <p>The background-image is fixed. Try to scroll down the page.</p>

@@ -9,15 +9,17 @@ const style = {
         backgroundAttachment:'fixed',
         backgroundPosition:'center',
         backgroundSize:'cover',
+        height:'inherit'
     },
     content:{
-        position:'relative'
+        // position:'relative',
+        height:'100%',
     }
 }
 
 const StaticBG = React.forwardRef(({
     src,
-    rgbaColor='rgba(255,255,255,0.5)',
+    backgroundColor='rgba(255,255,255,0.5)',
     children
 },ref) => {
     const newStyle = {
@@ -25,7 +27,7 @@ const StaticBG = React.forwardRef(({
             ...style.main,
             backgroundImage:src?`url(${src})`:'',
         },
-        content:{...style.content, backgroundColor:`${rgbaColor}`}
+        content:{...style.content, backgroundColor:`${backgroundColor}`}
     }
     const classes = makeStyles(newStyle)();
 

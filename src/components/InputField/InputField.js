@@ -7,6 +7,7 @@ import {
   FormControl,
   InputLabel,
   InputAdornment,
+  Typography
 } from "@material-ui/core";
 
 import { makeStyles } from "@material-ui/core/styles";
@@ -22,7 +23,7 @@ const InputField = React.forwardRef(
   (
     {
       variant = "standard",
-      labelText = "Input label",
+      labelText,
       labelBgColor = "#fff",
       htmlFor = "input-field",
       required = false,
@@ -69,9 +70,16 @@ const InputField = React.forwardRef(
 
     return (
       <FormControl ref={ref} variant={variant}>
+      {
+        labelText?
         <InputLabel htmlFor={htmlFor} required={required}>
-          <div className={classes.label}>{labelText}</div>
+          <div className={classes.label}>
+            <Typography variant='caption'>{labelText}</Typography>
+          </div>
         </InputLabel>
+        :
+        null
+      }
         {renderInput()}
       </FormControl>
     );
