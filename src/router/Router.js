@@ -14,6 +14,7 @@ import Landing from "../pages/Landing/Landing";
 import TripManager from "../pages/TripManager/TripManager";
 import DialogControl from "../dialogs/DialogControl";
 import DropDown from "../components/DropDown/DropDown";
+import UserAuthComp from "../components/UserAuthComp/UserAuthComp";
 
 import {
   Avatar,
@@ -162,7 +163,7 @@ function Router() {
       <Toolbar />
       <Switch>
         <Route exact path="/" component={Landing} />
-        <Route exact path="/TripManager" component={TripManager} />
+        <Route exact path="/TripManager" component={UserAuthComp('/', TripManager)} />
         <Route path="*" component={Landing} />
       </Switch>
       {renderFooter()}
