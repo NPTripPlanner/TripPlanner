@@ -33,6 +33,40 @@ const TripManager = () => {
   const classes = makeStyles(style)();
   
   const [keyword, setKeyword] = React.useState('');
+  const [tripItems, setTripItems] = React.useState([]);
+  const [searching, setSearching] = React.useState(false);
+  React.useEffect(()=>{
+    
+    setSearching(true);
+    let timer = null;
+    const p = new Promise((res, rej)=>{
+      timer = setTimeout(()=>{
+        res('successful');
+      }, 3000);
+    });
+
+    p.then((value)=>{
+      setSearching(false);
+      console.log(value);
+    })
+    .catch((err)=>{
+      setSearching(false);
+      console.log(err);
+    })
+
+    return ()=>{
+      clearTimeout(timer);
+    }
+
+  }, [keyword]);
+
+  const handleCreateTrip = ()=>{
+    console.log('create trip');
+  }
+
+  const handleSearchTrip = (event)=>{
+    setKeyword(event.target.value);
+  }
 
   return (
     <StaticBG src={imgUrl} backgroundColor='rgba(255,255,255,0.5)'>
@@ -45,11 +79,12 @@ const TripManager = () => {
             startAdornment={
               <Search />
             }
-            endAdornment={keyword?<CircularProgress size='1rem'/>:null}
+            onChange={handleSearchTrip}
+            endAdornment={searching?<CircularProgress size='1rem'/>:null}
           />
         </div>
         <div className={classes.toolItems}>
-          <Fab color="secondary">
+          <Fab color="secondary" onClick={handleCreateTrip}>
             <Add />
           </Fab>
         </div>
