@@ -4,7 +4,6 @@ import {makeStyles} from '@material-ui/core/styles';
 
 const style = {
     main:{
-        position:'relative',
         backgroundRepeat:'no-repeat',
         backgroundAttachment:'fixed',
         backgroundPosition:'center',
@@ -12,7 +11,7 @@ const style = {
         height:'inherit'
     },
     content:{
-        // position:'relative',
+        padding:'2%',
         height:'100%',
     }
 }
