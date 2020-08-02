@@ -4,7 +4,9 @@ const primaryMainColor = "#bbded6";
 const primaryLightColor = "#d1f2e5";
 const primaryDarkColor = "#aeccc3";
 const secondaryMainColor = "#6C63FF";
+const secondaryDarkColor = "#524ab8";
 const hyperLinkColor = "#6b6664";
+const inputBorderWidth = "3px";
 
 const theme = createMuiTheme({
   typography: {
@@ -28,6 +30,7 @@ const theme = createMuiTheme({
     },
     secondary: {
       main: secondaryMainColor,
+      dark: secondaryDarkColor,
     },
   },
   overrides: {
@@ -101,11 +104,18 @@ const theme = createMuiTheme({
       root: {
         "&:hover:not($disabled):not($focused):not($error) $notchedOutline": {
           borderColor: primaryMainColor,
+          borderWidth: inputBorderWidth,
         },
         "&$focused $notchedOutline": {
           borderColor: primaryDarkColor,
+          borderWidth: inputBorderWidth,
         },
       },
+      notchedOutline: {
+        borderColor: secondaryMainColor,
+        borderWidth: inputBorderWidth,
+        transition: 'all .3s ease-in-out',
+      }
     },
   },
 });
