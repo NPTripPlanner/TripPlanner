@@ -117,6 +117,17 @@ const theme = createMuiTheme({
         transition: 'all .3s ease-in-out',
       }
     },
+    MuiCardContent:{
+      root:{
+        padding:'2%'
+      }
+    },
+    MuiCardActions:{
+      root:{
+        justifyContent:'center',
+        padding:0,
+      }
+    },
   },
 });
 
