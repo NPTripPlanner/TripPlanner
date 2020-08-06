@@ -153,7 +153,7 @@ const TripManager = () => {
   }
 
   return (
-    <StaticBG src={imgUrl} backgroundColor='rgba(255,255,255,0.5)'>
+    <StaticBG src={imgUrl} backgroundColor='rgba(232,231,229,0.5)'>
       <div className={classes.tool}>
         <div className={classes.toolItems}>
           <InputField
@@ -164,7 +164,7 @@ const TripManager = () => {
               <Search />
             }
             onChange={handleSearchTrip}
-            endAdornment={searching?<CircularProgress size='1rem'/>:null}
+            endAdornment={searching?<CircularProgress size='2rem'/>:null}
           />
         </div>
         <div className={classes.toolItems}>

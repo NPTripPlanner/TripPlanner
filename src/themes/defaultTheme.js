@@ -110,11 +110,19 @@ const theme = createMuiTheme({
           borderColor: primaryDarkColor,
           borderWidth: inputBorderWidth,
         },
+        backgroundColor:'rgb(232,231,229)'
       },
       notchedOutline: {
         borderColor: secondaryMainColor,
         borderWidth: inputBorderWidth,
         transition: 'all .3s ease-in-out',
+      },
+      input: {
+        "&::placeholder": {
+          color: 'black',
+          fontSize: '1.5rem',
+          fontWeight: 800
+        },
       }
     },
     MuiCardContent:{
@@ -128,6 +136,11 @@ const theme = createMuiTheme({
         padding:0,
       }
     },
+    MuiCircularProgress:{
+      colorPrimary:{
+        color: primaryDarkColor,
+      }
+    }
   },
 });
 
