@@ -13,10 +13,10 @@ import {
 import { makeStyles } from "@material-ui/core/styles";
 
 const style = {
-  label: {
-    backgroundColor: "#fff",
+  label: props=>({
+    backgroundColor: props.labelBgColor,
     padding: "0 3px",
-  },
+  }),
 };
 
 const InputField = React.forwardRef(
@@ -33,14 +33,8 @@ const InputField = React.forwardRef(
     },
     ref
   ) => {
-    const newStyle = {
-      ...style,
-      label: {
-        ...style.label,
-        backgroundColor: labelBgColor,
-      },
-    };
-    const classes = makeStyles(newStyle)();
+    const styleProps = {labelBgColor};
+    const classes = makeStyles(style)(styleProps);
 
     const inputProps = {
       id: htmlFor,

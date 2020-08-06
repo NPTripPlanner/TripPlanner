@@ -17,10 +17,20 @@ import {
 
 const style= {
     main:{
-        maxWidth:150,
+        padding:'2%',
+        backgroundColor:'transparent'
     },
-    media: {
-       width:150
+    card:props=>({
+        maxWidth:props.maxWidth,
+    }),
+    media:props=>({
+       width:props.maxWidth
+    }),
+    content:{
+        display:'flex',
+        flexDirection:'column',
+        justifyContent:'center',
+        alignItems:'center'
     }
 }
 
@@ -34,25 +44,8 @@ const TripItem = React.forwardRef(({
     onEdit,
     onDelete,
 }, ref) => {
-    const newStyle = {
-        ...style,
-        main:{
-            ...style.main,
-            maxWidth:maxWidth,
-        },
-        media:{
-            ...style.media,
-            width:maxWidth
-        },
-        content:{
-            display:'flex',
-            flexDirection:'column',
-            justifyContent:'center',
-            alignItems:'center'
-        }
-    }
-
-    const classes = makeStyles(newStyle)();
+    const styleProps = {maxWidth}
+    const classes = makeStyles(style)(styleProps);
 
     const handleEdit = ()=>{
         if(onEdit) onEdit(customData);
@@ -63,7 +56,8 @@ const TripItem = React.forwardRef(({
     }
 
     return (
-        <Card ref={ref} className={classes.main}>
+        <div className={classes.main}>
+        <Card ref={ref} className={classes.card}>
             <CardMedia
             className={classes.media}
             component="img"
@@ -87,6 +81,7 @@ const TripItem = React.forwardRef(({
                 </IconButton>
             </CardActions>
         </Card>
+        </div>
     );
 });
 

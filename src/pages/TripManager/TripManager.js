@@ -12,7 +12,83 @@ import {
 import StaticBG from '../../components/StaticBG/StaticBG';
 import InputField from '../../components/InputField/InputField';
 
+import ItemImageUrl from '../../assets/images/TripManage/collection-item.jpeg';
+import TripItem from '../../components/TripItem/TripItem';
+
 const imgUrl = 'https://images.unsplash.com/photo-1502301197179-65228ab57f78?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=664&q=80';
+
+const mockTripItems = [
+  {
+    id:'tp1',
+    tripName:'My first trip',
+    startDate:'02/Jun/2020',
+    createDate:'01/Jun/2020',
+    imageUrl:ItemImageUrl
+  },
+  {
+    id:'tp2',
+    tripName:'My first trip',
+    startDate:'02/Jun/2020',
+    createDate:'01/Jun/2020',
+    imageUrl:ItemImageUrl
+  },
+  {
+    id:'tp3',
+    tripName:'My first trip',
+    startDate:'02/Jun/2020',
+    createDate:'01/Jun/2020',
+    imageUrl:ItemImageUrl
+  },
+  {
+    id:'tp4',
+    tripName:'My first trip',
+    startDate:'02/Jun/2020',
+    createDate:'01/Jun/2020',
+    imageUrl:ItemImageUrl
+  },
+  {
+    id:'tp4',
+    tripName:'My first trip',
+    startDate:'02/Jun/2020',
+    createDate:'01/Jun/2020',
+    imageUrl:ItemImageUrl
+  },
+  {
+    id:'tp4',
+    tripName:'My first trip',
+    startDate:'02/Jun/2020',
+    createDate:'01/Jun/2020',
+    imageUrl:ItemImageUrl
+  },
+  {
+    id:'tp4',
+    tripName:'My first trip',
+    startDate:'02/Jun/2020',
+    createDate:'01/Jun/2020',
+    imageUrl:ItemImageUrl
+  },
+  {
+    id:'tp4',
+    tripName:'My first trip',
+    startDate:'02/Jun/2020',
+    createDate:'01/Jun/2020',
+    imageUrl:ItemImageUrl
+  },
+  {
+    id:'tp4',
+    tripName:'My first trip',
+    startDate:'02/Jun/2020',
+    createDate:'01/Jun/2020',
+    imageUrl:ItemImageUrl
+  },
+  {
+    id:'tp4',
+    tripName:'My first trip',
+    startDate:'02/Jun/2020',
+    createDate:'01/Jun/2020',
+    imageUrl:ItemImageUrl
+  },
+]
 
 const style = {
   toolItems:{
@@ -21,11 +97,18 @@ const style = {
   },
   tool:{
     display:'flex',
+    flexGrow:'1',
     justifyContent:'center',
     alignItems:'center',
+    marginBottom:'1%'
   },
   scrollable:{
-    overflow:'scroll',
+    display:'flex',
+    flexGrow:'0',
+    flexWrap:'wrap',
+    justifyContent:'center',
+    alignItems:'flex-start',
+    overflow:'auto',
   }
 }
 
@@ -33,7 +116,7 @@ const TripManager = () => {
   const classes = makeStyles(style)();
   
   const [keyword, setKeyword] = React.useState('');
-  const [tripItems, setTripItems] = React.useState([]);
+  const [tripItems, setTripItems] = React.useState(mockTripItems);
   const [searching, setSearching] = React.useState(false);
   React.useEffect(()=>{
     
@@ -88,8 +171,28 @@ const TripManager = () => {
             <Add />
           </Fab>
         </div>
-    </div>
-    <div className={classes.scrollable}>trip items</div>
+      </div>
+      <div className={classes.scrollable}>
+      {
+        tripItems.map((item, i)=>{
+          return (
+            <TripItem 
+            key={i}
+            maxWidth={300}
+            image={item.imageUrl}
+            tripName={item.tripName}
+            startDate={item.startDate}
+            createDate={item.createDate}
+            customData={{
+                id:item.id
+            }}
+            onEdit={(data)=>console.log(`edit trip with id ${data.id}`)}
+            onDelete={(data)=>console.log(`delete trip with id ${data.id}`)}
+            />
+          )
+        })
+      }
+      </div>
     </StaticBG>
   );
 };
