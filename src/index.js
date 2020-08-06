@@ -5,19 +5,29 @@ import "./index.css";
 import Router from "./router/Router";
 import { 
   ThemeProvider,
+  StylesProvider,
+  jssPreset
  } from "@material-ui/core/styles";
 import theme from "./themes/defaultTheme";
 import { Provider } from "react-redux";
 import store from "./redux/Store";
 import * as serviceWorker from "./serviceWorker";
 
+import { create } from 'jss';
+
+const jss = create({
+  plugins: [...jssPreset().plugins],
+});
+
 ReactDOM.render(
   <BrowserRouter basename={process.env.PUBLIC_URL}>
-      <ThemeProvider theme={theme}>
-        <Provider store={store}>
-          <Router />
-        </Provider>
-      </ThemeProvider>
+    <StylesProvider jss={jss}>
+        <ThemeProvider theme={theme}>
+          <Provider store={store}>
+            <Router />
+          </Provider>
+        </ThemeProvider>
+    </StylesProvider>
   </BrowserRouter>,
   document.getElementById("root")
 );
