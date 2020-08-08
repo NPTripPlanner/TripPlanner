@@ -70,3 +70,36 @@ export const SendForgotPasswordMail = async (email) => {
 export const Logout = async () => {
   await firebaseAuth.signOut();
 };
+
+let mockTimer
+const mockTripItems = [
+  {
+    tripName: 'First trip',
+    startDate: '05/Jun/2021',
+    createDate: '05/Jun/2020',
+  },
+  {
+    tripName: 'Second trip',
+    startDate: '05/Jun/2022',
+    createDate: '05/Jun/2021',
+  },
+  {
+    tripName: 'Third trip',
+    startDate: '05/Jun/2023',
+    createDate: '05/Jun/2022',
+  },
+  {
+    tripName: 'Fourth trip',
+    startDate: '05/Jun/2024',
+    createDate: '05/Jun/2023',
+  },
+]
+export const FetchTripItemCollection = async ()=>{
+  //TODO: fetch real data from firebase
+  return await new Promise((res, rej)=>{
+    mockTimer = setTimeout(()=>{
+      res(mockTripItems);
+      clearTimeout(mockTimer);
+    }, 3000);
+  });
+}

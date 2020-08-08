@@ -1,4 +1,13 @@
 import React from "react";
+import {
+  useDispatch,
+  useSelector
+} from 'react-redux';
+
+import {
+  selectTripCollection,
+  selectFetchingTripCollection
+} from '../../redux/trip_manager/trip_manager.selector';
 
 import {makeStyles} from '@material-ui/core/styles'; 
 import {
@@ -11,84 +20,14 @@ import {
 } from "@material-ui/icons";
 import StaticBG from '../../components/StaticBG/StaticBG';
 import InputField from '../../components/InputField/InputField';
-
-import ItemImageUrl from '../../assets/images/TripManage/collection-item.jpeg';
 import TripItem from '../../components/TripItem/TripItem';
 
-const imgUrl = 'https://images.unsplash.com/photo-1502301197179-65228ab57f78?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=664&q=80';
+import ItemImageUrl from '../../assets/images/TripManage/collection-item.jpeg';
 
-const mockTripItems = [
-  {
-    id:'tp1',
-    tripName:'My first trip',
-    startDate:'02/Jun/2020',
-    createDate:'01/Jun/2020',
-    imageUrl:ItemImageUrl
-  },
-  {
-    id:'tp2',
-    tripName:'My first trip',
-    startDate:'02/Jun/2020',
-    createDate:'01/Jun/2020',
-    imageUrl:ItemImageUrl
-  },
-  {
-    id:'tp3',
-    tripName:'My first trip',
-    startDate:'02/Jun/2020',
-    createDate:'01/Jun/2020',
-    imageUrl:ItemImageUrl
-  },
-  {
-    id:'tp4',
-    tripName:'My first trip',
-    startDate:'02/Jun/2020',
-    createDate:'01/Jun/2020',
-    imageUrl:ItemImageUrl
-  },
-  {
-    id:'tp4',
-    tripName:'My first trip',
-    startDate:'02/Jun/2020',
-    createDate:'01/Jun/2020',
-    imageUrl:ItemImageUrl
-  },
-  {
-    id:'tp4',
-    tripName:'My first trip',
-    startDate:'02/Jun/2020',
-    createDate:'01/Jun/2020',
-    imageUrl:ItemImageUrl
-  },
-  {
-    id:'tp4',
-    tripName:'My first trip',
-    startDate:'02/Jun/2020',
-    createDate:'01/Jun/2020',
-    imageUrl:ItemImageUrl
-  },
-  {
-    id:'tp4',
-    tripName:'My first trip',
-    startDate:'02/Jun/2020',
-    createDate:'01/Jun/2020',
-    imageUrl:ItemImageUrl
-  },
-  {
-    id:'tp4',
-    tripName:'My first trip',
-    startDate:'02/Jun/2020',
-    createDate:'01/Jun/2020',
-    imageUrl:ItemImageUrl
-  },
-  {
-    id:'tp4',
-    tripName:'My first trip',
-    startDate:'02/Jun/2020',
-    createDate:'01/Jun/2020',
-    imageUrl:ItemImageUrl
-  },
-]
+import {StartFetchTripItems} from '../../redux/trip_manager/trip_manager.actions';
+
+
+const imgUrl = 'https://images.unsplash.com/photo-1502301197179-65228ab57f78?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=664&q=80';
 
 const style = {
   toolItems:{
@@ -117,32 +56,16 @@ const TripManager = () => {
   const classes = makeStyles(style)();
   
   const [keyword, setKeyword] = React.useState('');
-  const [tripItems, setTripItems] = React.useState(mockTripItems);
-  const [searching, setSearching] = React.useState(false);
+
+  const stableDispatch = React.useCallback(useDispatch(), []);
+  const fetching = useSelector(selectFetchingTripCollection);
+  const tripCollection = useSelector(selectTripCollection(keyword));
+
+
+  //fetch trip item collection when component first mounted
   React.useEffect(()=>{
-    
-    setSearching(true);
-    let timer = null;
-    const p = new Promise((res, rej)=>{
-      timer = setTimeout(()=>{
-        res('successful');
-      }, 3000);
-    });
-
-    p.then((value)=>{
-      setSearching(false);
-      console.log(value);
-    })
-    .catch((err)=>{
-      setSearching(false);
-      console.log(err);
-    })
-
-    return ()=>{
-      clearTimeout(timer);
-    }
-
-  }, [keyword]);
+    stableDispatch(StartFetchTripItems());
+  }, [stableDispatch]);
 
   const handleCreateTrip = ()=>{
     console.log('create trip');
@@ -164,7 +87,7 @@ const TripManager = () => {
               <Search />
             }
             onChange={handleSearchTrip}
-            endAdornment={searching?<CircularProgress size='2rem'/>:null}
+            endAdornment={fetching?<CircularProgress size='2rem'/>:null}
           />
         </div>
         <div className={classes.toolItems}>
@@ -175,12 +98,12 @@ const TripManager = () => {
       </div>
       <div className={classes.scrollable}>
       {
-        tripItems.map((item, i)=>{
+        tripCollection.map((item, i)=>{
           return (
             <TripItem 
             key={i}
             maxWidth={300}
-            image={item.imageUrl}
+            image={ItemImageUrl}
             tripName={item.tripName}
             startDate={item.startDate}
             createDate={item.createDate}
