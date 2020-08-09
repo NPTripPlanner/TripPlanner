@@ -7,7 +7,8 @@ import {
 import {
   selectTripCollection,
   selectFetchingTripCollection,
-  selectFilterCollection
+  selectFilterCollection,
+  selectSearchingTripCollection
 } from '../../redux/trip_manager/trip_manager.selector';
 
 import {makeStyles} from '@material-ui/core/styles'; 
@@ -54,6 +55,7 @@ const TripManager = () => {
   const tripCollection = useSelector(selectTripCollection);
   const filterCollection = useSelector(selectFilterCollection);
   const fetching = useSelector(selectFetchingTripCollection);
+  const searching = useSelector(selectSearchingTripCollection);
 
   //fetch trip item collection when component first mounted
   React.useEffect(()=>{
@@ -96,7 +98,7 @@ const TripManager = () => {
         </div>
       }
       {
-        fetching?
+        (fetching || searching)?
         <CircularProgress color='secondary'/>
         :
         <TripCollection tripCollection={

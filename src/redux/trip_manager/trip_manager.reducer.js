@@ -4,6 +4,7 @@ const initState = {
     fetchingTripItems: false,
     fetchTripItemsError: null,
     tripCollection:[],
+    searchingTripItems: false,
     filterCollection:[]
 };
 
@@ -33,13 +34,13 @@ const TripManagerReducer = (state = initState, action) => {
         case actionType.SEARCH_TRIP_ITEMS_START:
             return {
                 ...state,
-                fetchingTripItems: true,
+                searchingTripItems: true,
                 filterCollection: [],
             };
         case actionType.SEARCH_TRIP_ITEMS_SUCCESSFUL:
             return {
                 ...state,
-                fetchingTripItems: false,
+                searchingTripItems: false,
                 filterCollection: action.payload,
             }
         default:
