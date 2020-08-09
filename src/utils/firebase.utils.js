@@ -93,6 +93,21 @@ const mockTripItems = [
     startDate: '05/Jun/2024',
     createDate: '05/Jun/2023',
   },
+  {
+    tripName: 'Europ France trip',
+    startDate: '05/Jun/2024',
+    createDate: '05/Jun/2023',
+  },
+  {
+    tripName: 'America trip',
+    startDate: '05/Jun/2024',
+    createDate: '05/Jun/2023',
+  },
+  {
+    tripName: 'Germany 2 weeks travel',
+    startDate: '06/Oct/2000',
+    createDate: '22/Mar/1998',
+  },
 ]
 export const FetchTripItemCollection = async ()=>{
   //TODO: fetch real data from firebase

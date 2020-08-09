@@ -16,7 +16,7 @@ const style = {
         height:'100%',
         display:'flex',
         flexDirection:props.flexDirection==='vertical'?'column':'row',
-        justifyContent:'space-between',
+        justifyContent:'flex-start',
         alignItems:'center',
         backgroundColor:`${props.backgroundColor}`
     }),
