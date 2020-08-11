@@ -3,6 +3,9 @@ import {
 } from './utils';
 
 describe("Utility test", () => {
+    afterAll((done)=>{
+        done();
+    });
     it("Search objects in collection by keyword", async () => {
         expect.assertions(3);
 

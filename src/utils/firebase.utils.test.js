@@ -1,8 +1,7 @@
 import {
     CreateTripItem,
     InitFirebase,
-    ClearAllApps,
-    firebaseDatabase
+    ClearApp
 } from './firebase.utils';
 
 const currentUser = {
@@ -14,11 +13,12 @@ const currentUser = {
 describe('Firebase utility test', ()=>{
     beforeAll(async ()=>{
         InitFirebase();
-    })
+    });
 
-    afterAll(async ()=>{
-        return ClearAllApps();
-    })
+    afterAll(async (done)=>{
+        await ClearApp;
+        done();
+    });
 
     it('Create a new trip', async ()=>{
         expect.assertions(1);

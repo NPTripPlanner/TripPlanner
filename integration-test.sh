@@ -1,3 +1,4 @@
 #!/bin/bash
-npm run test
+#CI=tru to stop test when finish
+CI=true npm run test
 exit 0
