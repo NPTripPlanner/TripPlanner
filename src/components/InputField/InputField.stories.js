@@ -3,11 +3,7 @@ import React from "react";
 import InputField from "./InputField";
 
 import { IconButton, CircularProgress } from "@material-ui/core";
-import { 
-  AcUnit,
-  Accessibility,
-  Search
-} from "@material-ui/icons";
+import { AcUnit, Accessibility, Search } from "@material-ui/icons";
 
 import { ThemeProvider } from "@material-ui/core/styles";
 import theme from "../../themes/defaultTheme";
@@ -73,16 +69,13 @@ export const adornment = () => {
 };
 
 export const searchField = () => {
-
   return (
     <ThemeProvider theme={theme}>
       <InputField
         labelText="Search"
         variant="outlined"
         onChange={(event) => action(event.target.value)()}
-        startAdornment={
-          <Search />
-        }
+        startAdornment={<Search />}
         endAdornment={<CircularProgress />}
       />
     </ThemeProvider>

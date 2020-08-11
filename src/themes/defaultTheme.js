@@ -110,37 +110,37 @@ const theme = createMuiTheme({
           borderColor: primaryDarkColor,
           borderWidth: inputBorderWidth,
         },
-        backgroundColor:'rgb(232,231,229)'
+        backgroundColor: "rgb(232,231,229)",
       },
       notchedOutline: {
         borderColor: secondaryMainColor,
         borderWidth: inputBorderWidth,
-        transition: 'all .3s ease-in-out',
+        transition: "all .3s ease-in-out",
       },
       input: {
         "&::placeholder": {
-          color: 'black',
-          fontSize: '1.5rem',
-          fontWeight: 800
+          color: "black",
+          fontSize: "1.5rem",
+          fontWeight: 800,
         },
-      }
+      },
     },
-    MuiCardContent:{
-      root:{
-        padding:'2%'
-      }
+    MuiCardContent: {
+      root: {
+        padding: "2%",
+      },
     },
-    MuiCardActions:{
-      root:{
-        justifyContent:'center',
-        padding:0,
-      }
+    MuiCardActions: {
+      root: {
+        justifyContent: "center",
+        padding: 0,
+      },
     },
-    MuiCircularProgress:{
-      colorPrimary:{
+    MuiCircularProgress: {
+      colorPrimary: {
         color: primaryDarkColor,
-      }
-    }
+      },
+    },
   },
 });
 

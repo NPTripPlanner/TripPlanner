@@ -21,7 +21,7 @@ const firebaseErrors = {
 };
 
 const MsgFromErrorCode = (code) => {
-  if(code){
+  if (code) {
     const category = code.split("/")[0];
     const errors = firebaseErrors[category];
     if (errors) {

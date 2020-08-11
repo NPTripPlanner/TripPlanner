@@ -3,25 +3,25 @@ import { createSelector } from "reselect";
 const selectTripManager = (state) => state.tripManager;
 
 export const selectTripCollection = createSelector(
-    [selectTripManager],
+  [selectTripManager],
 
-    (tripManager)=>tripManager.tripCollection
+  (tripManager) => tripManager.tripCollection
 );
 
 export const selectFilterCollection = createSelector(
-    [selectTripManager],
-    
-    (tripManager)=>tripManager.filterCollection
+  [selectTripManager],
+
+  (tripManager) => tripManager.filterCollection
 );
 
 export const selectSearchingTripCollection = createSelector(
-    [selectTripManager],
+  [selectTripManager],
 
-    (tripManager)=>tripManager.searchingTripItems
+  (tripManager) => tripManager.searchingTripItems
 );
 
 export const selectFetchingTripCollection = createSelector(
-    [selectTripManager],
+  [selectTripManager],
 
-    (tripManager)=>tripManager.fetchingTripItems
+  (tripManager) => tripManager.fetchingTripItems
 );

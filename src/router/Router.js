@@ -28,7 +28,6 @@ import { Apps } from "@material-ui/icons";
 
 import { makeStyles } from "@material-ui/core/styles";
 
-
 import { ReactComponent as Logo } from "../assets/images/Logo/logo.svg";
 import { ReactComponent as Signin } from "../assets/images/Landing/sign-in.svg";
 import { ReactComponent as Facebook } from "../assets/images/Landing/facebook-brands.svg";
@@ -164,7 +163,11 @@ function Router() {
       <Toolbar />
       <Switch>
         <Route exact path="/" component={Landing} />
-        <Route exact path="/TripManager" component={UserAuthComp('/', TripManager)} />
+        <Route
+          exact
+          path="/TripManager"
+          component={UserAuthComp("/", TripManager)}
+        />
         <Route path="*" component={Landing} />
       </Switch>
       {renderFooter()}

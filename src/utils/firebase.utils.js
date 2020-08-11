@@ -1,6 +1,6 @@
 import * as firebasePro from "firebase";
-import 'firebase/firestore';
-import * as firebaseDev from '@firebase/testing';
+import "firebase/firestore";
+import * as firebaseDev from "@firebase/testing";
 import getErrorMsg from "./firebase.errors.utils";
 
 export let firebaseApp = null;
@@ -18,33 +18,30 @@ const firebaseConfig = {
   measurementId: process.env.REACT_APP_FB_MEASUREMENT_ID,
 };
 
-export const InitFirebase = ()=>{
-  const setup = (app)=>{
-    if(process.env.NODE_ENV !== 'test')
-      firebaseAuth = app.auth();
+export const InitFirebase = () => {
+  const setup = (app) => {
+    if (process.env.NODE_ENV !== "test") firebaseAuth = app.auth();
     firebaseDatabase = app.firestore();
-  }
-  switch(process.env.NODE_ENV){
-    case 'production':
-    case 'development':
-      firebaseApp =  firebasePro.initializeApp(firebaseConfig);
-      setup(firebaseApp); 
+  };
+  switch (process.env.NODE_ENV) {
+    case "production":
+    case "development":
+      firebaseApp = firebasePro.initializeApp(firebaseConfig);
+      setup(firebaseApp);
       break;
     default:
-      firebaseApp = firebaseDev.initializeTestApp(
-        {
-          databaseName: "foo-database",
-          auth: { uid: "alice", email:'test@test.com' },
-          projectId: 'tripplanner-9563b',
-        }
-      );
-      setup(firebaseApp); 
-  } 
-}
+      firebaseApp = firebaseDev.initializeTestApp({
+        databaseName: "foo-database",
+        auth: { uid: "alice", email: "test@test.com" },
+        projectId: "tripplanner-9563b",
+      });
+      setup(firebaseApp);
+  }
+};
 
-export const ClearApp = async ()=>{
+export const ClearApp = async () => {
   return await firebaseApp.delete();
-}
+};
 
 export const GetCurrentUser = () => {
   return new Promise((resolve, reject) => {
@@ -101,62 +98,61 @@ export const Logout = async () => {
   await firebaseAuth.signOut();
 };
 
-let mockTimer
+let mockTimer;
 const mockTripItems = [
   {
-    tripName: 'First trip',
-    startDate: '05/Jun/2021',
-    createDate: '05/Jun/2020',
+    tripName: "First trip",
+    startDate: "05/Jun/2021",
+    createDate: "05/Jun/2020",
   },
   {
-    tripName: 'Second trip',
-    startDate: '05/Jun/2022',
-    createDate: '05/Jun/2021',
+    tripName: "Second trip",
+    startDate: "05/Jun/2022",
+    createDate: "05/Jun/2021",
   },
   {
-    tripName: 'Third trip',
-    startDate: '05/Jun/2023',
-    createDate: '05/Jun/2022',
+    tripName: "Third trip",
+    startDate: "05/Jun/2023",
+    createDate: "05/Jun/2022",
   },
   {
-    tripName: 'Fourth trip',
-    startDate: '05/Jun/2024',
-    createDate: '05/Jun/2023',
+    tripName: "Fourth trip",
+    startDate: "05/Jun/2024",
+    createDate: "05/Jun/2023",
   },
   {
-    tripName: 'Europ France trip',
-    startDate: '05/Jun/2024',
-    createDate: '05/Jun/2023',
+    tripName: "Europ France trip",
+    startDate: "05/Jun/2024",
+    createDate: "05/Jun/2023",
   },
   {
-    tripName: 'America trip',
-    startDate: '05/Jun/2024',
-    createDate: '05/Jun/2023',
+    tripName: "America trip",
+    startDate: "05/Jun/2024",
+    createDate: "05/Jun/2023",
   },
   {
-    tripName: 'Germany 2 weeks travel',
-    startDate: '06/Oct/2000',
-    createDate: '22/Mar/1998',
+    tripName: "Germany 2 weeks travel",
+    startDate: "06/Oct/2000",
+    createDate: "22/Mar/1998",
   },
-]
-export const FetchTripItemCollection = async ()=>{
+];
+export const FetchTripItemCollection = async () => {
   //TODO: fetch real data from firebase
-  return await new Promise((res, rej)=>{
-    mockTimer = setTimeout(()=>{
+  return await new Promise((res, rej) => {
+    mockTimer = setTimeout(() => {
       res(mockTripItems);
       clearTimeout(mockTimer);
     }, 3000);
   });
-}
+};
 
-export const CreateTripItem = async (user, data)=>{
+export const CreateTripItem = async (user, data) => {
   //TODO: create trip data in firebase
-  try{
-    const ref = await firebaseDatabase.collection('users').doc(user.uid);
+  try {
+    const ref = await firebaseDatabase.collection("users").doc(user.uid);
     await ref.set(data);
     return ref.id;
-  }
-  catch(err){
+  } catch (err) {
     throw Error(getErrorMsg(err.code));
   }
-}
+};

@@ -3,18 +3,18 @@ import ReactDOM from "react-dom";
 import { BrowserRouter } from "react-router-dom";
 import "./index.css";
 import Router from "./router/Router";
-import { 
+import {
   ThemeProvider,
   StylesProvider,
-  jssPreset
- } from "@material-ui/core/styles";
+  jssPreset,
+} from "@material-ui/core/styles";
 import theme from "./themes/defaultTheme";
 import { Provider } from "react-redux";
 import store from "./redux/Store";
-import {InitFirebase} from './utils/firebase.utils';
+import { InitFirebase } from "./utils/firebase.utils";
 import * as serviceWorker from "./serviceWorker";
 
-import { create } from 'jss';
+import { create } from "jss";
 
 InitFirebase();
 
@@ -25,11 +25,11 @@ const jss = create({
 ReactDOM.render(
   <BrowserRouter basename={process.env.PUBLIC_URL}>
     <StylesProvider jss={jss}>
-        <ThemeProvider theme={theme}>
-          <Provider store={store}>
-            <Router />
-          </Provider>
-        </ThemeProvider>
+      <ThemeProvider theme={theme}>
+        <Provider store={store}>
+          <Router />
+        </Provider>
+      </ThemeProvider>
     </StylesProvider>
   </BrowserRouter>,
   document.getElementById("root")
