@@ -12,7 +12,7 @@ script:
   - "CI=false"
   #remember to use "chmod +x (your_shell_script)" to change permission of your shell script
   - firebase emulators:exec './integration-test.sh' 
-  - "npm run test"
+  #- "npm run test"
   - "npm run build"
 
 after_failure:
