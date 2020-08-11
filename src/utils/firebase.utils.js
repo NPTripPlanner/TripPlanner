@@ -1,4 +1,5 @@
 import * as firebasePro from "firebase";
+import 'firebase/firestore';
 import * as firebaseDev from '@firebase/testing';
 import getErrorMsg from "./firebase.errors.utils";
 
@@ -21,7 +22,7 @@ export const InitFirebase = ()=>{
   const setup = (app)=>{
     if(process.env.NODE_ENV !== 'test')
       firebaseAuth = app.auth();
-    firebaseDatabase = app.database();
+    firebaseDatabase = app.firestore();
   }
   switch(process.env.NODE_ENV){
     case 'production':
@@ -32,19 +33,17 @@ export const InitFirebase = ()=>{
     default:
       firebaseApp = firebaseDev.initializeTestApp(
         {
-          databaseName: "my-database",
+          databaseName: "foo-database",
           auth: { uid: "alice", email:'test@test.com' },
-          projectId: firebaseConfig.projectId,
+          projectId: 'tripplanner-9563b',
         }
       );
       setup(firebaseApp); 
   } 
 }
 
-export const ClearAllApps = ()=>{
-  return Promise.all([
-    firebaseApp.delete(),
-  ]);
+export const ClearApp = async ()=>{
+  return await firebaseApp.delete();
 }
 
 export const GetCurrentUser = () => {
@@ -153,8 +152,9 @@ export const FetchTripItemCollection = async ()=>{
 export const CreateTripItem = async (user, data)=>{
   //TODO: create trip data in firebase
   try{
-    const key = (await firebaseDatabase.ref(`users/${user.uid}`).push(data)).key;
-    return key;
+    const ref = await firebaseDatabase.collection('users').doc(user.uid);
+    await ref.set(data);
+    return ref.id;
   }
   catch(err){
     throw Error(getErrorMsg(err.code));

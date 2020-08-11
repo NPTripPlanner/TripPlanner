@@ -14,7 +14,6 @@ const currentUser = {
 describe('Firebase utility test', ()=>{
     beforeAll(async ()=>{
         InitFirebase();
-        return firebaseDatabase.ref().remove();
     })
 
     afterAll(async ()=>{
@@ -30,7 +29,6 @@ describe('Firebase utility test', ()=>{
             createDate:'04/Nov/2018',
         }))
         .resolves
-        .not
-        .toThrow();
+        .toEqual(currentUser.uid);
     });
 });
