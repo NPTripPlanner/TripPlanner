@@ -1,6 +1,10 @@
-import firebase from "firebase";
-import { auth } from "firebase";
+import * as firebasePro from "firebase";
+import * as firebaseDev from '@firebase/testing';
 import getErrorMsg from "./firebase.errors.utils";
+
+export let firebaseApp = null;
+export let firebaseAuth = null;
+export let firebaseDatabase = null;
 
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_FB_API_KEY,
@@ -13,8 +17,35 @@ const firebaseConfig = {
   measurementId: process.env.REACT_APP_FB_MEASUREMENT_ID,
 };
 
-const firebaseApp = firebase.initializeApp(firebaseConfig);
-const firebaseAuth = auth(firebaseApp);
+export const InitFirebase = ()=>{
+  const setup = (app)=>{
+    if(process.env.NODE_ENV !== 'test')
+      firebaseAuth = app.auth();
+    firebaseDatabase = app.database();
+  }
+  switch(process.env.NODE_ENV){
+    case 'production':
+    case 'development':
+      firebaseApp =  firebasePro.initializeApp(firebaseConfig);
+      setup(firebaseApp); 
+      break;
+    default:
+      firebaseApp = firebaseDev.initializeTestApp(
+        {
+          databaseName: "my-database",
+          auth: { uid: "alice", email:'test@test.com' },
+          projectId: firebaseConfig.projectId,
+        }
+      );
+      setup(firebaseApp); 
+  } 
+}
+
+export const ClearAllApps = ()=>{
+  return Promise.all([
+    firebaseApp.delete(),
+  ]);
+}
 
 export const GetCurrentUser = () => {
   return new Promise((resolve, reject) => {
@@ -117,4 +148,15 @@ export const FetchTripItemCollection = async ()=>{
       clearTimeout(mockTimer);
     }, 3000);
   });
+}
+
+export const CreateTripItem = async (user, data)=>{
+  //TODO: create trip data in firebase
+  try{
+    const key = (await firebaseDatabase.ref(`users/${user.uid}`).push(data)).key;
+    return key;
+  }
+  catch(err){
+    throw Error(getErrorMsg(err.code));
+  }
 }

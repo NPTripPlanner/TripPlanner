@@ -11,9 +11,12 @@ import {
 import theme from "./themes/defaultTheme";
 import { Provider } from "react-redux";
 import store from "./redux/Store";
+import {InitFirebase} from './utils/firebase.utils';
 import * as serviceWorker from "./serviceWorker";
 
 import { create } from 'jss';
+
+InitFirebase();
 
 const jss = create({
   plugins: [...jssPreset().plugins],

@@ -21,11 +21,13 @@ const firebaseErrors = {
 };
 
 const MsgFromErrorCode = (code) => {
-  const category = code.split("/")[0];
-  const errors = firebaseErrors[category];
-  if (errors) {
-    const msg = errors[code];
-    if (msg) return msg;
+  if(code){
+    const category = code.split("/")[0];
+    const errors = firebaseErrors[category];
+    if (errors) {
+      const msg = errors[code];
+      if (msg) return msg;
+    }
   }
   return `Message for error code ${code} not defined`;
 };
