@@ -14,6 +14,7 @@ describe("Firebase utility test", () => {
   afterAll(async (done) => {
     try{
         await ClearApp();
+        done();
     }
     catch(err){
         throw err;
