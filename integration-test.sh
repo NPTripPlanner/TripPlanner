@@ -1,3 +1,5 @@
 #!/bin/bash
-#CI=tru to stop test when finish
+echo 'shell script starting...'
 npm run test
+echo 'shell script ending...'
+exit 0
