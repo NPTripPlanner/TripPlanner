@@ -8,8 +8,10 @@ cache:
 before_script:
   - "npm install -g firebase-tools"
 script:
-  - "CI=false" #disable using CI env variable
-  - firebase emulators:exec './integration-test.sh'
+  #disable using CI env variable
+  - "CI=false"
+  #remember to use "chmod +x (your_shell_script)" to change permission of your shell script
+  - firebase emulators:exec './integration-test.sh' 
   - "npm run test"
   - "npm run build"
 
