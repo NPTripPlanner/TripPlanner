@@ -9,7 +9,7 @@ before_script:
   - "npm install -g firebase-tools"
 script:
   - "CI=false" #disable using CI env variable
-  - "firebase emulators:start"
+  - firebase emulators:exec './integration-test.sh'
   - "npm run test"
   - "npm run build"
 
