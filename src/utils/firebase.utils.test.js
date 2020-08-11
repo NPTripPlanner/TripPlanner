@@ -7,13 +7,13 @@ const currentUser = {
 };
 
 describe("Firebase utility test", () => {
-  beforeAll(async () => {
+  beforeAll(() => {
     InitFirebase();
   });
 
-  afterAll(async (done) => {
-    await ClearApp;
-    done();
+  afterAll((done) => {
+    ClearApp()
+    .then(()=>done());
   });
 
   it("Create a new trip", async () => {

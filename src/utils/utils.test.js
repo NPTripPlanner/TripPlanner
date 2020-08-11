@@ -28,7 +28,7 @@ describe("Utility test", () => {
     expect(
       SearchObjectsInCollection(collection, ["tripName"], "Second").length
     ).not.toEqual(4);
-    expect(
+    return expect(
       SearchObjectsInCollection(collection, ["tripName"], "Second")
     ).toEqual([
       {
