@@ -11,9 +11,13 @@ describe("Firebase utility test", () => {
     InitFirebase();
   });
 
-  afterAll((done) => {
-    ClearApp()
-    .then(()=>done());
+  afterAll(async (done) => {
+    try{
+        await ClearApp();
+    }
+    catch(err){
+        throw err;
+    }
   });
 
   it("Create a new trip", async () => {
