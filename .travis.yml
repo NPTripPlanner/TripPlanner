@@ -4,7 +4,7 @@ node_js:
 cache:
   directories:
   - node_modules
-  - "$HOME/.cache/firebase/"
+  - /home/cache/firebase/
 before_script:
   - "npm install -g firebase-tools"
 script:

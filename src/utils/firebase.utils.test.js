@@ -22,13 +22,19 @@ describe("Firebase utility test", () => {
   });
 
   it("Create a new trip", async () => {
-    expect.assertions(1);
+    expect.assertions(2);
 
-    return expect(
+    expect(
       CreateTripItem(currentUser, {
         tripName: "test trip",
         startDate: "04/Oct/2019",
         createDate: "04/Nov/2018",
+      })
+    ).resolves.toEqual(currentUser.uid);
+
+    return expect(
+      CreateTripItem(currentUser, {
+        owner: currentUser.displayName,
       })
     ).resolves.toEqual(currentUser.uid);
   });

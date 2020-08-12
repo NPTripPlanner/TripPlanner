@@ -149,9 +149,9 @@ export const FetchTripItemCollection = async () => {
 export const CreateTripItem = async (user, data) => {
   //TODO: create trip data in firebase
   try {
-    const ref = await firebaseDatabase.collection("users").doc(user.uid);
-    await ref.set(data);
-    return ref.id;
+    const docRef = await firebaseDatabase.collection("users").doc(user.uid);
+    await docRef.set(data);
+    return docRef.id;
   } catch (err) {
     throw Error(getErrorMsg(err.code));
   }
