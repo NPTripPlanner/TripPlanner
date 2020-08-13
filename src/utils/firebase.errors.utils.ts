@@ -1,4 +1,10 @@
-const firebaseErrors = {
+interface FirebaseErrors {
+  [key:string]: {
+    [key:string]:string
+  }
+}
+
+const firebaseErrors : FirebaseErrors = {
   auth: {
     "auth/email-already-in-use": "E-mail alrady in use",
     "auth/invalid-email": "Invalid E-mail",
@@ -20,7 +26,7 @@ const firebaseErrors = {
   },
 };
 
-const MsgFromErrorCode = (code) => {
+const MsgFromErrorCode = (code:string) => {
   if (code) {
     const category = code.split("/")[0];
     const errors = firebaseErrors[category];

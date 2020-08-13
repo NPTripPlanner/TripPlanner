@@ -3,9 +3,14 @@ import "firebase/firestore";
 import * as firebaseDev from "@firebase/testing";
 import getErrorMsg from "./firebase.errors.utils";
 
-export let firebaseApp = null;
-export let firebaseAuth = null;
-export let firebaseDatabase = null;
+type App = firebase.app.App;
+type Auth = firebase.auth.Auth;
+type Firestore = firebase.firestore.Firestore;
+type User = firebase.User | null;
+
+export let firebaseApp : App;
+export let firebaseAuth : Auth;
+export let firebaseDatabase : Firestore;
 
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_FB_API_KEY,
@@ -19,10 +24,11 @@ const firebaseConfig = {
 };
 
 export const InitFirebase = () => {
-  const setup = (app) => {
+  const setup = (app:App) => {
     if (process.env.NODE_ENV !== "test") firebaseAuth = app.auth();
     firebaseDatabase = app.firestore();
   };
+
   switch (process.env.NODE_ENV) {
     case "production":
     case "development":
@@ -62,22 +68,22 @@ export const GetCurrentUser = () => {
 };
 
 export const SignUpWithEmailAndPassword = async (
-  email,
-  password,
-  displayName
+  email:string,
+  password:string,
+  displayName:string
 ) => {
   try {
     await firebaseAuth.createUserWithEmailAndPassword(email, password);
-    const user = firebaseAuth.currentUser;
+    const user : User = await firebaseAuth.currentUser;
+    if(!user) throw Error('Unable to update user profile after creating user');
     await user.updateProfile({ displayName: displayName });
-
-    return await GetCurrentUser();
+    return user;
   } catch (err) {
     throw Error(getErrorMsg(err.code));
   }
 };
 
-export const LoginWithEmailAndPassword = async (email, password) => {
+export const LoginWithEmailAndPassword = async (email:string, password:string) => {
   try {
     await firebaseAuth.signInWithEmailAndPassword(email, password);
     return await GetCurrentUser();
@@ -86,7 +92,7 @@ export const LoginWithEmailAndPassword = async (email, password) => {
   }
 };
 
-export const SendForgotPasswordMail = async (email) => {
+export const SendForgotPasswordMail = async (email:string) => {
   try {
     await firebaseAuth.sendPasswordResetEmail(email);
   } catch (err) {
@@ -136,7 +142,7 @@ export const Logout = async () => {
 //     createDate: "22/Mar/1998",
 //   },
 // ];
-export const FetchTripItemCollection = async (user) => {
+export const FetchTripItemCollection = async (user:any) => {
   //TODO: fetch real data from firebase
   // return await new Promise((res, rej) => {
   //   mockTimer = setTimeout(() => {
@@ -150,7 +156,7 @@ export const FetchTripItemCollection = async (user) => {
   return querySnapshot;
 };
 
-export const CreateTripItem = async (user, data) => {
+export const CreateTripItem = async (user:any, data:any) => {
   //TODO: create trip data in firebase
   try {
     const userDocRef = await firebaseDatabase.doc(`users/${user.uid}`);
