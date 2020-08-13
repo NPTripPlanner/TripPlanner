@@ -98,60 +98,66 @@ export const Logout = async () => {
   await firebaseAuth.signOut();
 };
 
-let mockTimer;
-const mockTripItems = [
-  {
-    tripName: "First trip",
-    startDate: "05/Jun/2021",
-    createDate: "05/Jun/2020",
-  },
-  {
-    tripName: "Second trip",
-    startDate: "05/Jun/2022",
-    createDate: "05/Jun/2021",
-  },
-  {
-    tripName: "Third trip",
-    startDate: "05/Jun/2023",
-    createDate: "05/Jun/2022",
-  },
-  {
-    tripName: "Fourth trip",
-    startDate: "05/Jun/2024",
-    createDate: "05/Jun/2023",
-  },
-  {
-    tripName: "Europ France trip",
-    startDate: "05/Jun/2024",
-    createDate: "05/Jun/2023",
-  },
-  {
-    tripName: "America trip",
-    startDate: "05/Jun/2024",
-    createDate: "05/Jun/2023",
-  },
-  {
-    tripName: "Germany 2 weeks travel",
-    startDate: "06/Oct/2000",
-    createDate: "22/Mar/1998",
-  },
-];
-export const FetchTripItemCollection = async () => {
+// let mockTimer;
+// const mockTripItems = [
+//   {
+//     tripName: "First trip",
+//     startDate: "05/Jun/2021",
+//     createDate: "05/Jun/2020",
+//   },
+//   {
+//     tripName: "Second trip",
+//     startDate: "05/Jun/2022",
+//     createDate: "05/Jun/2021",
+//   },
+//   {
+//     tripName: "Third trip",
+//     startDate: "05/Jun/2023",
+//     createDate: "05/Jun/2022",
+//   },
+//   {
+//     tripName: "Fourth trip",
+//     startDate: "05/Jun/2024",
+//     createDate: "05/Jun/2023",
+//   },
+//   {
+//     tripName: "Europ France trip",
+//     startDate: "05/Jun/2024",
+//     createDate: "05/Jun/2023",
+//   },
+//   {
+//     tripName: "America trip",
+//     startDate: "05/Jun/2024",
+//     createDate: "05/Jun/2023",
+//   },
+//   {
+//     tripName: "Germany 2 weeks travel",
+//     startDate: "06/Oct/2000",
+//     createDate: "22/Mar/1998",
+//   },
+// ];
+export const FetchTripItemCollection = async (user) => {
   //TODO: fetch real data from firebase
-  return await new Promise((res, rej) => {
-    mockTimer = setTimeout(() => {
-      res(mockTripItems);
-      clearTimeout(mockTimer);
-    }, 3000);
-  });
+  // return await new Promise((res, rej) => {
+  //   mockTimer = setTimeout(() => {
+  //     res(mockTripItems);
+  //     clearTimeout(mockTimer);
+  //   }, 3000);
+  // });
+  const userDocRef = await firebaseDatabase.doc(`users/${user.uid}`);
+  const querySnapshot = await userDocRef.collection('trips').get();
+
+  return querySnapshot;
 };
 
 export const CreateTripItem = async (user, data) => {
   //TODO: create trip data in firebase
   try {
-    const docRef = await firebaseDatabase.collection("users").doc(user.uid);
-    await docRef.set(data);
-    return docRef.id;
+    const userDocRef = await firebaseDatabase.doc(`users/${user.uid}`);
+    await userDocRef.set({modifyDate:(new Date()).toString()});
+    const tripsColRef = await userDocRef.collection('trips');
+    await tripsColRef.add(data);
+    return userDocRef.id;
   } catch (err) {
     throw Error(getErrorMsg(err.code));
   }

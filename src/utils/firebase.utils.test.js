@@ -1,4 +1,9 @@
-import { CreateTripItem, InitFirebase, ClearApp } from "./firebase.utils";
+import { 
+  CreateTripItem,
+  FetchTripItemCollection, 
+  InitFirebase, 
+  ClearApp 
+} from "./firebase.utils";
 
 const currentUser = {
   uid: "testUser",
@@ -22,20 +27,26 @@ describe("Firebase utility test", () => {
   });
 
   it("Create a new trip", async () => {
-    expect.assertions(2);
+    expect.assertions(1);
 
-    expect(
+    return expect(
       CreateTripItem(currentUser, {
         tripName: "test trip",
         startDate: "04/Oct/2019",
         createDate: "04/Nov/2018",
       })
     ).resolves.toEqual(currentUser.uid);
-
-    return expect(
-      CreateTripItem(currentUser, {
-        owner: currentUser.displayName,
-      })
-    ).resolves.toEqual(currentUser.uid);
   });
+
+  // it("Fetch trip items", async () => {
+  //   expect.assertions(1);
+
+  //   return expect(
+  //     FetchTripItemCollection(currentUser)
+  //   ).resolves.toEqual(expect.arrayContaining([{
+  //     tripName: "test trip",
+  //     startDate: "04/Oct/2019",
+  //     createDate: "04/Nov/2018",
+  //   }]));
+  // })
 });
