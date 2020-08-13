@@ -2,6 +2,7 @@ import * as firebasePro from "firebase";
 import "firebase/firestore";
 import * as firebaseDev from "@firebase/testing";
 import getErrorMsg from "./firebase.errors.utils";
+import * as fireorm from 'fireorm';
 
 type App = firebase.app.App;
 type Auth = firebase.auth.Auth;
@@ -43,6 +44,7 @@ export const InitFirebase = () => {
       });
       setup(firebaseApp);
   }
+  fireorm.initialize(firebaseDatabase);
 };
 
 export const ClearApp = async () => {
@@ -168,3 +170,65 @@ export const CreateTripItem = async (user:any, data:any) => {
     throw Error(getErrorMsg(err.code));
   }
 };
+
+import { Collection, SubCollection, ISubCollection, getRepository } from 'fireorm';
+
+class Setting{
+  id : string = 'Setting';
+  mood : boolean = false;
+}
+
+class PrivateData{
+  id : string = 'PrivateData';
+  password : string = 'abcddd';
+}
+
+@Collection('userArchive')
+export class UserArchive{
+  id : string;
+  name: string;
+  age : number;
+
+  @SubCollection(Setting, 'settings')
+  setting? : ISubCollection<Setting | PrivateData>
+}
+
+export const CreateUser = async (userData:UserArchive) => {
+  try{
+    const userRepo = getRepository(UserArchive);
+    let newUser = new UserArchive();
+    newUser = {...newUser, ...userData};
+    const userDoc = await userRepo.create(newUser);
+    await userDoc.setting?.create(new Setting());
+    await userDoc.setting?.create(new PrivateData());
+    return userDoc;
+  }
+  catch(err){
+    throw Error(err.code);
+  }
+}
+
+export const GetUser = async (userId:string)=>{
+  try{
+    const userRepo = getRepository(UserArchive);
+    return await userRepo.findById(userId);
+  }
+  catch(err){
+    throw Error(err.code);
+  }
+}
+
+export const ClearDatabase = async () =>{
+  try{
+    const userRepo = getRepository(UserArchive);
+    const users : UserArchive[] = await userRepo.find();
+    let tasks : Promise<void>[] = [];
+    users.map((user)=>{
+      tasks.push(userRepo.delete(user.id));
+    })
+    return await Promise.all(tasks);
+  }
+  catch(err){
+    throw Error(err.code);
+  }
+}
