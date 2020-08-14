@@ -1,17 +1,25 @@
 import { 
-  CreateTripItem,
-  FetchTripItemCollection,
-  UserArchive,
-  CreateUser,
-  GetUser, 
   InitFirebase, 
   ClearApp,
-  ClearDatabase, 
+  CreateUser,
+  GetUser, 
+  ClearDatabase,
 } from "./firebase.utils";
 
+import {
+  UserArchive,
+} from '../schema/firestore.schema'
+
 describe("Firebase utility test", () => {
+
+  const user : UserArchive = new UserArchive();
+  user.email = 'abc@abc.gmail.com';
+  user.emailVerified = true;
+  user.displayName = 'test user';
+
   beforeAll(async () => {
     InitFirebase();
+    
     await ClearDatabase();
   });
 
@@ -24,52 +32,26 @@ describe("Firebase utility test", () => {
         throw err;
     }
   });
-  
-  const user : UserArchive = new UserArchive();
-  user.id = '';
-  user.name = 'test user';
-  user.age = 45;
 
   it('create new user', async ()=>{
     expect.assertions(1);
 
-    return expect(CreateUser(user))
-    .resolves
-    .toEqual(expect.objectContaining({name:'test user'}));
+    user.displayName = 'test user2';
+    const user2 = await CreateUser(user);
+    return expect(user2).toEqual(expect.objectContaining({displayName:'test user2'}));
   });
 
-  it('get user', async ()=>{
-    expect.assertions(1);
-
-    user.name = 'cool dude';
-    const newUser = await CreateUser(user);
-
-    return expect(GetUser(newUser.id))
-    .resolves
-    .toEqual(expect.objectContaining({name:'cool dude'}));
-  })
-
-  // it("Create a new trip", async () => {
+  // it('get user', async ()=>{
   //   expect.assertions(1);
 
-  //   return expect(
-  //     CreateTripItem(currentUser, {
-  //       tripName: "test trip",
-  //       startDate: "04/Oct/2019",
-  //       createDate: "04/Nov/2018",
-  //     })
-  //   ).resolves.toEqual(currentUser.uid);
-  // });
+  //   user.displayName = 'cool dude';
+  //   user.id = 'testUser2';
+  //   const newUser = await CreateUser(user);
 
-  // it("Fetch trip items", async () => {
-  //   expect.assertions(1);
-
-  //   return expect(
-  //     FetchTripItemCollection(currentUser)
-  //   ).resolves.toEqual(expect.arrayContaining([{
-  //     tripName: "test trip",
-  //     startDate: "04/Oct/2019",
-  //     createDate: "04/Nov/2018",
-  //   }]));
+  //   return expect(GetUser(newUser.id))
+  //   .resolves
+  //   .toMatchObject<UserArchive>(newUser);
   // })
+
+
 });

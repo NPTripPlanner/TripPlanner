@@ -39,13 +39,13 @@ function* loginStart() {
 
 function* userSignup({ payload: { email, password, displayName } }) {
   try {
-    const user = yield call(
+    const userCredential = yield call(
       SignUpWithEmailAndPassword,
       email,
       password,
       displayName
     );
-    yield call(loginSuccessful, user);
+    yield call(loginSuccessful, userCredential.user);
   } catch (err) {
     yield put(SignupFail(err));
   }

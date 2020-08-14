@@ -1,17 +1,19 @@
 import * as firebasePro from "firebase";
-import "firebase/firestore";
-import * as firebaseDev from "@firebase/testing";
+import 'firebase/firestore';
+import * as firebaseTest from "@firebase/testing";
 import getErrorMsg from "./firebase.errors.utils";
 import * as fireorm from 'fireorm';
+import {
+  UserArchive,
+} from '../schema/firestore.schema';
 
 type App = firebase.app.App;
 type Auth = firebase.auth.Auth;
-type Firestore = firebase.firestore.Firestore;
-type User = firebase.User | null;
+type FirestoreDB = firebase.firestore.Firestore;
 
 export let firebaseApp : App;
 export let firebaseAuth : Auth;
-export let firebaseDatabase : Firestore;
+export let firebaseDatabase : FirestoreDB;
 
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_FB_API_KEY,
@@ -26,7 +28,10 @@ const firebaseConfig = {
 
 export const InitFirebase = () => {
   const setup = (app:App) => {
-    if (process.env.NODE_ENV !== "test") firebaseAuth = app.auth();
+    if (process.env.NODE_ENV === "production"){ 
+      firebaseAuth = app.auth();
+    }
+    
     firebaseDatabase = app.firestore();
   };
 
@@ -37,13 +42,13 @@ export const InitFirebase = () => {
       setup(firebaseApp);
       break;
     default:
-      firebaseApp = firebaseDev.initializeTestApp({
-        databaseName: "foo-database",
-        auth: { uid: "alice", email: "test@test.com" },
+      firebaseApp = firebaseTest.initializeAdminApp({
+        databaseName: "tripplanner-9563b",
         projectId: "tripplanner-9563b",
       });
       setup(firebaseApp);
   }
+
   fireorm.initialize(firebaseDatabase);
 };
 
@@ -51,17 +56,13 @@ export const ClearApp = async () => {
   return await firebaseApp.delete();
 };
 
+///////////////////Auth//////////////////////////////////
 export const GetCurrentUser = () => {
-  return new Promise((resolve, reject) => {
+  return new Promise<firebase.User|null>((resolve, reject) => {
     const unsubscribe = firebaseAuth.onAuthStateChanged((user) => {
       unsubscribe();
       if (user) {
-        resolve({
-          uid: user.uid,
-          email: user.email,
-          displayName: user.displayName,
-          verified: user.emailVerified,
-        });
+        resolve(user);
       } else {
         return resolve(null);
       }
@@ -75,11 +76,13 @@ export const SignUpWithEmailAndPassword = async (
   displayName:string
 ) => {
   try {
-    await firebaseAuth.createUserWithEmailAndPassword(email, password);
-    const user : User = await firebaseAuth.currentUser;
-    if(!user) throw Error('Unable to update user profile after creating user');
-    await user.updateProfile({ displayName: displayName });
-    return user;
+    const userCredential  = await firebaseAuth.createUserWithEmailAndPassword(email, password);
+
+    if(!userCredential.user){
+      throw Error('Unable to update user profile after creating user'); 
+    }
+    await userCredential.user.updateProfile({ displayName: displayName });
+    return userCredential;
   } catch (err) {
     throw Error(getErrorMsg(err.code));
   }
@@ -106,101 +109,11 @@ export const Logout = async () => {
   await firebaseAuth.signOut();
 };
 
-// let mockTimer;
-// const mockTripItems = [
-//   {
-//     tripName: "First trip",
-//     startDate: "05/Jun/2021",
-//     createDate: "05/Jun/2020",
-//   },
-//   {
-//     tripName: "Second trip",
-//     startDate: "05/Jun/2022",
-//     createDate: "05/Jun/2021",
-//   },
-//   {
-//     tripName: "Third trip",
-//     startDate: "05/Jun/2023",
-//     createDate: "05/Jun/2022",
-//   },
-//   {
-//     tripName: "Fourth trip",
-//     startDate: "05/Jun/2024",
-//     createDate: "05/Jun/2023",
-//   },
-//   {
-//     tripName: "Europ France trip",
-//     startDate: "05/Jun/2024",
-//     createDate: "05/Jun/2023",
-//   },
-//   {
-//     tripName: "America trip",
-//     startDate: "05/Jun/2024",
-//     createDate: "05/Jun/2023",
-//   },
-//   {
-//     tripName: "Germany 2 weeks travel",
-//     startDate: "06/Oct/2000",
-//     createDate: "22/Mar/1998",
-//   },
-// ];
-export const FetchTripItemCollection = async (user:any) => {
-  //TODO: fetch real data from firebase
-  // return await new Promise((res, rej) => {
-  //   mockTimer = setTimeout(() => {
-  //     res(mockTripItems);
-  //     clearTimeout(mockTimer);
-  //   }, 3000);
-  // });
-  const userDocRef = await firebaseDatabase.doc(`users/${user.uid}`);
-  const querySnapshot = await userDocRef.collection('trips').get();
-
-  return querySnapshot;
-};
-
-export const CreateTripItem = async (user:any, data:any) => {
-  //TODO: create trip data in firebase
-  try {
-    const userDocRef = await firebaseDatabase.doc(`users/${user.uid}`);
-    await userDocRef.set({modifyDate:(new Date()).toString()});
-    const tripsColRef = await userDocRef.collection('trips');
-    await tripsColRef.add(data);
-    return userDocRef.id;
-  } catch (err) {
-    throw Error(getErrorMsg(err.code));
-  }
-};
-
-import { Collection, SubCollection, ISubCollection, getRepository } from 'fireorm';
-
-class Setting{
-  id : string = 'Setting';
-  mood : boolean = false;
-}
-
-class PrivateData{
-  id : string = 'PrivateData';
-  password : string = 'abcddd';
-}
-
-@Collection('userArchive')
-export class UserArchive{
-  id : string;
-  name: string;
-  age : number;
-
-  @SubCollection(Setting, 'settings')
-  setting? : ISubCollection<Setting | PrivateData>
-}
-
+///////////////////Firestore CRUD//////////////////////////////////
 export const CreateUser = async (userData:UserArchive) => {
   try{
-    const userRepo = getRepository(UserArchive);
-    let newUser = new UserArchive();
-    newUser = {...newUser, ...userData};
-    const userDoc = await userRepo.create(newUser);
-    await userDoc.setting?.create(new Setting());
-    await userDoc.setting?.create(new PrivateData());
+    const userRepo = fireorm.getRepository(UserArchive);
+    const userDoc = await userRepo.create(userData);
     return userDoc;
   }
   catch(err){
@@ -210,7 +123,7 @@ export const CreateUser = async (userData:UserArchive) => {
 
 export const GetUser = async (userId:string)=>{
   try{
-    const userRepo = getRepository(UserArchive);
+    const userRepo = fireorm.getRepository(UserArchive);
     return await userRepo.findById(userId);
   }
   catch(err){
@@ -220,7 +133,7 @@ export const GetUser = async (userId:string)=>{
 
 export const ClearDatabase = async () =>{
   try{
-    const userRepo = getRepository(UserArchive);
+    const userRepo = fireorm.getRepository(UserArchive);
     const users : UserArchive[] = await userRepo.find();
     let tasks : Promise<void>[] = [];
     users.map((user)=>{
