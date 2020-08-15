@@ -111,7 +111,7 @@ const renderFooter = () => {
   return <Footer sections={footerContent()} />;
 };
 
-function Router() {
+const Router = React.forwardRef(({},ref)=>{
   const classes = makeStyles(style)();
 
   const user = useSelector(selectUserInfo);
@@ -124,6 +124,7 @@ function Router() {
     if (!user) {
       return (
         <Header
+          ref={ref}
           brand={
             <Avatar variant="rounded">
               <Logo />
@@ -141,6 +142,7 @@ function Router() {
 
     return (
       <Header
+        ref={ref}
         brand={
           <Avatar variant="rounded">
             <Logo />
@@ -174,6 +176,6 @@ function Router() {
       <DialogControl />
     </React.Fragment>
   );
-}
+});
 
 export default Router;

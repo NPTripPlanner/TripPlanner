@@ -6,15 +6,15 @@ import {
   SearchTripItemsSuccessful,
 } from "./trip_manager.actions";
 
-import { FetchTripItemCollection } from "../../utils/firebase.utils";
+// import { FetchTripItemCollection } from "../../utils/firebase.utils";
 import { SearchObjectsInCollection } from "../../utils/utils";
 
 import { call, put, all, takeLeading, takeLatest } from "redux-saga/effects";
 
 function* doFetchTripItems() {
   try {
-    const tripItems = yield call(FetchTripItemCollection);
-    yield put(FetchTripItemsSuccessful(tripItems));
+    // const tripItems = yield call(FetchTripItemCollection);
+    yield put(FetchTripItemsSuccessful([]));
   } catch (error) {
     yield put(FetchTripItemsFail(error));
   }

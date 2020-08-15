@@ -1,4 +1,5 @@
 import * as firebasePro from "firebase";
+import 'firebase/functions';
 import 'firebase/firestore';
 import * as firebaseTest from "@firebase/testing";
 import getErrorMsg from "./firebase.errors.utils";
@@ -10,10 +11,12 @@ import {
 type App = firebase.app.App;
 type Auth = firebase.auth.Auth;
 type FirestoreDB = firebase.firestore.Firestore;
+type CloudFunctions = firebase.functions.Functions;
 
 export let firebaseApp : App;
 export let firebaseAuth : Auth;
 export let firebaseDatabase : FirestoreDB;
+export let cloudFunctions : CloudFunctions;
 
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_FB_API_KEY,
@@ -28,11 +31,12 @@ const firebaseConfig = {
 
 export const InitFirebase = () => {
   const setup = (app:App) => {
-    if (process.env.NODE_ENV === "production"){ 
+    if (process.env.NODE_ENV !== "test"){ 
       firebaseAuth = app.auth();
     }
     
     firebaseDatabase = app.firestore();
+    cloudFunctions = app.functions();
   };
 
   switch (process.env.NODE_ENV) {
@@ -82,11 +86,23 @@ export const SignUpWithEmailAndPassword = async (
       throw Error('Unable to update user profile after creating user'); 
     }
     await userCredential.user.updateProfile({ displayName: displayName });
+    const result = initializeUser(userCredential.user);
+    if(!result) throw Error('Initilize user fail');
     return userCredential;
   } catch (err) {
     throw Error(getErrorMsg(err.code));
   }
 };
+
+const initializeUser = async (user:firebase.User)=>{
+  
+  const result = await cloudFunctions.httpsCallable('initUser')({
+    id:user.uid,
+    displayName:user.displayName,
+    email:user.email,
+  });
+  return result;
+}
 
 export const LoginWithEmailAndPassword = async (email:string, password:string) => {
   try {
@@ -138,6 +154,7 @@ export const ClearDatabase = async () =>{
     let tasks : Promise<void>[] = [];
     users.map((user)=>{
       tasks.push(userRepo.delete(user.id));
+      return user;
     })
     return await Promise.all(tasks);
   }
