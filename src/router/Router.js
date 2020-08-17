@@ -1,7 +1,7 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { selectUserInfo } from "../redux/user/user.selector";
-import { UserLogout, CheckUserSessionStart } from "../redux/user/user.actions";
+import { UserLogout } from "../redux/user/user.actions";
 import { useHistory } from "react-router-dom";
 
 import { Login } from "../redux/dialog/dialog.actions";
@@ -14,7 +14,7 @@ import Landing from "../pages/Landing/Landing";
 import TripManager from "../pages/TripManager/TripManager";
 import DialogControl from "../dialogs/DialogControl";
 import DropDown from "../components/DropDown/DropDown";
-import UserAuthComp from "../components/UserAuthComp/UserAuthComp";
+import PrivateRoute from "./PrivateRoute";
 
 import {
   Avatar,
@@ -111,14 +111,12 @@ const renderFooter = () => {
   return <Footer sections={footerContent()} />;
 };
 
-const Router = React.forwardRef(({},ref)=>{
+const Router = React.forwardRef((_,ref)=>{
   const classes = makeStyles(style)();
 
   const user = useSelector(selectUserInfo);
   const dispatch = useDispatch();
   const history = useHistory();
-
-  if (!user) dispatch(CheckUserSessionStart());
 
   const renderHeader = () => {
     if (!user) {
@@ -164,13 +162,9 @@ const Router = React.forwardRef(({},ref)=>{
       {renderHeader()}
       <Toolbar />
       <Switch>
-        <Route exact path="/" component={Landing} />
-        <Route
-          exact
-          path="/TripManager"
-          component={UserAuthComp("/", TripManager)}
-        />
-        <Route path="*" component={Landing} />
+        <Route exact path="/" render={()=><Landing />} />
+        <PrivateRoute exact path='/TripManager' fallbackPath='/' component={<TripManager />}/>
+        <Route path="*" render={()=><Landing />} />
       </Switch>
       {renderFooter()}
       <DialogControl />

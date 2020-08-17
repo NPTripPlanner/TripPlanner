@@ -33,6 +33,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
+    "deploy-functions": "firebase deploy --only functions",
     "prettier": "prettier --write \"**/*.{js,css,scss}\"",
     "test": "react-scripts test",
     "eject": "react-scripts eject",

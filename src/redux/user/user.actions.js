@@ -52,8 +52,8 @@ export const CheckUserSessionStart = () => ({
   type: actionTypes.CHECK_USER_SESSION_START,
 });
 
-export const CheckUserSessionFail = () => ({
-  type: actionTypes.CHECK_USER_SESSION_FAIL,
+export const CheckUserSessionEnd = () => ({
+  type: actionTypes.CHECK_USER_SESSION_END,
 });
 
 export const UserLogout = () => ({

@@ -2,6 +2,7 @@ import actionTypes from "./user.actionTypes";
 
 const initState = {
   user: null,
+  checkingSession: false,
   loginFail: null,
   signupFail: null,
   forgotPassMailSentFail: null,
@@ -39,9 +40,10 @@ const UserReducer = (state = initState, action) => {
         forgotPassMailSentFail: action.payload,
         forgotPassMailSent: false,
       };
-    case actionTypes.CHECK_USER_SESSION_FAIL:
     case actionTypes.CHECK_USER_SESSION_START:
-      return { ...state, user: null };
+      return { ...state, checkingSession: true };
+    case actionTypes.CHECK_USER_SESSION_END:
+      return {...state, checkingSession: false};
     case actionTypes.LOG_OUT:
       return { ...state, user: null };
     default:

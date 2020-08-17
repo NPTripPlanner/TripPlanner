@@ -6,7 +6,7 @@ import {
   SendForgotPassMailSuccessful,
   SendForgotPassMailFail,
   SendForgotPassMailReset,
-  CheckUserSessionFail,
+  CheckUserSessionEnd,
   UserLogout,
 } from "./user.actions";
 
@@ -83,9 +83,8 @@ function* doCheckUserSession() {
   const user = yield GetCurrentUser();
   if (user) {
     yield call(loginSuccessful, user);
-  } else {
-    yield put(CheckUserSessionFail());
   }
+  yield put(CheckUserSessionEnd());
 }
 
 function* checkUserSessionStart() {

@@ -8,6 +8,12 @@ export const selectUserInfo = createSelector(
   (user) => user.user
 );
 
+export const selectCheckingUserSession = createSelector(
+  [selectUser],
+
+  (user) => user.checkingSession
+);
+
 export const selectLoginFail = createSelector(
   [selectUser],
 
@@ -32,3 +38,4 @@ export const selectSendForgotPassMailFail = createSelector(
   (user) =>
     user.forgotPassMailSentFail ? user.forgotPassMailSentFail.message : null
 );
+

@@ -2,8 +2,8 @@ let adminApp;
 let firestore;
 
 module.exports = {
-    init:(adminApp)=>{
-        adminApp = adminApp,
+    init:(app)=>{
+        adminApp = app,
         firestore = adminApp.firestore();
     },
     adminApp: ()=>adminApp,

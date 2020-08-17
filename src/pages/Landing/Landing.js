@@ -3,6 +3,7 @@ import { useHistory } from "react-router-dom";
 
 import { useDispatch, useSelector } from "react-redux";
 import { selectUserInfo } from "../../redux/user/user.selector";
+import { CheckUserSessionStart } from "../../redux/user/user.actions";
 
 import { Login } from "../../redux/dialog/dialog.actions";
 
@@ -36,11 +37,16 @@ Trip planner is here to assist and help you to create a itinerary easily. Trip p
 `;
 
 const Landing = () => {
+
   const classes = makeStyles(style)();
 
   const user = useSelector(selectUserInfo);
   const dispatch = useDispatch();
   const history = useHistory();
+
+  if (!user){
+    dispatch(CheckUserSessionStart());
+  }
 
   const handleGetStartClick = () => {
     if (!user) {
