@@ -11,7 +11,7 @@ script:
   #disable using CI env variable
   - "CI=false"
   #remember to use "chmod +x (your_shell_script)" to change permission of your shell script
-  - CI=true firebase emulators:exec './integration-test.sh' 
+  - firebase emulators:exec './integration-test.sh' --only firestore
   #- "npm run test"
   - "npm run build"
 

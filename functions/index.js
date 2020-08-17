@@ -1,36 +1,48 @@
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
-const firestore = admin.initializeApp({
-        projectId:'tripplanner-9563b'
-}).firestore();
+const adminApp = admin.initializeApp({
+    projectId:'tripplanner-9563b'
+})
+const firestore = adminApp.firestore();
 
-const getMetadata = (createDate=null, modifyDate=null)=>{
-    let cDate = admin.firestore.Timestamp.fromDate(new Date());
-    let mDate = admin.firestore.Timestamp.fromDate(new Date());
-    if(createDate){
-        cDate = admin.firestore.Timestamp.fromDate(createDate);
-    }
-    if(modifyDate){
-        mDate = admin.firestore.Timestamp.fromDate(modifyDate);
-    }
-    return {
-        createDate: cDate,
-        modifyDate: mDate,
-    }
-}
+require('./utils/utils').init(adminApp);
+const trip = require('./utils/trip.utils');
+const user = require('./utils/user.utils');
+const commonUtils = require('./utils/commom.utils');
 
 exports.initUser = functions.https.onCall(async (data, context) => {
-    if(!context.auth){
-        throw new functions.https.HttpsError('unauthorized', 'Initialize user fail');
+    
+    if(process.env.NODE_ENV !== 'test'){
+        if(!context.auth){
+            throw new functions.https.HttpsError('unauthorized', 'Initialize user fail');
+        }
     }
-
+    
     try{
-        return await firestore.runTransaction(async (trans)=>{
-            const userId = await createUser(trans, data);
-            const archiveId =  await createTripArchive(trans, userId);
-            await createTripTemplate(trans, archiveId);
-            return data;
-        });
+        const userBatch = firestore.batch();
+        //create a new user
+        const userId = await user.createUserWith(data, userBatch);
+        //create a new trip archive
+        const archiveId = await trip.createTripArchiveWith(userId, null, userBatch);
+        await userBatch.commit();
+
+        //transfer trip archive to user
+        await firestore.runTransaction(async (trans)=>{
+            return await trip.transferTripArchiveTo(userId, archiveId, trans);
+        })
+        
+    
+        const tripBatch = firestore.batch();
+        //TODO:create trip template
+        const tripData = {
+            tripName:'My first trip',
+            metadata: commonUtils.getMetadata(),
+        }
+        //create trip under a trip archive
+        await trip.createTripUnderArchiveWith(archiveId, tripData, tripBatch);
+        await tripBatch.commit();
+        
+        return true;
     }
     catch(err){
         console.log(err)
@@ -38,56 +50,3 @@ exports.initUser = functions.https.onCall(async (data, context) => {
     }
 });
 
-const createUser = async (trans, userData)=>{
-    try{
-        const user = {
-            id: userData.id,
-            displayName: userData.displayName,
-            email: userData.email,
-            metadata:getMetadata(),
-        };
-        const userDocRef = await firestore.collection('userArchive').doc(user.id);
-        trans.create(userDocRef, user);
-        return user.id;
-    }
-    catch(err){
-        throw err;
-    }
-}
-
-const createTripArchive = async (trans, ownerId)=>{
-    try{
-        const archiveDocRef = await firestore.collection('tripArchive').doc();
-
-        const archiveData = {
-            id: archiveDocRef.id,
-            ownerId: ownerId,
-            metadata: getMetadata(),
-        }
-        trans.create(archiveDocRef, archiveData);
-        return archiveData.id;
-    }
-    catch(err){
-        throw err;
-    }
-}
-
-const createTripTemplate = async (trans, archiveId)=>{
-    try{
-        const archiveDocRef = await firestore.collection('tripArchive').doc(archiveId);
-        const tripDocRef = archiveDocRef.collection('tripCollection').doc();
-    
-        //TODO:create trip template
-        const tripData = {
-            id: tripDocRef.id,
-            tripName:'My first trip',
-            metadata: getMetadata(),
-        }
-        trans.create(tripDocRef, tripData);
-    
-        return tripData.id;
-    }
-    catch(err){
-        throw err;
-    }
-}
