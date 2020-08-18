@@ -1,6 +1,5 @@
 const firestore = require('./utils').firestore();
 const commonUtils = require('./commom.utils');
-const { write } = require('fs');
 
 
 /**
@@ -17,6 +16,7 @@ exports.createUserWith = async (userData, batchOrTrans)=>{
             metadata: commonUtils.getMetadata(),
             ownedArchives:[],
         };
+
         const userDocRef = await firestore.collection('userArchive').doc(user.id);
 
         batchOrTrans.create(userDocRef, user);

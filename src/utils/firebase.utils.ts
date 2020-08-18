@@ -1,7 +1,7 @@
+import * as firebaseTest from "@firebase/testing";
 import * as firebasePro from "firebase";
 import 'firebase/functions';
 import 'firebase/firestore';
-import * as firebaseTest from "@firebase/testing";
 import getErrorMsg from "./firebase.errors.utils";
 import * as fireorm from 'fireorm';
 import {
@@ -10,7 +10,7 @@ import {
 
 type App = firebase.app.App;
 type Auth = firebase.auth.Auth;
-type FirestoreDB = firebase.firestore.Firestore;
+type FirestoreDB = firebase.firestore.Firestore | any;
 type CloudFunctions = firebase.functions.Functions;
 
 export let firebaseApp : App;
@@ -31,12 +31,21 @@ const firebaseConfig = {
 
 export const InitFirebase = () => {
   const setup = (app:App) => {
+    //test do not have auth
     if (process.env.NODE_ENV !== "test"){ 
       firebaseAuth = app.auth();
     }
-    
     firebaseDatabase = app.firestore();
     cloudFunctions = app.functions();
+
+    //test and developmentuse firestore and cloud function in emulator 
+    if(process.env.NODE_ENV!=='production'){
+      firebaseDatabase.settings({
+        host: "http://localhost:8080",
+        ssl: false,
+      });
+      cloudFunctions.useFunctionsEmulator('http://localhost:5001');
+    }
   };
 
   switch (process.env.NODE_ENV) {
@@ -46,9 +55,9 @@ export const InitFirebase = () => {
       setup(firebaseApp);
       break;
     default:
-      firebaseApp = firebaseTest.initializeAdminApp({
-        databaseName: "tripplanner-9563b",
-        projectId: "tripplanner-9563b",
+      firebaseApp = firebaseTest.initializeTestApp({
+        projectId:'tripplanner-9563b',
+        auth:{uid:'test', email:'test@test.com'}
       });
       setup(firebaseApp);
   }
@@ -86,7 +95,7 @@ export const SignUpWithEmailAndPassword = async (
       throw Error('Unable to update user profile after creating user'); 
     }
     await userCredential.user.updateProfile({ displayName: displayName });
-    const result = initializeUser(userCredential.user);
+    const result = await initializeUser(userCredential.user);
     if(!result) throw Error('Initilize user fail');
     return userCredential;
   } catch (err) {
@@ -94,8 +103,10 @@ export const SignUpWithEmailAndPassword = async (
   }
 };
 
-const initializeUser = async (user:firebase.User)=>{
-  
+/**
+ * Call cloud function to initialize user
+ */
+export const initializeUser = async (user:firebase.User|any)=>{
   const result = await cloudFunctions.httpsCallable('initUser')({
     id:user.uid,
     displayName:user.displayName,

@@ -10,20 +10,37 @@ const trip = require('./utils/trip.utils');
 const user = require('./utils/user.utils');
 const commonUtils = require('./utils/commom.utils');
 
+const mockAuth = require('./mock/mock.auth');
+
+
+const env = process.env.NODE_ENV;
+
+function authFromFunctionContext(context){
+
+    if (env==='test') {
+      console.log("Authentication is mocked for integration testing");
+    }
+  
+    return (env==='test')
+      ? mockAuth.mockFirebaseAuth
+      : context.auth;
+}
+
 exports.initUser = functions.https.onCall(async (data, context) => {
     
-    if(process.env.NODE_ENV !== 'test'){
-        if(!context.auth){
-            throw new functions.https.HttpsError('unauthorized', 'Initialize user fail');
-        }
-    }
+    const auth = authFromFunctionContext(context);
     
+    if(!auth){
+        throw new functions.https.HttpsError('unauthorized', 'Initialize user fail');
+    }
+
     try{
         const userBatch = firestore.batch();
         //create a new user
         const userId = await user.createUserWith(data, userBatch);
         //create a new trip archive
         const archiveId = await trip.createTripArchiveWith(userId, null, userBatch);
+        
         await userBatch.commit();
 
         //transfer trip archive to user

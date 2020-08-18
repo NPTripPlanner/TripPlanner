@@ -35,7 +35,7 @@
     "build": "react-scripts build",
     "deploy-functions": "firebase deploy --only functions",
     "prettier": "prettier --write \"**/*.{js,css,scss}\"",
-    "test": "react-scripts test",
+    "test": "export FIRESTORE_EMULATOR_HOST=\"localhost:8080\" && react-scripts test",
     "eject": "react-scripts eject",
     "storybook": "start-storybook -p 9009 -s public",
     "build-storybook": "build-storybook -s public"
