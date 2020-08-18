@@ -10,7 +10,7 @@ import {
   UserLogout,
 } from "./user.actions";
 
-import { call, put, all, takeLeading, takeEvery } from "redux-saga/effects";
+import { call, put, all, takeLeading, takeEvery, delay } from "redux-saga/effects";
 
 import {
   SignUpWithEmailAndPassword,
@@ -80,6 +80,7 @@ function* sendForgotPassMailResetStart() {
 }
 
 function* doCheckUserSession() {
+  yield delay(1000);
   const user = yield GetCurrentUser();
   if (user) {
     yield call(loginSuccessful, user);

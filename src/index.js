@@ -12,6 +12,7 @@ import theme from "./themes/defaultTheme";
 import { Provider } from "react-redux";
 import store from "./redux/Store";
 import { InitFirebase } from "./utils/firebase.utils";
+import CheckSession from './session/CheckSession';
 import * as serviceWorker from "./serviceWorker";
 
 import { create } from "jss";
@@ -22,12 +23,14 @@ const jss = create({
   plugins: [...jssPreset().plugins],
 });
 
+
+
 ReactDOM.render(
   <BrowserRouter basename={process.env.PUBLIC_URL}>
     <StylesProvider jss={jss}>
       <ThemeProvider theme={theme}>
         <Provider store={store}>
-          <Router />
+          <CheckSession component={<Router />} />
         </Provider>
       </ThemeProvider>
     </StylesProvider>

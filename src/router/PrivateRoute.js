@@ -9,7 +9,6 @@ const PrivateRoute = ({
      ...rest
 }) => {
     const user = useSelector(selectUserInfo);
-
     return (
         <Route
         {...rest}
