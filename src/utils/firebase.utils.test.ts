@@ -112,7 +112,7 @@ describe("Firebase utility test", () => {
         return val;
       })
 
-      expect(batch.results.length).toEqual(4);
+      return expect(batch.results.length).toEqual(4);
 
       
     })
