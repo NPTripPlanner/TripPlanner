@@ -4,8 +4,9 @@ import 'firebase/functions';
 import 'firebase/firestore';
 import getErrorMsg from "./firebase.errors.utils";
 import * as fireorm from 'fireorm';
-import {TripArchive, TripArchiveRepository} from '../schema/firestore.schema';
+import {TripArchive, TripArchiveRepository } from '../schema/firestore.schema';
 import { QueryDocumentSnapshot } from "@google-cloud/firestore";
+import { BaseFirestoreRepository } from "fireorm";
 
 type App = firebase.app.App;
 type Auth = firebase.auth.Auth;
@@ -154,6 +155,20 @@ export const ClearTestFirestore = async ()=>{
 
 //#endregion Test only
 
+//#region Fireorm
+/**
+ * An easy way to get fireorm's repository with type conversion if provided
+ * @param entity 
+ */
+export const GetRepository = async <
+T extends fireorm.IEntity,
+ConvertTo = BaseFirestoreRepository<T>
+>
+(entity:fireorm.Constructor<T>)=>{
+  return (await fireorm.getRepository(entity)) as unknown as ConvertTo;
+}
+//#endregion Fireorm
+
 //#region Firestore CRUD
 /**
  * Return all trip archives associate with user
@@ -161,7 +176,8 @@ export const ClearTestFirestore = async ()=>{
  */
 export const FetchTripArchive = async (userId:string)=>{
   try{
-    const tripArchiveRepo = await fireorm.getRepository(TripArchive);
+    // const tripArchiveRepo = await fireorm.getRepository(TripArchive);
+    const tripArchiveRepo = await GetRepository(TripArchive);
     return await tripArchiveRepo.whereEqualTo('ownerId', userId).find();
   }
   catch(err){
@@ -173,14 +189,15 @@ export const FetchTripArchive = async (userId:string)=>{
  * Get trip archives in batch
  * @param userId 
  * @param batchLimit 
- * @param startAfter 
+ * @param startAfter a particualr document snapshot
  */
 export const PullNextTripArchive = async (userId:string, 
   batchLimit:number=10,
   startAfter:null|QueryDocumentSnapshot=null,
   )=>{
   try{
-    const tripArchiveRepo = (await fireorm.getRepository(TripArchive)) as TripArchiveRepository;
+    // const tripArchiveRepo = (await fireorm.getRepository(TripArchive)) as TripArchiveRepository;
+    const tripArchiveRepo = await GetRepository<TripArchive, TripArchiveRepository>(TripArchive);
     tripArchiveRepo.startAfterSnap = startAfter;
     const results = await tripArchiveRepo.whereEqualTo('ownerId', userId)
     .limit(batchLimit)
@@ -214,3 +231,7 @@ export const CreateTripArchive = async (userId:string, archiveName:string)=>{
   }
 }
 //#endregion Firestore CRUD
+
+//#region  Firestore listener
+
+//#endregion Firestore listener

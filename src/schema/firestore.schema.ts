@@ -33,7 +33,7 @@ export class TripArchive {
 /**
  * support pagination 
  */
-class ImprovedRepository<T extends IEntity> extends BaseFirestoreRepository<T>{
+export class ImprovedRepository<T extends IEntity> extends BaseFirestoreRepository<T>{
 
     startAfterSnap: QueryDocumentSnapshot|null;
     lastDocSnap: QueryDocumentSnapshot;
