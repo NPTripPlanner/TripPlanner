@@ -162,10 +162,10 @@ export const ClearTestFirestore = async ()=>{
  */
 export const GetRepository = async <
 T extends fireorm.IEntity,
-ConvertTo = BaseFirestoreRepository<T>
+ConvertToType = BaseFirestoreRepository<T>
 >
 (entity:fireorm.Constructor<T>)=>{
-  return (await fireorm.getRepository(entity)) as unknown as ConvertTo;
+  return (await fireorm.getRepository(entity)) as unknown as ConvertToType;
 }
 //#endregion Fireorm
 
