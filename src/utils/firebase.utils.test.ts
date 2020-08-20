@@ -37,6 +37,9 @@ describe("Firebase utility test", () => {
   });
   
   describe('init user block', ()=>{
+    afterAll(async (done) => {
+      done();
+    });
 
     it('initialize user', async ()=>{
       const result = await initializeUser(fakeUser);
@@ -46,6 +49,10 @@ describe("Firebase utility test", () => {
   })
 
   describe('create trip archive', ()=>{
+    afterAll(async (done) => {
+      done();
+    });
+
     it('create trip archive under user id', async ()=>{
       expect(CreateTripArchive(fakeUser.uid, 'trip archive 1'))
       .resolves
@@ -61,6 +68,9 @@ describe("Firebase utility test", () => {
   })
 
   describe('get trip archive', ()=>{
+    afterAll(async (done) => {
+      done();
+    });
 
     it('get all trip archive by user id', async ()=>{
       expect(FetchTripArchive(fakeUser.uid))
@@ -113,8 +123,6 @@ describe("Firebase utility test", () => {
       })
 
       return expect(batch.results.length).toEqual(4);
-
-      
     })
 
   })

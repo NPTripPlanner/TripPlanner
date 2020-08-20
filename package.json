@@ -37,7 +37,7 @@
     "build": "react-scripts build",
     "deploy-functions": "firebase deploy --only functions",
     "prettier": "prettier --write \"**/*.{js,css,scss}\"",
-    "test": "react-scripts test",
+    "test": "cross-env CI=true react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
     "storybook": "start-storybook -p 9009 -s public",
     "build-storybook": "build-storybook -s public"
@@ -66,6 +66,7 @@
     "@storybook/preset-create-react-app": "^3.1.4",
     "@storybook/react": "^6.0.6",
     "class-validator": "^0.12.2",
+    "cross-env": "^7.0.2",
     "prettier": "^2.0.5",
     "redux-logger": "^3.0.6",
     "redux-saga-test-plan": "^4.0.0-rc.3"
