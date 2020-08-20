@@ -4,9 +4,8 @@ import 'firebase/functions';
 import 'firebase/firestore';
 import getErrorMsg from "./firebase.errors.utils";
 import * as fireorm from 'fireorm';
-import {
-  UserArchive,
-} from '../schema/firestore.schema';
+import {TripArchive, TripArchiveRepository} from '../schema/firestore.schema';
+import { QueryDocumentSnapshot } from "@google-cloud/firestore";
 
 type App = firebase.app.App;
 type Auth = firebase.auth.Auth;
@@ -29,6 +28,8 @@ const firebaseConfig = {
   measurementId: process.env.REACT_APP_FB_MEASUREMENT_ID,
 };
 
+//#region App
+
 export const InitFirebase = () => {
   const setup = (app:App) => {
     //test do not have auth
@@ -40,10 +41,10 @@ export const InitFirebase = () => {
 
     //test and developmentuse firestore and cloud function in emulator 
     if(process.env.NODE_ENV!=='production'){
-      firebaseDatabase.settings({
-        host: "http://localhost:8080",
-        ssl: false,
-      });
+      // firebaseDatabase.settings({
+      //   host: "http://localhost:8080",
+      //   ssl: false,
+      // });
       cloudFunctions.useFunctionsEmulator('http://localhost:5001');
     }
   };
@@ -69,7 +70,9 @@ export const ClearApp = async () => {
   return await firebaseApp.delete();
 };
 
-///////////////////Auth//////////////////////////////////
+//#endregion App
+
+//#region User
 export const GetCurrentUser = () => {
   return new Promise<firebase.User|null>((resolve, reject) => {
     const unsubscribe = firebaseAuth.onAuthStateChanged((user) => {
@@ -112,7 +115,7 @@ export const initializeUser = async (user:firebase.User|any)=>{
     displayName:user.displayName,
     email:user.email,
   });
-  return result;
+  return result.data;
 }
 
 export const LoginWithEmailAndPassword = async (email:string, password:string) => {
@@ -136,40 +139,78 @@ export const Logout = async () => {
   await firebaseAuth.signOut();
 };
 
-///////////////////Firestore CRUD//////////////////////////////////
-export const CreateUser = async (userData:UserArchive) => {
+//#endregion User
+
+//#region Test only
+
+/**
+ * Clear all firestore data in emulator
+ */
+export const ClearTestFirestore = async ()=>{
+  return await firebaseTest.clearFirestoreData({
+    projectId:'tripplanner-9563b',
+  })
+}
+
+//#endregion Test only
+
+//#region Firestore CRUD
+/**
+ * Return all trip archives associate with user
+ * @param userId 
+ */
+export const FetchTripArchive = async (userId:string)=>{
   try{
-    const userRepo = fireorm.getRepository(UserArchive);
-    const userDoc = await userRepo.create(userData);
-    return userDoc;
+    const tripArchiveRepo = await fireorm.getRepository(TripArchive);
+    return await tripArchiveRepo.whereEqualTo('ownerId', userId).find();
   }
   catch(err){
-    throw Error(err.code);
+    throw Error(getErrorMsg(err.code));
   }
 }
 
-export const GetUser = async (userId:string)=>{
+/**
+ * Get trip archives in batch
+ * @param userId 
+ * @param batchLimit 
+ * @param startAfter 
+ */
+export const PullNextTripArchive = async (userId:string, 
+  batchLimit:number=10,
+  startAfter:null|QueryDocumentSnapshot=null,
+  )=>{
   try{
-    const userRepo = fireorm.getRepository(UserArchive);
-    return await userRepo.findById(userId);
+    const tripArchiveRepo = (await fireorm.getRepository(TripArchive)) as TripArchiveRepository;
+    tripArchiveRepo.startAfterSnap = startAfter;
+    const results = await tripArchiveRepo.whereEqualTo('ownerId', userId)
+    .limit(batchLimit)
+    .find();
+    return {
+      lastDocSnap: tripArchiveRepo.lastDocSnap,
+      results: results,
+    }
   }
   catch(err){
-    throw Error(err.code);
+    throw Error(getErrorMsg(err.code));
   }
 }
 
-export const ClearDatabase = async () =>{
+/**
+ * Create a new trip archive in firestore through cloud function
+ * @param userId 
+ * @param archiveName 
+ */
+export const CreateTripArchive = async (userId:string, archiveName:string)=>{
   try{
-    const userRepo = fireorm.getRepository(UserArchive);
-    const users : UserArchive[] = await userRepo.find();
-    let tasks : Promise<void>[] = [];
-    users.map((user)=>{
-      tasks.push(userRepo.delete(user.id));
-      return user;
-    })
-    return await Promise.all(tasks);
+    const result = await cloudFunctions.httpsCallable('createTripArchive')({
+      userId: userId,
+      name: archiveName,
+    });
+    return result.data;
   }
   catch(err){
-    throw Error(err.code);
+    console.log(err);
+    throw Error(getErrorMsg(err.code));
   }
 }
+//#endregion Firestore CRUD

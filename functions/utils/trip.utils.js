@@ -63,9 +63,7 @@ exports.transferTripArchiveTo = async (userId, archiveId, batchOrTrans)=>{
         if(!userSnapshot.exists) throw Error(`${errorMsg} user do not exist`);
         if(!archiveSnapshot.exists) throw Error(`${errorMsg} trip archive do not exist`);
 
-        
-
-        //update trip archive
+        //update trip archive owerId
         const data = {ownerId: userId}
         batchOrTrans.update(archiveDocRef, data);
 

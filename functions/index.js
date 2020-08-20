@@ -15,26 +15,36 @@ const mockAuth = require('./mock/mock.auth');
 
 const env = process.env.NODE_ENV;
 
-function authFromFunctionContext(context){
+class ValidateError extends Error{
+    constructor(code, message){
+        super(message);
+        this.code = code;
+    }
+}
+
+function validateAuthFromFunctionContext(context,  errorMsg=''){
 
     if (env==='test') {
       console.log("Authentication is mocked for integration testing");
+      return mockAuth.mockFirebaseAuth;
     }
-  
-    return (env==='test')
-      ? mockAuth.mockFirebaseAuth
-      : context.auth;
+    if(context.auth) return context.auth
+
+    throw new ValidateError('cloud-function/unauthorized', errorMsg);
 }
 
+/**
+ * data: {
+ *          id: string
+            displayName: string,
+            email: string,
+ * }
+ */
 exports.initUser = functions.https.onCall(async (data, context) => {
-    
-    const auth = authFromFunctionContext(context);
-    
-    if(!auth){
-        throw new functions.https.HttpsError('unauthorized', 'Initialize user fail');
-    }
 
     try{
+        validateAuthFromFunctionContext(context, 'Initialize user fail');
+
         const userBatch = firestore.batch();
         //create a new user
         const userId = await user.createUserWith(data, userBatch);
@@ -62,7 +72,31 @@ exports.initUser = functions.https.onCall(async (data, context) => {
         return true;
     }
     catch(err){
-        console.log(err)
+        console.log(err);
+        throw new functions.https.HttpsError(err.code, err.message);
+    }
+});
+
+exports.createTripArchive = functions.https.onCall(async (data, context)=>{
+
+    try{
+        validateAuthFromFunctionContext(context, 'Create trip archive fail');
+
+        const {userId, name} = data;
+
+        const archiveBatch = firestore.batch();
+        const archiveId = await trip.createTripArchiveWith(userId, name, archiveBatch);
+        await archiveBatch.commit();
+
+        //transfer trip archive to user
+        await firestore.runTransaction(async (trans)=>{
+            return await trip.transferTripArchiveTo(userId, archiveId, trans);
+        });
+
+        return {id: archiveId, ownerId: userId};
+    }
+    catch(err){
+        console.log(err);
         throw new functions.https.HttpsError(err.code, err.message);
     }
 });

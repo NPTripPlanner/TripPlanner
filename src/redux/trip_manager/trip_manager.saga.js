@@ -9,6 +9,7 @@ import {
 // import { FetchTripItemCollection } from "../../utils/firebase.utils";
 import { SearchObjectsInCollection } from "../../utils/utils";
 
+import { eventChannel } from 'redux-saga';
 import { call, put, all, takeLeading, takeLatest } from "redux-saga/effects";
 
 function* doFetchTripItems() {
