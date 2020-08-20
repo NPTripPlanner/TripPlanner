@@ -4,14 +4,14 @@ node_js:
 cache:
   directories:
   - node_modules
-  - /home/cache/firebase/
+  - /home/travis/.cache/firebase/emulators
 before_script:
   - "npm install -g firebase-tools"
 script:
   #disable using CI env variable
   - "CI=false"
   #remember to use "chmod +x (your_shell_script)" to change permission of your shell script
-  - firebase emulators:exec './integration-test.sh' --only firestore
+  - firebase emulators:exec './integration-test.sh'
   #- "npm run test"
   - "npm run build"
 
