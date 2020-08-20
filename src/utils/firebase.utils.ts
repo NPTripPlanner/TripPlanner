@@ -45,7 +45,7 @@ export const InitFirebase = () => {
       //   host: "http://localhost:8080",
       //   ssl: false,
       // });
-      cloudFunctions.useFunctionsEmulator('http://localhost:5001');
+      cloudFunctions.useFunctionsEmulator('http://127.0.0.1:5001');
     }
   };
 
