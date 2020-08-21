@@ -5,7 +5,7 @@ import {
   initializeUser,
   CreateTripArchive,
   FetchTripArchive,
-  PullNextTripArchive,
+  FetchTripArchiveAfter,
   ListenToRepository,
   GetRepository,
   ListenToDocument,
@@ -94,9 +94,9 @@ describe("Firebase utility test", () => {
       .not
       .toThrowError();
 
-      let batch = await PullNextTripArchive(fakeUser.uid, 1);
+      let batch = await FetchTripArchiveAfter(fakeUser.uid, 1);
       expect(batch.lastDocSnap).not.toBeNull();
-      batch = await PullNextTripArchive(fakeUser.uid, 1, batch.lastDocSnap);
+      batch = await FetchTripArchiveAfter(fakeUser.uid, 1, batch.lastDocSnap);
       return expect(batch.lastDocSnap).not.toBeNull();
     })
 
@@ -106,10 +106,10 @@ describe("Firebase utility test", () => {
       .not
       .toThrowError();
 
-      let batch = await PullNextTripArchive(fakeUser.uid, 2);
+      let batch = await FetchTripArchiveAfter(fakeUser.uid, 2);
       expect(batch.results.length).toEqual(2);
 
-      batch = await PullNextTripArchive(fakeUser.uid, 2, batch.lastDocSnap);
+      batch = await FetchTripArchiveAfter(fakeUser.uid, 2, batch.lastDocSnap);
       return expect(batch.results.length).toEqual(2);
     })
 
@@ -119,7 +119,7 @@ describe("Firebase utility test", () => {
       .not
       .toThrowError();
 
-      let batch = await PullNextTripArchive(fakeUser.uid, 4);
+      let batch = await FetchTripArchiveAfter(fakeUser.uid, 4);
 
       const sortedResults = sort(batch.results).asc(t=>t.metadata.createAt);
       // sortedResults.map((val)=>{

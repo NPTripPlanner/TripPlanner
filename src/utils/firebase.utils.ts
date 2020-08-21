@@ -167,8 +167,8 @@ ConvertToType = ImprovedRepository<T>
 
 //#region Firestore CRUD
 /**
- * Return all trip archives associate with user
- * @param userId 
+ * Return all trip archives under user id
+ * @param userId user id to fetch trip archive from
  */
 export const FetchTripArchive = async (userId:string)=>{
   try{
@@ -177,19 +177,19 @@ export const FetchTripArchive = async (userId:string)=>{
     return await tripArchiveRepo.whereEqualTo('ownerId', userId).find();
   }
   catch(err){
-    console.log(err);
     throw Error(getErrorMsg(err.code));
   }
 }
 
 /**
- * Get trip archives in batch
- * @param userId 
- * @param batchLimit 
- * @param startAfter a particualr document snapshot
+ * Get trip archives under user id after certain document
+ * @param userId user id to fetch trip archive from
+ * @param amount how many to fetch at a time, default is 10
+ * @param startAfter a particualr document snapshot, usually from the last fetch, if null fetch will
+ * start from the begining
  */
-export const PullNextTripArchive = async (userId:string, 
-  batchLimit:number=10,
+export const FetchTripArchiveAfter = async (userId:string, 
+  amount:number=10,
   startAfter:null|QueryDocumentSnapshot=null,
   )=>{
   try{
@@ -197,7 +197,7 @@ export const PullNextTripArchive = async (userId:string,
     const tripArchiveRepo = await GetRepository<TripArchive, TripArchiveRepository>(TripArchive);
     tripArchiveRepo.qeryAfterSnap(startAfter);
     const results = await tripArchiveRepo.whereEqualTo('ownerId', userId)
-    .limit(batchLimit)
+    .limit(amount)
     .find();
     return {
       lastDocSnap: tripArchiveRepo.getLastDocQuerySnap(),
@@ -217,8 +217,8 @@ interface CreateTripArchiveReturn {
 }
 /**
  * Create a new trip archive in firestore through cloud function
- * @param userId 
- * @param archiveName 
+ * @param userId user id the new trip archive will be created under
+ * @param archiveName trip archive name
  */
 export const CreateTripArchive = async (userId:string, archiveName:string)=>{
   try{
