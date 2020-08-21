@@ -6,9 +6,13 @@ import {
   CreateTripArchive,
   FetchTripArchive,
   PullNextTripArchive,
+  ListenToRepository,
+  GetRepository,
 } from "./firebase.utils";
 
 import sort from 'fast-sort';
+import { TripArchive } from "../schema/firestore.schema";
+import ImprovedRepository from "../schema/ImprovedRepository";
 
 describe("Firebase utility test", () => {
 
@@ -117,14 +121,58 @@ describe("Firebase utility test", () => {
       let batch = await PullNextTripArchive(fakeUser.uid, 4);
 
       const sortedResults = sort(batch.results).asc(t=>t.metadata.createAt);
-      sortedResults.map((val)=>{
-        console.log(val.metadata.createAt, val);
-        return val;
-      })
+      // sortedResults.map((val)=>{
+      //   console.log(val.metadata.createAt, val);
+      //   return val;
+      // })
 
-      return expect(batch.results.length).toEqual(4);
+      return expect(sortedResults.length).toEqual(4);
     })
 
   })
 
+  describe('listen to collection', ()=>{
+    afterAll(async (done) => {
+      done();
+    });
+    beforeEach((done)=>{
+      window.jasmine.DEFAULT_TIMEOUT_INTERVAL = 1000000000;
+      done();
+    })
+
+    it('listen collection', async()=>{
+      const cbObj ={ 
+        fn:(docs)=>{
+          console.log('receive data', docs);
+        }
+      };
+      const spy = jest.spyOn(cbObj, 'fn');
+
+      const unsubscribe = ListenToRepository<TripArchive, ImprovedRepository<TripArchive>>(
+        await GetRepository(TripArchive), 
+        cbObj.fn,
+        (err)=>console.log(err)
+      );
+
+      const result = await new Promise((res)=>{
+        let count = 0;
+        const intval = setInterval(async ()=>{
+          await CreateTripArchive(fakeUser.uid, `Auto created trip archive ${count}`);
+          count++;
+          if(count >= 2){
+             clearInterval(intval);
+            res(true);
+          }
+        }, 3000);
+      });
+
+      unsubscribe();
+
+      expect(spy).toHaveBeenCalled();
+      expect(spy).toHaveBeenCalledTimes(3);
+      return expect(result).toBeTruthy();
+    })
+  })
+  
+  
 });

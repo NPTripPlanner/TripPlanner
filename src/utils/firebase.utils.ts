@@ -5,8 +5,8 @@ import 'firebase/firestore';
 import getErrorMsg from "./firebase.errors.utils";
 import * as fireorm from 'fireorm';
 import {TripArchive, TripArchiveRepository } from '../schema/firestore.schema';
-import { QueryDocumentSnapshot } from "@google-cloud/firestore";
-import { BaseFirestoreRepository } from "fireorm";
+import { QueryDocumentSnapshot, DocumentReference, CollectionReference, DocumentSnapshot, QuerySnapshot } from "@google-cloud/firestore";
+import ImprovedRepository from "../schema/ImprovedRepository";
 
 type App = firebase.app.App;
 type Auth = firebase.auth.Auth;
@@ -42,11 +42,7 @@ export const InitFirebase = () => {
 
     //test and developmentuse firestore and cloud function in emulator 
     if(process.env.NODE_ENV!=='production'){
-      // firebaseDatabase.settings({
-      //   host: "http://localhost:8080",
-      //   ssl: false,
-      // });
-      cloudFunctions.useFunctionsEmulator('http://127.0.0.1:5001');
+      cloudFunctions.useFunctionsEmulator('http://localhost:5001');
     }
   };
 
@@ -162,7 +158,7 @@ export const ClearTestFirestore = async ()=>{
  */
 export const GetRepository = async <
 T extends fireorm.IEntity,
-ConvertToType = BaseFirestoreRepository<T>
+ConvertToType = ImprovedRepository<T>
 >
 (entity:fireorm.Constructor<T>)=>{
   return (await fireorm.getRepository(entity)) as unknown as ConvertToType;
@@ -181,6 +177,7 @@ export const FetchTripArchive = async (userId:string)=>{
     return await tripArchiveRepo.whereEqualTo('ownerId', userId).find();
   }
   catch(err){
+    console.log(err);
     throw Error(getErrorMsg(err.code));
   }
 }
@@ -198,12 +195,12 @@ export const PullNextTripArchive = async (userId:string,
   try{
     // const tripArchiveRepo = (await fireorm.getRepository(TripArchive)) as TripArchiveRepository;
     const tripArchiveRepo = await GetRepository<TripArchive, TripArchiveRepository>(TripArchive);
-    tripArchiveRepo.startAfterSnap = startAfter;
+    tripArchiveRepo.qeryAfterSnap(startAfter);
     const results = await tripArchiveRepo.whereEqualTo('ownerId', userId)
     .limit(batchLimit)
     .find();
     return {
-      lastDocSnap: tripArchiveRepo.lastDocSnap,
+      lastDocSnap: tripArchiveRepo.getLastDocQuerySnap(),
       results: results,
     }
   }
@@ -212,6 +209,12 @@ export const PullNextTripArchive = async (userId:string,
   }
 }
 
+interface CreateTripArchiveReturn {
+  /** Trip archive id */
+  id: string;
+  /** Owner id or user id */
+  ownerId: string;
+}
 /**
  * Create a new trip archive in firestore through cloud function
  * @param userId 
@@ -223,7 +226,8 @@ export const CreateTripArchive = async (userId:string, archiveName:string)=>{
       userId: userId,
       name: archiveName,
     });
-    return result.data;
+    const data : CreateTripArchiveReturn = result.data;
+    return data;
   }
   catch(err){
     console.log(err);
@@ -233,5 +237,62 @@ export const CreateTripArchive = async (userId:string, archiveName:string)=>{
 //#endregion Firestore CRUD
 
 //#region  Firestore listener
+type SnapshotCollection = CollectionReference;
+type SnapshotDocument = DocumentReference;
+type ObserverCollection = (snapshot: QuerySnapshot<FirebaseFirestore.DocumentData>) => void; 
+type ObserverDocument = (snapshot: DocumentSnapshot<FirebaseFirestore.DocumentData>) => void;
+type onListenError = (error: Error) => void;
+
+const validateParams =  (
+  watched:(SnapshotCollection|SnapshotDocument),
+  observer:(ObserverCollection|ObserverDocument),
+  onError:onListenError
+)=>{
+  const errorMsg = 'Can not watch, null paramter';
+  if(!watched){ throw new Error(errorMsg)};
+  if(!observer){ throw new Error(errorMsg)};
+  if(!onError){ throw new Error(errorMsg)};
+}
+const onListenCollection = (watched:SnapshotCollection, observer:ObserverCollection, onError:onListenError)=>{
+  validateParams(watched, observer, onError);
+  return watched.onSnapshot(observer, onError);
+}
+
+const onListenDocument = (watched:SnapshotDocument, observer:ObserverDocument, onError:onListenError)=>{
+  validateParams(watched, observer, onError);
+  return watched.onSnapshot(observer, onError);
+}
+
+export const ListenToRepository = <
+K extends fireorm.IEntity,
+T extends ImprovedRepository<K>
+>(repo:T, cb:(docs:K[])=>void, onError:onListenError)=>{
+
+  const obeserver = (qerySnapshot:QuerySnapshot)=>{
+    const docs = repo.extractFromColSnap(qerySnapshot);
+    cb(docs);
+  }
+  return onListenCollection(
+    repo.getCollectionReference(),
+    obeserver,
+    onError
+  )
+}
+
+// export const ListenToDocument = <
+// K extends IEntity,
+// T extends ImprovedRepository<K>
+// >(repo:T, document:K, cb:(doc:K)=>void, onError:onListenError)=>{
+
+//   const obeserver = (docSnapshot:DocumentSnapshot)=>{
+//     const doc = repo.extractFromDocSnap(docSnapshot);
+//     cb(doc);
+//   }
+//   return onListenDocument(
+//     document.docRef,
+//     obeserver,
+//     onError
+//   )
+// }
 
 //#endregion Firestore listener

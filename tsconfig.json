@@ -2,12 +2,7 @@
   "compilerOptions": {
     "target": "es5",
     "module": "esnext",
-    "strict": true,
     "strictPropertyInitialization": false,
-    // "noImplicitAny": true,
-    // "strictNullChecks": true,
-    // "noImplicitThis": true,
-    // "alwaysStrict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noImplicitReturns": true,
@@ -26,7 +21,8 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "jsx": "react"
+    "jsx": "react",
+    "strict": false
   },
   "include": [
     "src"
