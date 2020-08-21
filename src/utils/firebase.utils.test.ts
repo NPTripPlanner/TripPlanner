@@ -8,6 +8,7 @@ import {
   PullNextTripArchive,
   ListenToRepository,
   GetRepository,
+  ListenToDocument,
 } from "./firebase.utils";
 
 import sort from 'fast-sort';
@@ -140,20 +141,23 @@ describe("Firebase utility test", () => {
       done();
     })
 
-    it('listen collection', async()=>{
+    it('listen documents under collection', async()=>{
+      //will use jest to spy on it
       const cbObj ={ 
         fn:(docs)=>{
-          console.log('receive data', docs);
+          console.log('receive documents changed under collection', docs);
         }
       };
       const spy = jest.spyOn(cbObj, 'fn');
 
+      //listen to collection change
       const unsubscribe = ListenToRepository<TripArchive, ImprovedRepository<TripArchive>>(
         await GetRepository(TripArchive), 
         cbObj.fn,
         (err)=>console.log(err)
       );
 
+      //create 2 trip archives automatically
       const result = await new Promise((res)=>{
         let count = 0;
         const intval = setInterval(async ()=>{
@@ -172,7 +176,61 @@ describe("Firebase utility test", () => {
       expect(spy).toHaveBeenCalledTimes(3);
       return expect(result).toBeTruthy();
     })
+
+
   })
   
+  describe('listen to one document change', ()=>{
+    afterAll(async (done) => {
+      done();
+    });
+    beforeEach((done)=>{
+      window.jasmine.DEFAULT_TIMEOUT_INTERVAL = 1000000000;
+      done();
+    })
+
+    it('listen to document', async ()=>{
+      const oldName = 'change this document\'s name';
+      const repo = await GetRepository(TripArchive);
+      const result = await CreateTripArchive(fakeUser.uid, oldName);
+      const docRef = repo.getDocumentReference(result.id);
+      //will use jest to spy on it
+      const cbObj={
+        fn:(doc)=>{
+          console.log('receive document changed', doc);
+        }
+      }
   
+      const spy = jest.spyOn(cbObj, 'fn');
+  
+      //check if document's name is old name
+      let doc = await repo.findById(result.id);
+      expect(doc.name).toEqual(oldName);
+  
+      //listen to document change
+      const unsubscribe = ListenToDocument<TripArchive, ImprovedRepository<TripArchive>>(
+      repo, docRef, cbObj.fn,(err)=>console.log(err));
+      
+      //update document's name to new name
+      const newName = 'The name has been changed';
+      doc = await repo.findById(result.id);
+      doc.name = newName;
+      await repo.update(doc);
+  
+      //uncomment and manual change in firestore to see the result
+      //you have 20 sec to change value
+      // await new Promise((res)=>{
+      //   const time = setTimeout(()=>{
+      //     clearTimeout(time);
+      //     res(true);
+      //   }, 20000);
+      // });
+      
+      unsubscribe();
+  
+      expect(spy).toBeCalled();
+      doc = await repo.findById(result.id);
+      return expect(doc.name).toEqual(newName);
+    })
+  });
 });

@@ -38,7 +38,7 @@
     "build": "react-scripts build",
     "deploy-functions": "firebase deploy --only functions",
     "prettier": "prettier --write \"**/*.{js,css,scss}\"",
-    "test": "cross-env CI=true react-scripts test --env=jsdom",
+    "test": "cross-env CI=true react-scripts test --env=jsdom --forceExit --detectOpenHandles",
     "test-watch": "react-scripts test --watch",
     "eject": "react-scripts eject",
     "storybook": "start-storybook -p 9009 -s public",

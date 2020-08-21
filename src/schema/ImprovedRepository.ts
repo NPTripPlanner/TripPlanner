@@ -12,6 +12,7 @@ import {
     CollectionReference,
     Query,
     DocumentSnapshot,
+    DocumentReference,
  } from '@google-cloud/firestore';
 import { getMetadataStorage } from 'fireorm/lib/src/MetadataStorage';
 
@@ -69,6 +70,10 @@ export default class ImprovedRepository<T extends IEntity> extends BaseFirestore
      */
     getLastDocQuerySnap = (): QueryDocumentSnapshot =>{
       return this.lastDocSnap;
+    }
+
+    getDocumentReference = (pathOrId:string): DocumentReference =>{
+      return this.collectionRef.doc(pathOrId);
     }
 
     async execute(

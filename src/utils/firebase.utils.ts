@@ -279,20 +279,20 @@ T extends ImprovedRepository<K>
   )
 }
 
-// export const ListenToDocument = <
-// K extends IEntity,
-// T extends ImprovedRepository<K>
-// >(repo:T, document:K, cb:(doc:K)=>void, onError:onListenError)=>{
+export const ListenToDocument = <
+K extends fireorm.IEntity,
+T extends ImprovedRepository<K>
+>(repo:T, documentRef:DocumentReference, cb:(doc:K)=>void, onError:onListenError)=>{
 
-//   const obeserver = (docSnapshot:DocumentSnapshot)=>{
-//     const doc = repo.extractFromDocSnap(docSnapshot);
-//     cb(doc);
-//   }
-//   return onListenDocument(
-//     document.docRef,
-//     obeserver,
-//     onError
-//   )
-// }
+  const obeserver = (docSnapshot:DocumentSnapshot)=>{
+    const doc = repo.extractFromDocSnap(docSnapshot);
+    cb(doc);
+  }
+  return onListenDocument(
+    documentRef,
+    obeserver,
+    onError
+  )
+}
 
 //#endregion Firestore listener

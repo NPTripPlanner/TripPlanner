@@ -3,7 +3,6 @@ import {
     CustomRepository,
 } from 'fireorm';
 import ImprovedRepository from './ImprovedRepository';
-import { DocumentReference } from '@google-cloud/firestore';
 
 
 export type Metadata = {

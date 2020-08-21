@@ -12,7 +12,6 @@ const commonUtils = require('./utils/commom.utils');
 
 const mockAuth = require('./mock/mock.auth');
 
-
 const env = process.env.NODE_ENV;
 
 class ValidateError extends Error{
