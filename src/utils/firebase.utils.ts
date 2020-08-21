@@ -263,6 +263,16 @@ const onListenDocument = (watched:SnapshotDocument, observer:ObserverDocument, o
   return watched.onSnapshot(observer, onError);
 }
 
+/**
+ * Realtime listening on repository(collection)
+ * 
+ * function return an unsubcribe function
+ * use unsubscribe function to cancel listening
+ * e.g unsubscribe()
+ * @param repo 
+ * @param cb 
+ * @param onError 
+ */
 export const ListenToRepository = <
 K extends fireorm.IEntity,
 T extends ImprovedRepository<K>
@@ -278,7 +288,13 @@ T extends ImprovedRepository<K>
     onError
   )
 }
-
+/**
+ * Realtime listening on document
+ * 
+ * function return an unsubcribe function
+ * use unsubscribe function to cancel listening
+ * e.g unsubscribe()
+ */
 export const ListenToDocument = <
 K extends fireorm.IEntity,
 T extends ImprovedRepository<K>

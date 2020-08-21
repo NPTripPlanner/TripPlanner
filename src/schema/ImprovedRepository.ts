@@ -72,6 +72,10 @@ export default class ImprovedRepository<T extends IEntity> extends BaseFirestore
       return this.lastDocSnap;
     }
 
+    /**
+     * Return a firebase DocumentReference under collection
+     * @param pathOrId 
+     */
     getDocumentReference = (pathOrId:string): DocumentReference =>{
       return this.collectionRef.doc(pathOrId);
     }

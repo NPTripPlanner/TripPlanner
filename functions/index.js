@@ -14,6 +14,10 @@ const mockAuth = require('./mock/mock.auth');
 
 const env = process.env.NODE_ENV;
 
+if(process.env.NODE_ENV === 'production'){
+    console.log = ()=>{}
+}
+
 class ValidateError extends Error{
     constructor(code, message){
         super(message);
