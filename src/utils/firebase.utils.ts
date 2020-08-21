@@ -183,6 +183,8 @@ export const FetchTripArchive = async (userId:string)=>{
 
 /**
  * Get trip archives under user id after certain document
+ * 
+ * This fetch is for pagination use
  * @param userId user id to fetch trip archive from
  * @param amount how many to fetch at a time, default is 10
  * @param startAfter a particualr document snapshot, usually from the last fetch, if null fetch will

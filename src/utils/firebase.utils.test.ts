@@ -154,8 +154,8 @@ describe("Firebase utility test", () => {
     it('listen documents under collection', async()=>{
       //will use jest to spy on it
       const cbObj ={ 
-        fn:(docs)=>{
-          console.log('receive documents changed under collection', docs);
+        fn:(_docs)=>{
+          // console.log('receive documents changed under collection', docs);
         }
       };
       const spy = jest.spyOn(cbObj, 'fn');
@@ -206,8 +206,8 @@ describe("Firebase utility test", () => {
       const docRef = repo.getDocumentReference(result.id);
       //will use jest to spy on it
       const cbObj={
-        fn:(doc)=>{
-          console.log('receive document changed', doc);
+        fn:(_doc)=>{
+          // console.log('receive document changed', doc);
         }
       }
   
