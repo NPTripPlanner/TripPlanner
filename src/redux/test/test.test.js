@@ -6,6 +6,7 @@ describe("Redux saga test", () => {
   afterAll((done)=>{
     done();
   });
+
   it("set message saga", async () => {
     return expectSaga(setMessageSaga)
       .put({ type: "SET_MESSAGE", payload: "This is from saga" })

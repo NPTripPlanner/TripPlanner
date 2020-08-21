@@ -3,9 +3,11 @@ import { fetchTripArchives } from "./trip_manager.saga";
 import { 
     StartFetchTripArchives,
     FetchTripArchivesSuccessful,
+    FetchTripArchivesFail,
 } from './trip_manager.actions';
 import { expectSaga } from "redux-saga-test-plan";
 import * as matchers from 'redux-saga-test-plan/matchers';
+import { throwError } from 'redux-saga-test-plan/providers';
 import * as api from '../../utils/firebase.utils';
 import { TripArchive } from "../../schema/firestore.schema";
 
@@ -38,4 +40,19 @@ describe("Test trip archive saga", () => {
         .run();
     });
 
+    it("start fetch trip archives error", () => {
+        const user = {
+            uid:'fake id'
+        }
+        const fakeError = new Error('error')
+        
+        return expectSaga(fetchTripArchives)
+        .provide([
+            [matchers.call.fn(api.GetCurrentUser), user],
+            [matchers.call.fn(api.FetchTripArchiveAfter), throwError(fakeError)]
+        ])
+        .put(FetchTripArchivesFail(fakeError))
+        .dispatch(StartFetchTripArchives(3, true))
+        .run();
+    });
 });
