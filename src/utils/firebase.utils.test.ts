@@ -9,6 +9,7 @@ import {
   ListenToRepository,
   GetRepository,
   ListenToDocument,
+  GetTripArchive,
 } from "./firebase.utils";
 
 import sort from 'fast-sort';
@@ -76,6 +77,15 @@ describe("Firebase utility test", () => {
     afterAll(async (done) => {
       done();
     });
+
+    it('get specific trip archive', async ()=>{
+      const archiveName = 'special trip archive';
+      const result = await CreateTripArchive(fakeUser.uid, archiveName);
+      const archive = await GetTripArchive(fakeUser.uid, result.id);
+
+      expect(archive.ownerId).toEqual(result.ownerId);
+      return expect(archive.id).toEqual(result.id);
+    })
 
     it('get all trip archive by user id', async ()=>{
       expect(FetchTripArchive(fakeUser.uid))

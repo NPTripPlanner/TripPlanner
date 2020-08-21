@@ -165,7 +165,7 @@ ConvertToType = ImprovedRepository<T>
 }
 //#endregion Fireorm
 
-//#region Firestore CRUD
+//#region Firestore Read
 /**
  * Return all trip archives under user id
  * @param userId user id to fetch trip archive from
@@ -209,6 +209,25 @@ export const FetchTripArchiveAfter = async (userId:string,
   }
 }
 
+/**
+ * Return trip archive under user with archive id
+ * @param userId user id to get trip archive from
+ * @param archiveId trip archive id
+ */
+export const GetTripArchive = async (userId:string, archiveId:string)=>{
+  try{
+    const tripArchiveRepo = await GetRepository<TripArchive, TripArchiveRepository>(TripArchive);
+    return await tripArchiveRepo.whereEqualTo('ownerId', userId)
+    .whereEqualTo('id', archiveId)
+    .findOne();
+  }
+  catch(err){
+    throw Error(getErrorMsg(err.code));
+  }
+}
+//#endregion Firestore Read
+
+//#region Firestore write
 interface CreateTripArchiveReturn {
   /** Trip archive id */
   id: string;
@@ -234,7 +253,7 @@ export const CreateTripArchive = async (userId:string, archiveName:string)=>{
     throw Error(getErrorMsg(err.code));
   }
 }
-//#endregion Firestore CRUD
+//#endregion Firestore write
 
 //#region  Firestore listener
 type SnapshotCollection = CollectionReference;
@@ -264,7 +283,8 @@ const onListenDocument = (watched:SnapshotDocument, observer:ObserverDocument, o
 }
 
 /**
- * Realtime listening on repository(collection)
+ * Create a realtime listener to listen on
+ * specific repository(collection) change
  * 
  * function return an unsubcribe function
  * use unsubscribe function to cancel listening
@@ -289,7 +309,7 @@ T extends ImprovedRepository<K>
   )
 }
 /**
- * Realtime listening on document
+ * Create a realtime listener to listen on specific document change
  * 
  * function return an unsubcribe function
  * use unsubscribe function to cancel listening
