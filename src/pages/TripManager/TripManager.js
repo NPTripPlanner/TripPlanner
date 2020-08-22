@@ -14,6 +14,7 @@ import { Search, Add } from "@material-ui/icons";
 import StaticBG from "../../components/StaticBG/StaticBG";
 import InputField from "../../components/InputField/InputField";
 import TripCollection from "./TripCollection";
+import Collection from '../../components/Collection/Collection';
 
 import {
   StartFetchTripItems,

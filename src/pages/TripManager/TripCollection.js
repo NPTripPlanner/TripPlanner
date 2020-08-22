@@ -5,6 +5,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import TripItem from "../../components/TripItem/TripItem";
 
 import ItemImageUrl from "../../assets/images/TripManage/collection-item.jpeg";
+import Collection from "../../components/Collection/Collection";
 
 const style = {
   scrollable: {
