@@ -21,6 +21,21 @@ export const FetchTripArchivesFail = (error)=>({
   payload: error,
 });
 
+export const CreateTripArchiveStart = (tripArchiveName) =>({
+  type: actionType.CREATE_TRIP_ARCHIVE_START,
+  payload: {tripArchiveName},
+});
+
+export const CreateTripArchiveSuccessful = (tripArchiveId, tripArchiveName) =>({
+  type: actionType.CREATE_TRIP_ARCHIVE_SUCCESSFUL,
+  payload: {tripArchiveId, tripArchiveName},
+});
+
+export const CreateTripArchiveFail = (error) =>({
+  type: actionType.CREATE_TRIP_ARCHIVE_FAIL,
+  payload: error,
+})
+
 /////////////////////////////To be removed//////////////////////////////////
 export const StartFetchTripItems = () => ({
   type: actionType.FETCH_TRIP_ITEMS_START,

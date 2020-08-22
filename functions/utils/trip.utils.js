@@ -83,3 +83,14 @@ exports.transferTripArchiveTo = async (userId, archiveId, batchOrTrans)=>{
         throw Error(err);
     }
 }
+
+exports.getTripArchive = async (archiveId)=>{
+    try{
+        const archiveSnapshot = await firestore.collection('tripArchive').doc(archiveId).get();
+        if(!archiveSnapshot.exists) throw Error(`TripArchive ${archiveId} does not exists`);
+        return archiveSnapshot.data();
+    }
+    catch(err){
+        throw Error(err);
+    }
+}

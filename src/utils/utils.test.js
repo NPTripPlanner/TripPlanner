@@ -1,4 +1,4 @@
-import { SearchObjectsInCollection } from "./utils";
+import { SearchObjectsInCollection, ConverJsonObjToClass } from "./utils";
 
 describe("Utility test", () => {
   afterAll((done) => {

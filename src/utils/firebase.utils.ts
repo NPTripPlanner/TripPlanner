@@ -230,12 +230,6 @@ export const GetTripArchive = async (userId:string, archiveId:string)=>{
 //#endregion Firestore Read
 
 //#region Firestore write
-interface CreateTripArchiveReturn {
-  /** Trip archive id */
-  id: string;
-  /** Owner id or user id */
-  ownerId: string;
-}
 /**
  * Create a new trip archive in firestore through cloud function
  * @param userId user id the new trip archive will be created under
@@ -247,11 +241,11 @@ export const CreateTripArchive = async (userId:string, archiveName:string)=>{
       userId: userId,
       name: archiveName,
     });
-    const data : CreateTripArchiveReturn = result.data;
+    const data = TripArchive.transformTripArchive(result.data);
     return data;
   }
   catch(err){
-    console.log(err);
+    console.log(err)
     throw Error(getErrorMsg(err.code));
   }
 }
