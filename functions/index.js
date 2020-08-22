@@ -96,7 +96,10 @@ exports.createTripArchive = functions.https.onCall(async (data, context)=>{
             return await trip.transferTripArchiveTo(userId, archiveId, trans);
         });
 
-        const retData = await trip.getTripArchive(archiveId);
+        const retData = {
+            id: archiveId,
+            ownerId: userId,
+        };
 
         return retData;
     }
