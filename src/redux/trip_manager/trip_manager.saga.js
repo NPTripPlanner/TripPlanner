@@ -3,6 +3,8 @@ import actionType from "./trip_manager.actionType";
 import {
   FetchTripArchivesSuccessful,
   FetchTripArchivesFail,
+  CreateTripArchiveSuccessful,
+  CreateTripArchiveFail,
 
 //////////////////////////////////To be removed//////////////////////////
   FetchTripItemsSuccessful,
@@ -14,7 +16,8 @@ import {
 import { SearchObjectsInCollection } from "../../utils/utils";
 import {
   GetCurrentUser,
-  FetchTripArchiveAfter
+  FetchTripArchiveAfter,
+  CreateTripArchive,
 } from '../../utils/firebase.utils'; 
 
 import { eventChannel } from 'redux-saga';
@@ -36,6 +39,21 @@ function* doFetchTripArchives({payload:{amount, fromStart}}){
 
 export function* fetchTripArchives() {
   yield takeLatest(actionType.FETCH_TRIP_ARCHIVES_START, doFetchTripArchives);
+}
+
+export function* doCreateTripArchive({payload:{tripArchiveName}}){
+  try{
+    const user = yield call(GetCurrentUser);
+    const tripArchive = yield call(CreateTripArchive, user.uid, tripArchiveName);
+    yield put(CreateTripArchiveSuccessful(tripArchive));
+  }
+  catch(error){
+    yield put(CreateTripArchiveFail(error));
+  }
+}
+
+export function* createTripArchive(){
+  yield takeLeading(actionType.CREATE_TRIP_ARCHIVE_START, doCreateTripArchive);
 }
 
 //////////////////////////////////To be removed//////////////////////////
@@ -70,7 +88,7 @@ function* searchTripItems() {
 export default function* TripManagerSaga() {
   yield all([
     call(fetchTripArchives),
-
+    call(createTripArchive),
 
     //////////////////////////////////To be removed//////////////////////////
     call(fetchTripItems),

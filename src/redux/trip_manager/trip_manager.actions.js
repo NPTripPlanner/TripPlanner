@@ -21,7 +21,7 @@ export const FetchTripArchivesFail = (error)=>({
   payload: error,
 });
 
-export const CreateTripArchiveStart = (tripArchiveName) =>({
+export const StartCreateTripArchive = (tripArchiveName) =>({
   type: actionType.CREATE_TRIP_ARCHIVE_START,
   payload: {tripArchiveName},
 });

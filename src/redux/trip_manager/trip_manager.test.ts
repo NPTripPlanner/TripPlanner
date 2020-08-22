@@ -1,9 +1,12 @@
 // import store from "../Store";
-import { fetchTripArchives } from "./trip_manager.saga";
+import { fetchTripArchives, createTripArchive } from "./trip_manager.saga";
 import { 
     StartFetchTripArchives,
     FetchTripArchivesSuccessful,
     FetchTripArchivesFail,
+    StartCreateTripArchive,
+    CreateTripArchiveSuccessful,
+    CreateTripArchiveFail,
 } from './trip_manager.actions';
 import { expectSaga } from "redux-saga-test-plan";
 import * as matchers from 'redux-saga-test-plan/matchers';
@@ -53,6 +56,40 @@ describe("Test trip archive saga", () => {
         ])
         .put(FetchTripArchivesFail(fakeError))
         .dispatch(StartFetchTripArchives(3, true))
+        .run();
+    });
+
+    it("create trip archive", () => {
+        const fakeTripArchive = new TripArchive()
+
+        const user = {
+            uid:'fake id'
+        }
+        
+        return expectSaga(createTripArchive)
+        .provide([
+            [matchers.call.fn(api.GetCurrentUser), user],
+            [matchers.call.fn(api.CreateTripArchive),fakeTripArchive]
+        ])
+        .put(CreateTripArchiveSuccessful(fakeTripArchive))
+        .dispatch(StartCreateTripArchive('new trip archive'))
+        .run();
+    });
+
+    it("create trip archive error", () => {
+        const user = {
+            uid:'fake id'
+        }
+
+        const fakeError = new Error('error')
+        
+        return expectSaga(createTripArchive)
+        .provide([
+            [matchers.call.fn(api.GetCurrentUser), user],
+            [matchers.call.fn(api.CreateTripArchive), throwError(fakeError)]
+        ])
+        .put(CreateTripArchiveFail(fakeError))
+        .dispatch(StartCreateTripArchive('new trip archive'))
         .run();
     });
 });
