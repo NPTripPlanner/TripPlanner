@@ -26,9 +26,9 @@ export const CreateTripArchiveStart = (tripArchiveName) =>({
   payload: {tripArchiveName},
 });
 
-export const CreateTripArchiveSuccessful = (tripArchiveId, tripArchiveName) =>({
+export const CreateTripArchiveSuccessful = (tripArchive) =>({
   type: actionType.CREATE_TRIP_ARCHIVE_SUCCESSFUL,
-  payload: {tripArchiveId, tripArchiveName},
+  payload: {tripArchive},
 });
 
 export const CreateTripArchiveFail = (error) =>({

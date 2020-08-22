@@ -57,14 +57,22 @@ const TripManagerReducer = (state = initState, action) => {
       }
     }
     case actionType.CREATE_TRIP_ARCHIVE_SUCCESSFUL:{
-      const {tripArchiveId, tripArchiveName} = action.payload;
+      const {tripArchive} = action.payload;
       return {
         ...state,
         creatingTripArchive: null,
         creatingTripArchiveError: null,
+        tripArchives:[...state.tripArchives, tripArchive],
       }
     }
-
+    case actionType.CREATE_TRIP_ARCHIVE_FAIL:{
+      const {error} = action.payload;
+      return {
+        ...state,
+        creatingTripArchive: null,
+        creatingTripArchiveError: error,
+      }
+    }
 
     ////////////////////////////////To be removed///////////////////////////
     case actionType.FETCH_TRIP_ITEMS_START:
