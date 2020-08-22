@@ -241,7 +241,8 @@ export const CreateTripArchive = async (userId:string, archiveName:string)=>{
       userId: userId,
       name: archiveName,
     });
-    const data = TripArchive.transformTripArchive(result.data);
+    const archiveId = result.data.id;
+    const data = GetTripArchive(userId, archiveId);
     return data;
   }
   catch(err){
