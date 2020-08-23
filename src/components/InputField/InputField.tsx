@@ -16,6 +16,7 @@ type IProps = {
   [key:string]: {}|string;
   variant: string;
   labelText: string;
+  errorText: string;
   labelBgColor: string;
   htmlFor: string;
   required: boolean;
@@ -29,12 +30,19 @@ const style = createStyles({
     backgroundColor: props.labelBgColor,
     padding: "0 3px",
   }),
+  errorLabel:{
+    color: 'red',
+  },
+  control:{
+    margin:'5%',
+  }
 });
 
 const InputField = React.forwardRef<Ref, IProps>((props,ref) => {
   const {
     variant = "standard",
     labelText,
+    errorText,
     labelBgColor = "#fff",
     htmlFor = "input-field",
     required = false,
@@ -53,6 +61,7 @@ const InputField = React.forwardRef<Ref, IProps>((props,ref) => {
     endAdornment: !endAdornment ? null : (
       <InputAdornment position="end">{endAdornment}</InputAdornment>
     ),
+    error: errorText?true:false,
     ...rest,
   };
 
@@ -82,7 +91,7 @@ const InputField = React.forwardRef<Ref, IProps>((props,ref) => {
     }
 
     return (
-      <FormControl ref={ref} {...getVariant(variant)}>
+      <FormControl className={classes.control} ref={ref} {...getVariant(variant)}>
         {labelText ? (
           <InputLabel htmlFor={htmlFor} required={required}>
             <div className={classes.label}>
@@ -91,6 +100,12 @@ const InputField = React.forwardRef<Ref, IProps>((props,ref) => {
           </InputLabel>
         ) : null}
         {renderInput()}
+        {
+        !errorText?null:
+        <div className={classes.errorLabel}>
+          <Typography variant="caption">{errorText}</Typography>
+        </div>
+        }
       </FormControl>
     );
   }
