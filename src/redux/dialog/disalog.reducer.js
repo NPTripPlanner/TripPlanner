@@ -14,6 +14,8 @@ const DialogReducer = (state = initState, action) => {
       return { ...state, dialogName: dialogActionTypes.ForgotPass };
     case dialogActionTypes.Close:
       return { ...state, dialogName: "" };
+    case dialogActionTypes.CreateTripArchive:
+      return {...state, dialogName: dialogActionTypes.CreateTripArchive};
     default:
       return state;
   }

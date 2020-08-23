@@ -1,5 +1,4 @@
 import actionType from "./trip_manager.actionType";
-import { action } from "@storybook/addon-actions";
 
 /**
  * Start to fetch trip archives
@@ -18,7 +17,7 @@ export const FetchTripArchivesSuccessful = (tripArchiveData, fromStart) =>({
 
 export const FetchTripArchivesFail = (error)=>({
   type: actionType.FETCH_TRIP_ARCHIVES_FAIL,
-  payload: error,
+  payload: {error},
 });
 
 export const StartCreateTripArchive = (tripArchiveName) =>({
@@ -33,7 +32,7 @@ export const CreateTripArchiveSuccessful = (tripArchive) =>({
 
 export const CreateTripArchiveFail = (error) =>({
   type: actionType.CREATE_TRIP_ARCHIVE_FAIL,
-  payload: error,
+  payload: {error},
 })
 
 /////////////////////////////To be removed//////////////////////////////////

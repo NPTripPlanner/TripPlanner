@@ -11,7 +11,7 @@ export const selectFetchingTripArchives = createSelector(
 export const selectFetchingTripArchiveError = createSelector(
   [selectTripManager],
 
-  (tripManager)=>tripManager.fetchingTripArchivesError
+  (tripManager)=>tripManager.fetchingTripArchivesError?tripManager.fetchingTripArchivesError.message:null
 )
 
 export const selectTripArchives = createSelector(
@@ -24,6 +24,18 @@ export const selectMoreTripArchives = createSelector(
   [selectTripManager],
 
   (tripManager)=>tripManager.moreTripArchives
+)
+
+export const selectCreatingTripArchive = createSelector(
+  [selectTripManager],
+
+  (tripManager)=>tripManager.creatingTripArchive
+)
+
+export const selectCreatingTripArchiveError = createSelector(
+  [selectTripManager],
+
+  (tripManager)=>tripManager.creatingTripArchiveError?tripManager.creatingTripArchiveError.message:null
 )
 
   ///////////////////To be removed////////////////////////

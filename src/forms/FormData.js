@@ -1,6 +1,6 @@
 import React from "react";
 
-import { Email, Https, Person } from "@material-ui/icons";
+import { Email, Https, Person, Input } from "@material-ui/icons";
 
 import InputField from "../components/InputField/InputField";
 
@@ -128,4 +128,25 @@ export const forgotPassFormFields = [
 
 export const forgotPassFormData = {
   email: "",
+};
+
+export const creatTripArchiveFormFields = [
+  {
+    id: "tripArchiveName",
+    inputField: (
+      <InputField
+        id="tripArchiveName"
+        labelText="Name"
+        variant="outlined"
+        type="text"
+        placeholder="New Trip Archive"
+        endAdornment={<Input />}
+        required
+      />
+    ),
+  },
+];
+
+export const creatTripArchiveFormData = {
+  tripArchiveName: "",
 };

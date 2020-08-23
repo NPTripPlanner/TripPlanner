@@ -20,7 +20,6 @@ import {
   CreateTripArchive,
 } from '../../utils/firebase.utils'; 
 
-import { eventChannel } from 'redux-saga';
 import { call, put, all, takeLeading, takeLatest } from "redux-saga/effects";
 
 let lastFetchCursor = null;

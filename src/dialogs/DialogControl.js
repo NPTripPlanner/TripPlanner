@@ -14,6 +14,7 @@ import { Link } from "@material-ui/core";
 import LoginForm from "../forms/LoginForm";
 import SignupForm from "../forms/SignupForm";
 import ForgotPassForm from "../forms/ForgotPassForm";
+import CreateTripArchiveForm from '../forms/CreateTripArchiveForm'
 
 import TPDialog from "../components/TPDialog/TPDialog";
 
@@ -35,7 +36,14 @@ const DialogControl = () => {
     </TPDialog>
   );
 
-  if (user && dialogName) dispatch(Close());
+  if (user && dialogName){
+    return (
+      <React.Fragment>
+        {handleDialog(DialogTypes.CreateTripArchive, "Create Trip Archive",
+         <CreateTripArchiveForm />, [])(dialogName)}
+      </React.Fragment>
+    );
+  };
 
   if (!user) {
     return (
@@ -66,6 +74,8 @@ const DialogControl = () => {
             </Link>,
           ]
         )(dialogName)}
+        {handleDialog(DialogTypes.CreateTripArchive, "Create Trip Archive",
+         <CreateTripArchiveForm />, [])(dialogName)}
       </React.Fragment>
     );
   }

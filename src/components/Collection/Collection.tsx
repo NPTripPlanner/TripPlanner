@@ -4,6 +4,7 @@ import { makeStyles, createStyles } from "@material-ui/core/styles";
 
 type IProps = {
     direction?: string;
+    children: React.ReactNode;
 };
 type Ref = HTMLDivElement;
 
@@ -21,8 +22,8 @@ const style = createStyles({
 
 const Collection = React.forwardRef<Ref, IProps>((props, ref) => {
   const {
-      children,
       direction = 'horizontal',
+      children,
   } = props;
   const classes = makeStyles(style)({direction});
 

@@ -7,6 +7,7 @@ import * as fireorm from 'fireorm';
 import {TripArchive, TripArchiveRepository } from '../schema/firestore.schema';
 import { QueryDocumentSnapshot, DocumentReference, CollectionReference, DocumentSnapshot, QuerySnapshot } from "@google-cloud/firestore";
 import ImprovedRepository from "../schema/ImprovedRepository";
+import firebase from "firebase";
 
 type App = firebase.app.App;
 type Auth = firebase.auth.Auth;
@@ -219,9 +220,11 @@ export const FetchTripArchiveAfter = async (userId:string,
 export const GetTripArchive = async (userId:string, archiveId:string)=>{
   try{
     const tripArchiveRepo = await GetRepository<TripArchive, TripArchiveRepository>(TripArchive);
-    return await tripArchiveRepo.whereEqualTo('ownerId', userId)
+    const result = await tripArchiveRepo.whereEqualTo('ownerId', userId)
     .whereEqualTo('id', archiveId)
     .findOne();
+    console.log(userId, archiveId, result);
+    return result;
   }
   catch(err){
     throw Error(getErrorMsg(err.code));
@@ -242,7 +245,8 @@ export const CreateTripArchive = async (userId:string, archiveName:string)=>{
       name: archiveName,
     });
     const archiveId = result.data.id;
-    const data = GetTripArchive(userId, archiveId);
+    const data = await GetTripArchive(userId, archiveId);
+    
     return data;
   }
   catch(err){
