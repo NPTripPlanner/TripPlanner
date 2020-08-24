@@ -35,7 +35,13 @@ export const selectCreatingTripArchive = createSelector(
 export const selectCreatingTripArchiveError = createSelector(
   [selectTripManager],
 
-  (tripManager)=>tripManager.creatingTripArchiveError?tripManager.creatingTripArchiveError.message:null
+  (tripManager)=>tripManager.createTripArchiveError?tripManager.createTripArchiveError.message:null
+)
+
+export const selectCreateTripArchiveSuccessful = createSelector(
+  [selectTripManager],
+
+  (tripManager)=>tripManager.createTripArchiveSuccessful
 )
 
   ///////////////////To be removed////////////////////////

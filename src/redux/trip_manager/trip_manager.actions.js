@@ -33,6 +33,10 @@ export const CreateTripArchiveSuccessful = (tripArchive) =>({
 export const CreateTripArchiveFail = (error) =>({
   type: actionType.CREATE_TRIP_ARCHIVE_FAIL,
   payload: {error},
+});
+
+export const CreateTripArchiveReset = () =>({
+  type: actionType.CREATE_TRIP_ARCHIVE_RESET,
 })
 
 /////////////////////////////To be removed//////////////////////////////////

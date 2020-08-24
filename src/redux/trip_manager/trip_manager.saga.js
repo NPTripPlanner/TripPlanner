@@ -5,6 +5,7 @@ import {
   FetchTripArchivesFail,
   CreateTripArchiveSuccessful,
   CreateTripArchiveFail,
+  CreateTripArchiveReset,
 
 //////////////////////////////////To be removed//////////////////////////
   FetchTripItemsSuccessful,
@@ -20,7 +21,7 @@ import {
   CreateTripArchive,
 } from '../../utils/firebase.utils'; 
 
-import { call, put, all, takeLeading, takeLatest } from "redux-saga/effects";
+import { call, put, all, takeLeading, takeLatest, take } from "redux-saga/effects";
 
 let lastFetchCursor = null;
 function* doFetchTripArchives({payload:{amount, fromStart}}){
@@ -53,6 +54,13 @@ export function* doCreateTripArchive({payload:{tripArchiveName}}){
 
 export function* createTripArchive(){
   yield takeLeading(actionType.CREATE_TRIP_ARCHIVE_START, doCreateTripArchive);
+}
+
+export function* createTripArchiveReset(){
+  while(true){
+    yield take(actionType.CREATE_TRIP_ARCHIVE_RESET);
+    yield put(CreateTripArchiveReset());
+  }
 }
 
 //////////////////////////////////To be removed//////////////////////////
@@ -88,7 +96,8 @@ export default function* TripManagerSaga() {
   yield all([
     call(fetchTripArchives),
     call(createTripArchive),
-
+    call(createTripArchiveReset),
+    
     //////////////////////////////////To be removed//////////////////////////
     call(fetchTripItems),
     call(searchTripItems)

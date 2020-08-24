@@ -6,7 +6,9 @@ const initState = {
   tripArchives:[],
   moreTripArchives: false,
   creatingTripArchive: null,
-  creatingTripArchiveError: null,
+  createTripArchiveError: null,
+  createTripArchiveSuccessful: false,
+
 
   ///////////////////To be removed////////////////////////
   fetchingTripItems: false,
@@ -53,7 +55,8 @@ const TripManagerReducer = (state = initState, action) => {
       return {
         ...state,
         creatingTripArchive: tripArchiveName,
-        creatingTripArchiveError: null,
+        createTripArchiveError: null,
+        createTripArchiveSuccessful: false,
       }
     }
     case actionType.CREATE_TRIP_ARCHIVE_SUCCESSFUL:{
@@ -61,7 +64,8 @@ const TripManagerReducer = (state = initState, action) => {
       return {
         ...state,
         creatingTripArchive: null,
-        creatingTripArchiveError: null,
+        createTripArchiveError: null,
+        createTripArchiveSuccessful: true,
         tripArchives:[...state.tripArchives, tripArchive],
       }
     }
@@ -70,7 +74,16 @@ const TripManagerReducer = (state = initState, action) => {
       return {
         ...state,
         creatingTripArchive: null,
-        creatingTripArchiveError: error,
+        createTripArchiveError: error,
+        createTripArchiveSuccessful: false,
+      }
+    }
+    case actionType.CREATE_TRIP_ARCHIVE_RESET:{
+      return {
+        ...state,
+        creatingTripArchive: null,
+        createTripArchiveError: null,
+        createTripArchiveSuccessful: false,
       }
     }
 

@@ -6,25 +6,20 @@ const commonUtils = require('./commom.utils');
  * Create a new user
  */
 exports.createUserWith = async (userData, batchOrTrans)=>{
-    try{
-        if(!userData) throw Error('User data was not given');
+    if(!userData) throw Error('User data was not given');
 
-        const user = {
-            id: userData.id,
-            displayName: userData.displayName,
-            email: userData.email,
-            metadata: commonUtils.getMetadata(),
-            ownedArchives:[],
-        };
+    const user = {
+        id: userData.id,
+        displayName: userData.displayName,
+        email: userData.email,
+        metadata: commonUtils.getMetadata(),
+        ownedArchives:[],
+    };
 
-        const userDocRef = await firestore.collection('userArchive').doc(user.id);
+    const userDocRef = await firestore.collection('userArchive').doc(user.id);
 
-        batchOrTrans.create(userDocRef, user);
+    batchOrTrans.create(userDocRef, user);
 
-        return user.id;
-    }
-    catch(err){
-        throw err;
-    }
+    return user.id;
 }
 

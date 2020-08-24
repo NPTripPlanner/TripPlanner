@@ -36,6 +36,7 @@ const MsgFromErrorCode = (code:string) => {
       const msg = errors[code];
       if (msg) return msg;
     }
+    return `Somthing went wrong (${code})`
   }
   return `Message for error code ${code} not defined`;
 };
