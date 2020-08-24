@@ -8,9 +8,20 @@ import {
   StepLabel,
 } from "@material-ui/core";
 
-import { makeStyles } from "@material-ui/core/styles";
+import { makeStyles, createStyles } from "@material-ui/core/styles";
 
-const style = {
+export interface Steps {
+  label: string;
+  icon: React.ReactNode;
+}
+type IProps = {
+  [key:string]:{}|string;
+  steps: Array<Steps>;
+  initStep: number;
+  stepIcon: React.ElementType<any>;
+}
+
+const style = createStyles({
   main: {
     display: "flex",
     flexDirection: "column",
@@ -19,10 +30,16 @@ const style = {
   button: {
     textAlign: "center",
   },
-};
+});
 
-const TPStepper = React.forwardRef(
-  ({ steps, initStep = 1, stepIcon, ...rest }, ref) => {
+const TPStepper = React.forwardRef<any, IProps>((props, ref) => {
+    const { 
+      steps = Array<Steps>(),
+      initStep = 1,
+      stepIcon,
+      ...rest
+    } = props;
+
     const classes = makeStyles(style)();
 
     const [activeStep, setActiveStep] = React.useState(initStep);

@@ -5,9 +5,9 @@ import { ReactComponent as Plan } from "../../../assets/images/Landing/organize-
 import { ReactComponent as Travel } from "../../../assets/images/Landing/start-journey.svg";
 import { Zoom, Typography } from "@material-ui/core";
 
-import { makeStyles } from "@material-ui/core/styles";
+import { makeStyles, createStyles } from "@material-ui/core/styles";
 
-const style = {
+const style = createStyles({
   main: {
     display: "flex",
     flexDirection: "column",
@@ -20,7 +20,7 @@ const style = {
   title: {
     textAlign: "center",
   },
-};
+});
 
 const icons = {
   1: {

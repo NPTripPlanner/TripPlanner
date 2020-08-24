@@ -3,7 +3,7 @@
     "target": "es5",
     "module": "esnext",
     "strictPropertyInitialization": false,
-    "noUnusedLocals": true,
+    "noUnusedLocals": false,
     "noUnusedParameters": true,
     "noImplicitReturns": true,
     "experimentalDecorators": true,

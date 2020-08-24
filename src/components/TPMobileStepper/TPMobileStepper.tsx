@@ -1,11 +1,16 @@
 import React from "react";
 
 import { MobileStepper, Paper, Typography } from "@material-ui/core";
-import { useTheme, makeStyles } from "@material-ui/core/styles";
+import { useTheme, makeStyles, createStyles } from "@material-ui/core/styles";
 import SwipeableViews from "react-swipeable-views";
 import { autoPlay } from "react-swipeable-views-utils";
+import {Steps} from '../TPStepper/TPStepper';
 
-const style = {
+type IProps = {
+  steps?: Array<Steps>;
+}
+
+const style = createStyles({
   main: {
     display: "flex",
     flexDirection: "column",
@@ -19,11 +24,14 @@ const style = {
     justifyContent: "center",
     alignItems: "center",
   },
-};
+});
 
 const AutoPlaySwipeableViews = autoPlay(SwipeableViews);
 
-const TPMobileStepper = React.forwardRef(({ steps }, ref) => {
+const TPMobileStepper = React.forwardRef<any, IProps>((props, ref) => {
+  const { 
+    steps = Array<Steps>(), 
+  } = props;
   const classes = makeStyles(style)();
   const theme = useTheme();
 

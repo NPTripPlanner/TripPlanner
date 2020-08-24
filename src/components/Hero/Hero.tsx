@@ -5,9 +5,20 @@ import { Typography } from "@material-ui/core";
 
 import style from "./Hero.style";
 
-const Hero = React.forwardRef(({ imageUrl, title }, ref) => {
-  const classes = makeStyles(style)();
+type IProps = {
+  imageUrl: string;
+  title: string;
+}
 
+
+const Hero = React.forwardRef<any, IProps>((props, ref) => {
+  const { 
+    imageUrl,
+    title 
+  } = props;
+
+  const classes = makeStyles(style)();
+  
   return (
     <div ref={ref} className={classes.main}>
       <img className={classes.img} src={imageUrl} alt="hero-img" />

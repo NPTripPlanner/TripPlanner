@@ -1,4 +1,5 @@
-export default {
+import {createStyles} from '@material-ui/core/styles';
+export default createStyles({
   main: {
     position: "relative",
     width: "100%",
@@ -17,7 +18,7 @@ export default {
   },
   titleTypo: {
     fontSize: "4rem",
-    fontWeight: "900",
+    fontWeight: 900,
     "@media(max-width:1509px)": {
       fontSize: "3rem",
     },
@@ -43,4 +44,4 @@ export default {
       fontSize: "0.9rem",
     },
   },
-};
+});

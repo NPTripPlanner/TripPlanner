@@ -5,7 +5,6 @@ import { useHistory } from "react-router-dom";
 import {
     Avatar,
     IconButton,
-    Link,
 } from "@material-ui/core";
 import {Apps} from '@material-ui/icons';
 
@@ -14,11 +13,8 @@ import { ReactComponent as Signin } from "../../assets/images/Landing/sign-in.sv
 
 import Header from "../../components/Header/Header";
 import AvatarDropDown from './AvatarDropDown';
-import LoginForm from '../../forms/LoginForm';
-import SignupForm from '../../forms/SignupForm';
-import ForgotPassForm from '../../forms/ForgotPassForm';
 import { UserLogout } from '../../redux/user/user.actions';
-import { CreateDialog } from '../../dialogs/CreateDialog';
+import UserLoginFlowDialog from '../../dialogs/UserLoginFlowDialog';
 
 const MemberHeader = ()=>{
     const dispatch = useDispatch();
@@ -57,48 +53,15 @@ const MemberHeader = ()=>{
     );
 }
 
-//change to component
+
 const NoneMemberHeader = ()=>{
-    const [dialog, setDialog] = React.useState(null);
+    const [loginFlow, setLoginFlow] = React.useState(null);
 
-    const signupDialog = ()=>(
-        CreateDialog('Sign up', <SignupForm />, 'lg', [
-            <Link key="1" onClick={() => setDialog(loginDialog())}>
-              I dont have an account
-            </Link>,
-            ],
-            ()=>setDialog(null)
-        )
-    );
-
-    const forgotPassDialog = ()=>(
-        CreateDialog('Forgot passowrd', <ForgotPassForm />, 'lg', [
-            <Link key="1" onClick={() => setDialog(loginDialog())}>
-              I dont have an account
-            </Link>,
-            <Link key="2" onClick={() => setDialog(signupDialog())}>
-              Forgot password?
-            </Link>,
-            ],
-            ()=>setDialog(null)
-        )
-    );
-
-    const loginDialog = ()=>(
-        CreateDialog('Login', <LoginForm />, 'lg', [
-            <Link key="1" onClick={() => setDialog(signupDialog())}>
-              I dont have an account
-            </Link>,
-            <Link key="2" onClick={() => setDialog(forgotPassDialog())}>
-              Forgot password?
-            </Link>,
-            ],
-            ()=>setDialog(null)
-        )
-    );
-
-
-
+    const handleLogin = ()=>{
+        setLoginFlow(<UserLoginFlowDialog onClose={
+            ()=>setLoginFlow(null)
+          } />)
+    }
 
     return (
         <React.Fragment>
@@ -110,12 +73,12 @@ const NoneMemberHeader = ()=>{
             }
             title="Trip Planner"
             rightButtons={[
-            <IconButton onClick={() => setDialog(loginDialog())}>
+            <IconButton onClick={handleLogin}>
                 <Signin />
             </IconButton>,
             ]}
             />
-            {dialog?dialog:null}
+            {loginFlow?loginFlow:null}
         </React.Fragment>
     );
 }

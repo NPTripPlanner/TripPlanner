@@ -1,16 +1,21 @@
 import React from "react";
 
 import { Typography } from "@material-ui/core";
-import { makeStyles } from "@material-ui/core/styles";
+import { makeStyles, createStyles } from "@material-ui/core/styles";
 
-const style = {
+type IProps = {
+  [key:string]:{}|string;
+  text: string;
+}
+const style = createStyles({
   pre: {
     margin: "0 0 ",
     whiteSpace: "pre-wrap",
   },
-};
+});
 
-const FTypography = React.forwardRef(({ text, ...rest }, ref) => {
+const FTypography = React.forwardRef<any, IProps>((props, ref) => {
+  const { text, ...rest } = props
   const classes = makeStyles(style)();
   return (
     <pre ref={ref} className={classes.pre}>
