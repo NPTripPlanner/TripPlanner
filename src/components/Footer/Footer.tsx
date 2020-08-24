@@ -1,9 +1,17 @@
 import React from "react";
 
 import { Typography } from "@material-ui/core";
-import { makeStyles } from "@material-ui/core/styles";
+import { makeStyles, createStyles } from "@material-ui/core/styles";
 
-const style = (theme) => ({
+interface Section {
+  title:string;
+  links:Array<React.ReactNode>;
+}
+type IProps = {
+  sections: Array<Section>;
+}
+
+const style = (theme) => createStyles({
   main: {
     position: "relative",
     backgroundColor: theme.palette.primary.main,
@@ -29,11 +37,15 @@ const style = (theme) => ({
   },
 });
 
-const Footer = React.forwardRef(({ sections }, ref) => {
+const Footer = (props:IProps) => {
+  const {
+    sections
+  } = props;
+
   const classes = makeStyles(style)();
 
   return (
-    <div ref={ref} className={classes.main}>
+    <div className={classes.main}>
       <div>
         {sections.map((section) => {
           return (
@@ -54,6 +66,6 @@ const Footer = React.forwardRef(({ sections }, ref) => {
       </div>
     </div>
   );
-});
+};
 
 export default Footer;

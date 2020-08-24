@@ -3,11 +3,19 @@ import { Route, Redirect } from "react-router-dom";
 import { selectUserInfo } from "../redux/user/user.selector";
 import {useSelector } from "react-redux";
 
-const PrivateRoute = ({
-     component, 
-     fallbackPath='/', 
-     ...rest
-}) => {
+type IProps = {
+    [key:string]: {}|string;
+    component: React.ReactNode;
+    fallbackPath: string;
+}
+
+const PrivateRoute = (props:IProps) => {
+    const {
+        component, 
+        fallbackPath = '/', 
+        ...rest
+    } = props;
+
     const user = useSelector(selectUserInfo);
     return (
         <Route
