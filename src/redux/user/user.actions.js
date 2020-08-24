@@ -15,6 +15,14 @@ export const LoginFail = (error) => ({
   payload: error,
 });
 
+export const ClearLoginError = () => ({
+  type: actionTypes.CLEAR_LOGIN_ERROR,
+});
+
+export const ClearLoginErrorSuccessful = () => ({
+  type: actionTypes.CLEAR_LOGIN_ERROR_SUCCESSFUL,
+});
+
 export const SignupStart = (email, password, displayName) => ({
   type: actionTypes.SIGNUP_START,
   payload: { email, password, displayName },

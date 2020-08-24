@@ -17,6 +17,8 @@ const UserReducer = (state = initState, action) => {
       return { ...state, loginFail: null, user: action.payload };
     case actionTypes.LOGIN_FAIL:
       return { ...state, loginFail: action.payload, user: null };
+    case actionTypes.CLEAR_LOGIN_ERROR_SUCCESSFUL:
+      return {...state, loginFail: null}
     case actionTypes.SIGNUP_START:
       return { ...state, signupFail: null };
     case actionTypes.SIGNUP_FAIL:

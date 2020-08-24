@@ -2,6 +2,7 @@ import actionTypes from "./user.actionTypes";
 import {
   LoginSuccessful,
   LoginFail,
+  ClearLoginErrorSuccessful,
   SignupFail,
   SendForgotPassMailSuccessful,
   SendForgotPassMailFail,
@@ -10,7 +11,7 @@ import {
   UserLogout,
 } from "./user.actions";
 
-import { call, put, all, takeLeading, takeEvery, delay } from "redux-saga/effects";
+import { call, put, all, takeLeading, takeEvery, delay, take } from "redux-saga/effects";
 
 import {
   SignUpWithEmailAndPassword,
@@ -35,6 +36,13 @@ function* loginSuccessful(user) {
 
 function* loginStart() {
   yield takeLeading(actionTypes.LOGIN_START, userLogin);
+}
+
+function* clearLoginError() {
+  while(true){
+    yield take(actionTypes.CLEAR_LOGIN_ERROR);
+    yield put(ClearLoginErrorSuccessful());
+  }
 }
 
 function* userSignup({ payload: { email, password, displayName } }) {
@@ -104,6 +112,7 @@ function* logout() {
 export default function* UserSaga() {
   yield all([
     call(loginStart),
+    call(clearLoginError),
     call(signupStart),
     call(sendForgotPassMailStart),
     call(sendForgotPassMailResetStart),

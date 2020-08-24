@@ -1,6 +1,6 @@
 import React from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { LoginStart } from "../redux/user/user.actions";
+import { LoginStart, ClearLoginError } from "../redux/user/user.actions";
 
 // import TPForm from "../components/TPForm/TPForm";
 // import TPSpinner from "../components/TPSpinner/TPSpinner";
@@ -33,6 +33,13 @@ const LoginForm = () => {
  
   const classes = makeStyles(style)();
 
+  const loginError = useSelector(selectLoginFail);
+  const dispatch = React.useCallback(useDispatch(),[]);
+
+  React.useEffect(()=>{
+    return ()=>dispatch(ClearLoginError());
+  },[dispatch]);
+
   const validation = ()=>(Yup.object({
     email: Yup.string()
     .email('Invalid email address')
@@ -41,9 +48,6 @@ const LoginForm = () => {
     .min(6, 'At least 6 combination of letter, number or symbol')
     .required('Required')
   }))
-
-  const loginError = useSelector(selectLoginFail);
-  const dispatch = useDispatch();
 
   const formik = useFormik({
     initialValues:{
