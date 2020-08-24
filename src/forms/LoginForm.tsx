@@ -2,12 +2,7 @@ import React from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { LoginStart, ClearLoginError } from "../redux/user/user.actions";
 
-// import TPForm from "../components/TPForm/TPForm";
-// import TPSpinner from "../components/TPSpinner/TPSpinner";
-
 import { selectLoginFail } from "../redux/user/user.selector";
-
-// import { loginFormData, loginFormFields } from "./FormData";
 
 import { Button, Typography, CircularProgress } from "@material-ui/core";
 import { makeStyles} from '@material-ui/core/styles';

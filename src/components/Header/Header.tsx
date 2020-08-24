@@ -1,10 +1,18 @@
-import React from "react";
+import React, { RefObject } from "react";
 
 import { AppBar, Toolbar, Typography } from "@material-ui/core";
 
-import { makeStyles } from "@material-ui/core/styles";
+import { makeStyles, createStyles } from "@material-ui/core/styles";
 
-const style = {
+type IProps = {
+  brand: any;
+  title?: string;
+  rightButtons?: Array<React.ReactNode>;
+}
+
+type Ref = RefObject<HTMLDivElement>;
+
+const style = createStyles({
   group: {
     width: "100%",
     display: "flex",
@@ -23,9 +31,16 @@ const style = {
   titleTypo: {
     // fontWeight:'900'
   },
-};
+});
 
-const Header = React.forwardRef(({ brand, title, rightButtons }, ref) => {
+const Header = React.forwardRef<Ref, IProps>((props, ref) => {
+
+  const { 
+    brand, 
+    title = '', 
+    rightButtons = Array<React.ReactNode>(),
+   } = props;
+
   const classes = makeStyles(style)();
 
   const renderRightButtons = (buttons) => {

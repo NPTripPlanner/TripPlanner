@@ -10,8 +10,24 @@ import {
   Typography,
 } from "@material-ui/core";
 
-const DropDown = React.forwardRef(
-  ({ icon, dropdownItems, onItemClicked }, ref) => {
+export interface Item {
+  title: string;
+  onClick: ()=>void;
+}
+
+type IProps = {
+  icon: any;
+  dropdownItems?: Array<Item>;
+  onItemClicked?: (i:number)=>void;
+}
+
+const DropDown = (props:IProps) => {
+    const {
+      icon,
+      dropdownItems = Array<Item>(),
+      onItemClicked = null,
+    } = props;
+
     const [open, setOpen] = React.useState(false);
     const [anchorEl, setAnchorEl] = React.useState(null);
 
@@ -31,7 +47,7 @@ const DropDown = React.forwardRef(
     };
 
     return (
-      <div ref={ref}>
+      <div>
         {addPropsToComponent(icon, { onClick: handleClick })}
         <Popover
           open={open}
@@ -60,7 +76,6 @@ const DropDown = React.forwardRef(
         </Popover>
       </div>
     );
-  }
-);
+};
 
 export default DropDown;
