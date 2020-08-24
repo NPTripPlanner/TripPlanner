@@ -7,10 +7,18 @@ import { Link } from '@material-ui/core';
 
 type IProps = {
     onClose?: ()=>void;
+    onFlowEnd?: ()=>void;
 }
 
 const UserLoginFlowDialog = (props:IProps)=>{
-    const { onClose } = props;
+    const { onClose, onFlowEnd } = props;
+
+    React.useEffect(()=>{
+        
+        return ()=>{
+            if(onFlowEnd) onFlowEnd();
+        }
+    },[onFlowEnd]);
 
     const signupDialog = ()=>(
         CreateDialog('Sign up', <SignupForm />, 'lg', [

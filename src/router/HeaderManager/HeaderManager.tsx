@@ -58,9 +58,14 @@ const NoneMemberHeader = ()=>{
     const [loginFlow, setLoginFlow] = React.useState(null);
 
     const handleLogin = ()=>{
-        setLoginFlow(<UserLoginFlowDialog onClose={
+        setLoginFlow(
+            <UserLoginFlowDialog 
+            onClose={
             ()=>setLoginFlow(null)
-          } />)
+            }
+            onFlowEnd={()=>setLoginFlow(null)}
+            />
+        )
     }
 
     return (

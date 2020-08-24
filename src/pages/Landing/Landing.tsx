@@ -44,9 +44,14 @@ const Landing = () => {
 
   const handleGetStartClick = () => {
     if(!user){
-      setLoginFlow(<UserLoginFlowDialog onClose={
-        ()=>setLoginFlow(null)
-      } />)
+      setLoginFlow(
+        <UserLoginFlowDialog 
+        onClose={
+          ()=>setLoginFlow(null)
+        } 
+        onFlowEnd={()=>setLoginFlow(null)}
+        />
+      )
       return;
     }
     setRedirect(true);
@@ -60,7 +65,7 @@ const Landing = () => {
       />
     )
   }
-
+  
   return (
     <React.Fragment>
       {(loginFlow && !user)?loginFlow:null}
