@@ -8,8 +8,8 @@ import {
 } from '@material-ui/icons';
 import StaticBG from "../../components/StaticBG/StaticBG";
 import ManagerTool from './ManagerTool';
-import {CreateTripArchive} from '../../redux/dialog/dialog.actions';
-import { useDispatch } from "react-redux";
+import { CreateDialog } from "../../dialogs/CreateDialog";
+import CreateTripArchiveForm from "../../forms/CreateTripArchiveForm";
 
 const renderTripArchiveTool = (
   onArchiveSearch:(keyword)=>void,
@@ -53,16 +53,23 @@ const renderTripCollection = (
 }
 
 const TripManager = () => {
-
+  const [dialog, setDialog] = React.useState(null);
   const [isTripArchive, setIsTripArchive] = React.useState(true);
-  const dispatch = useDispatch();
 
   const handleArchiveSearch = (keyword)=>{
     console.log(keyword);
   }
 
   const handleCreateTripArchive = ()=>{
-    dispatch(CreateTripArchive());
+    setDialog(
+      CreateDialog(
+        'Create a new trip archive',
+        <CreateTripArchiveForm />,
+        'lg',
+        [],
+        ()=>setDialog(null)
+      )
+    );
   }
 
   const handleTripSearch = (keyword)=>{
@@ -83,9 +90,12 @@ const TripManager = () => {
   }
 
   return (
-    <StaticBG backgroundColor="rgba(166,166,166,0.5)">
-      {handlRenderTool()}
-    </StaticBG>
+    <React.Fragment>
+      <StaticBG backgroundColor="rgba(166,166,166,0.5)">
+        {handlRenderTool()}
+      </StaticBG>
+      {dialog?dialog:null}
+    </React.Fragment>
   );
 };
 
