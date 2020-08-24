@@ -21,7 +21,7 @@ export const Default = () => {
       </div>
       <TPDialog
         title="Dialog"
-        open={open}
+        isOpen={open}
         fullWidth={true}
         maxWidth="lg"
         onClose={toggleDialog}

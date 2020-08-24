@@ -44,7 +44,7 @@ const CreateTripArchiveForm = () => {
   });
 
   if(createTripArchiveError && formik.isSubmitting) formik.setSubmitting(false);
-
+  if(createTripArchiveSuccessful && formik.isSubmitting) formik.setSubmitting(false);
   if(createTripArchiveSuccessful){
     return (
       <div>

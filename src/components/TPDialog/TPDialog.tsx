@@ -12,9 +12,19 @@ import {
 
 import { ReactComponent as Close } from "../../assets/images/Dialog/close-button.svg";
 
-import { makeStyles, useTheme } from "@material-ui/core/styles";
+import { makeStyles, useTheme, createStyles } from "@material-ui/core/styles";
 
-const style = {
+type IProps= {
+  [key:string]: {}|string;
+  isOpen: boolean;
+  title: string;
+  footers?: Array<React.ReactNode>;
+  onClose?: ()=>void;
+  children?: React.ReactNode;
+}
+type Ref = JSX.Element;
+
+const style = createStyles({
   header: {
     display: "flex",
   },
@@ -34,10 +44,16 @@ const style = {
     top: 0,
     right: 0,
   },
-};
+});
 
-const TPDialog = React.forwardRef(
-  ({ title, footers, onClose, children, ...rest }, ref) => {
+const TPDialog = React.forwardRef<Ref, IProps>((props, ref) => {
+    const {
+      title,
+      isOpen,
+      footers=Array<React.ReactNode>(),
+      onClose=null,
+      children, 
+      ...rest } = props;
     const classes = makeStyles(style)();
 
     const theme = useTheme();
@@ -48,7 +64,7 @@ const TPDialog = React.forwardRef(
     };
 
     return (
-      <Dialog ref={ref} {...rest} fullScreen={fullScreen}>
+      <Dialog ref={ref} {...rest} fullScreen={fullScreen} open={isOpen}>
         <DialogTitle>
           <div className={classes.header}>
             <div className={classes.title}>
