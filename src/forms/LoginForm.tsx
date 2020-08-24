@@ -10,24 +10,13 @@ import { selectLoginFail } from "../redux/user/user.selector";
 // import { loginFormData, loginFormFields } from "./FormData";
 
 import { Button, Typography, CircularProgress } from "@material-ui/core";
-import { makeStyles, createStyles} from '@material-ui/core/styles';
+import { makeStyles} from '@material-ui/core/styles';
+import style from './FormStyle';
 import {Lock, Email} from '@material-ui/icons';
 import { useFormik } from 'formik';
 import InputField from '../components/InputField/InputField';
 import * as Yup from 'yup';
 
-const style = createStyles({
-  form:{
-    display:'flex',
-    flexDirection:'column',
-    justifyContent:'center',
-    alignItems:'center',
-  },
-  error:{
-    color: 'red',
-    textAlign:'center',
-  }
-});
 
 const LoginForm = () => {
  

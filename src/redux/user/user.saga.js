@@ -4,6 +4,7 @@ import {
   LoginFail,
   ClearLoginErrorSuccessful,
   SignupFail,
+  ClearSignupErrorSuccessful,
   SendForgotPassMailSuccessful,
   SendForgotPassMailFail,
   SendForgotPassMailReset,
@@ -63,6 +64,13 @@ function* signupStart() {
   yield takeLeading(actionTypes.SIGNUP_START, userSignup);
 }
 
+function* clearSignupError() {
+  while(true){
+    yield take(actionTypes.CLEAR_SIGNUP_ERROR);
+    yield put(ClearSignupErrorSuccessful());
+  }
+}
+
 function* sendForgotPassMail({ payload: { email } }) {
   try {
     yield call(SendForgotPasswordMail, email);
@@ -114,6 +122,7 @@ export default function* UserSaga() {
     call(loginStart),
     call(clearLoginError),
     call(signupStart),
+    call(clearSignupError),
     call(sendForgotPassMailStart),
     call(sendForgotPassMailResetStart),
     call(checkUserSessionStart),

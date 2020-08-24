@@ -23,6 +23,7 @@ const firebaseErrors : FirebaseErrors = {
       "The continue URL provided in the request is invalid",
     "auth/unauthorized-continue-uri":
       "he domain of the continue URL is not whitelisted",
+    "auth/network-request-failed": "Please, check your internet connection",
   },
 };
 

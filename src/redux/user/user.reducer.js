@@ -23,6 +23,8 @@ const UserReducer = (state = initState, action) => {
       return { ...state, signupFail: null };
     case actionTypes.SIGNUP_FAIL:
       return { ...state, signupFail: action.payload, user: null };
+    case actionTypes.CLEAR_SIGNUP_ERROR_SUCCESSFUL:
+      return {...state, signupFail: null};
     case actionTypes.SEND_FORGOTPASS_MAIL_RESET:
     case actionTypes.SEND_FORGOTPASS_MAIL_START:
       return {

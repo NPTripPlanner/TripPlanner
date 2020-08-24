@@ -38,6 +38,14 @@ export const SignupFail = (error) => ({
   payload: error,
 });
 
+export const ClearSignupError = () => ({
+  type: actionTypes.CLEAR_SIGNUP_ERROR,
+});
+
+export const ClearSignupErrorSuccessful = () => ({
+  type: actionTypes.CLEAR_SIGNUP_ERROR_SUCCESSFUL,
+});
+
 export const SendForgotPassMailStart = (email) => ({
   type: actionTypes.SEND_FORGOTPASS_MAIL_START,
   payload: { email },
