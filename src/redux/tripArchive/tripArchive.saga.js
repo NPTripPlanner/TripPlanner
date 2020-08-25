@@ -1,4 +1,4 @@
-import actionType from "./trip_manager.actionType";
+import actionType from "./tripArchive.actionType";
 
 import {
   FetchTripArchivesSuccessful,
@@ -6,15 +6,8 @@ import {
   CreateTripArchiveSuccessful,
   CreateTripArchiveFail,
   CreateTripArchiveReset,
+} from "./tripArchive.actions";
 
-//////////////////////////////////To be removed//////////////////////////
-  FetchTripItemsSuccessful,
-  FetchTripItemsFail,
-  SearchTripItemsSuccessful,
-} from "./trip_manager.actions";
-
-// import { FetchTripItemCollection } from "../../utils/firebase.utils";
-import { SearchObjectsInCollection } from "../../utils/utils";
 import {
   GetCurrentUser,
   FetchTripArchiveAfter,
@@ -63,43 +56,10 @@ export function* createTripArchiveReset(){
   }
 }
 
-//////////////////////////////////To be removed//////////////////////////
-function* doFetchTripItems() {
-  try {
-    // const tripItems = yield call(FetchTripItemCollection);
-    yield put(FetchTripItemsSuccessful([]));
-  } catch (error) {
-    yield put(FetchTripItemsFail(error));
-  }
-}
-
-function* fetchTripItems() {
-  yield takeLeading(actionType.FETCH_TRIP_ITEMS_START, doFetchTripItems);
-}
-
-function* doSearchTripItems({ payload: { collection, keys, keyword } }) {
-  console.log(collection, keys, keyword);
-  const result = yield call(
-    SearchObjectsInCollection,
-    collection,
-    keys,
-    keyword
-  );
-  yield put(SearchTripItemsSuccessful(result));
-}
-
-function* searchTripItems() {
-  yield takeLatest(actionType.SEARCH_TRIP_ITEMS_START, doSearchTripItems);
-}
-
 export default function* TripManagerSaga() {
   yield all([
     call(fetchTripArchives),
     call(createTripArchive),
     call(createTripArchiveReset),
-    
-    //////////////////////////////////To be removed//////////////////////////
-    call(fetchTripItems),
-    call(searchTripItems)
   ]);
 }

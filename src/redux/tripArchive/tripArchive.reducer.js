@@ -1,4 +1,4 @@
-import actionType from "./trip_manager.actionType";
+import actionType from "./tripArchive.actionType";
 
 const initState = {
   fetchingTripArchives: false,
@@ -8,14 +8,6 @@ const initState = {
   creatingTripArchive: null,
   createTripArchiveError: null,
   createTripArchiveSuccessful: false,
-
-
-  ///////////////////To be removed////////////////////////
-  fetchingTripItems: false,
-  fetchTripItemsError: null,
-  tripCollection: [],
-  searchingTripItems: false,
-  filterCollection: [],
 };
 
 const TripManagerReducer = (state = initState, action) => {
@@ -86,41 +78,6 @@ const TripManagerReducer = (state = initState, action) => {
         createTripArchiveSuccessful: false,
       }
     }
-
-    ////////////////////////////////To be removed///////////////////////////
-    case actionType.FETCH_TRIP_ITEMS_START:
-      return {
-        ...state,
-        fetchingTripItems: true,
-        fetchTripItemsError: null,
-        tripCollection: [],
-      };
-    case actionType.FETCH_TRIP_ITEMS_SUCCESSFUL:
-      return {
-        ...state,
-        fetchingTripItems: false,
-        fetchTripItemsError: null,
-        tripCollection: action.payload,
-      };
-    case actionType.FETCH_TRIP_ITEMS_FAIL:
-      return {
-        ...state,
-        fetchingTripItems: false,
-        fetchTripItemsError: action.payload,
-      };
-    case actionType.SEARCH_TRIP_ITEMS_START:
-      return {
-        ...state,
-        searchingTripItems: true,
-        filterCollection: [],
-      };
-    case actionType.SEARCH_TRIP_ITEMS_SUCCESSFUL:
-      return {
-        ...state,
-        searchingTripItems: false,
-        filterCollection: action.payload,
-      };
-    ////////////////////////////////To be removed///////////////////////////
     default:
       return state;
   }

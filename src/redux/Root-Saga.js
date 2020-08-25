@@ -1,7 +1,7 @@
 import { setMessageSaga } from "./test/test.saga";
 
 import userSaga from "./user/user.saga";
-import tripManagerSaga from "./trip_manager/trip_manager.saga";
+import tripManagerSaga from "./tripArchive/tripArchive.saga";
 
 import { all, call } from "redux-saga/effects";
 

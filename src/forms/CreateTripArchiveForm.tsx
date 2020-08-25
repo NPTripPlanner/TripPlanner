@@ -3,12 +3,12 @@ import { useSelector, useDispatch } from "react-redux";
 import { 
   StartCreateTripArchive,
   CreateTripArchiveReset 
-} from "../redux/trip_manager/trip_manager.actions";
+} from "../redux/tripArchive/tripArchive.actions";
 
 import { 
     selectCreatingTripArchiveError,
     selectCreateTripArchiveSuccessful
- } from "../redux/trip_manager/trip_manager.selector";
+ } from "../redux/tripArchive/tripArchive.selector";
 
 import { Button, Typography, CircularProgress } from "@material-ui/core";
 import { makeStyles} from '@material-ui/core/styles';

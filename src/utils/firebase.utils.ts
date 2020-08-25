@@ -43,6 +43,9 @@ export const InitFirebase = () => {
     //test and developmentuse firestore and cloud function in emulator 
     if(process.env.NODE_ENV!=='production'){
       cloudFunctions.useFunctionsEmulator('http://localhost:5001');
+    }
+    //connect to emulator firestore in dev
+    if(process.env.NODE_ENV === 'development'){
       firebasePro.firestore().settings({
         host: "localhost:8080",
         ssl: false
@@ -99,8 +102,11 @@ export const SignUpWithEmailAndPassword = async (
       throw Error('Unable to update user profile after creating user'); 
     }
     await userCredential.user.updateProfile({ displayName: displayName });
-    const result = await initializeUser(userCredential.user);
-    if(!result) throw Error('Initilize user fail');
+    //only use when dev mode
+    if(process.env.NODE_ENV === 'development'){
+      const result = await initializeUser(userCredential.user);
+      if(!result) throw Error('Initilize user fail');
+    }
     return userCredential;
   } catch (err) {
     throw Error(getErrorMsg(err.code));
