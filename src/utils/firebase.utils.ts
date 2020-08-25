@@ -7,7 +7,6 @@ import * as fireorm from 'fireorm';
 import {TripArchive, TripArchiveRepository } from '../schema/firestore.schema';
 import { QueryDocumentSnapshot, DocumentReference, CollectionReference, DocumentSnapshot, QuerySnapshot } from "@google-cloud/firestore";
 import ImprovedRepository from "../schema/ImprovedRepository";
-import firebase from "firebase";
 
 type App = firebase.app.App;
 type Auth = firebase.auth.Auth;
@@ -34,7 +33,7 @@ const firebaseConfig = {
 
 export const InitFirebase = () => {
   const setup = (app:App) => {
-    //test do not have auth
+    //test do not use auth but dev and production
     if (process.env.NODE_ENV !== "test"){ 
       firebaseAuth = app.auth();
     }
@@ -44,6 +43,10 @@ export const InitFirebase = () => {
     //test and developmentuse firestore and cloud function in emulator 
     if(process.env.NODE_ENV!=='production'){
       cloudFunctions.useFunctionsEmulator('http://localhost:5001');
+      firebasePro.firestore().settings({
+        host: "localhost:8080",
+        ssl: false
+      });
     }
   };
 
