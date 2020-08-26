@@ -1,6 +1,7 @@
 import { createSelector } from "reselect";
+import {IRootReducerState} from '../Root-Reducer';
 
-const selectUser = (state) => state.user;
+const selectUser = (state:IRootReducerState) => state.user;
 
 export const selectUserInfo = createSelector(
   [selectUser],

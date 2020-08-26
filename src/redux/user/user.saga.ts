@@ -7,12 +7,12 @@ import {
   ClearSignupErrorSuccessful,
   SendForgotPassMailSuccessful,
   SendForgotPassMailFail,
-  SendForgotPassMailReset,
+  SendForgotPassMailResetSuccessful,
   CheckUserSessionEnd,
   UserLogout,
 } from "./user.actions";
 
-import { call, put, all, takeLeading, takeEvery, delay, take } from "redux-saga/effects";
+import { call, put, all, takeLeading, delay, take } from "redux-saga/effects";
 
 import {
   SignUpWithEmailAndPassword,
@@ -22,8 +22,9 @@ import {
   Logout,
 } from "../../utils/firebase.utils";
 
-function* userLogin({ payload: { email, password } }) {
+function* userLogin(action) {
   try {
+    const { email, password } = action.payload;
     const user = yield call(LoginWithEmailAndPassword, email, password);
     yield call(loginSuccessful, user);
   } catch (err) {
@@ -46,8 +47,9 @@ function* clearLoginError() {
   }
 }
 
-function* userSignup({ payload: { email, password, displayName } }) {
+function* userSignup(action) {
   try {
+    const { email, password, displayName } = action.payload;
     const userCredential = yield call(
       SignUpWithEmailAndPassword,
       email,
@@ -71,8 +73,9 @@ function* clearSignupError() {
   }
 }
 
-function* sendForgotPassMail({ payload: { email } }) {
+function* doSendForgotPassMail(action) {
   try {
+    const { email } = action.payload;
     yield call(SendForgotPasswordMail, email);
     yield put(SendForgotPassMailSuccessful());
   } catch (err) {
@@ -81,18 +84,14 @@ function* sendForgotPassMail({ payload: { email } }) {
 }
 
 function* sendForgotPassMailStart() {
-  yield takeLeading(actionTypes.SEND_FORGOTPASS_MAIL_START, sendForgotPassMail);
+  yield takeLeading(actionTypes.SEND_FORGOTPASS_MAIL_START, doSendForgotPassMail);
 }
 
-function* doSendForgotPassMailReset() {
-  yield put(SendForgotPassMailReset());
-}
-
-function* sendForgotPassMailResetStart() {
-  yield takeEvery(
-    actionTypes.SEND_FORGOTPASS_MAIL_RESET,
-    doSendForgotPassMailReset
-  );
+function* forgotPassMailResetStart() {
+  while(true){
+    yield take(actionTypes.SEND_FORGOTPASS_MAIL_RESET);
+    yield put(SendForgotPassMailResetSuccessful());
+  }
 }
 
 function* doCheckUserSession() {
@@ -124,7 +123,7 @@ export default function* UserSaga() {
     call(signupStart),
     call(clearSignupError),
     call(sendForgotPassMailStart),
-    call(sendForgotPassMailResetStart),
+    call(forgotPassMailResetStart),
     call(checkUserSessionStart),
     call(logout),
   ]);

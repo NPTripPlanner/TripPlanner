@@ -17,8 +17,9 @@ import {
 import { call, put, all, takeLeading, takeLatest, take } from "redux-saga/effects";
 
 let lastFetchCursor = null;
-function* doFetchTripArchives({payload:{amount, fromStart}}){
+function* doFetchTripArchives(action){
   try{
+    const {amount, fromStart} = action.payload;
     const user = yield call(GetCurrentUser);
     lastFetchCursor = fromStart?null:lastFetchCursor;
     const result = yield call(FetchTripArchiveAfter, user.uid, amount, lastFetchCursor);
@@ -34,8 +35,9 @@ export function* fetchTripArchives() {
   yield takeLatest(actionType.FETCH_TRIP_ARCHIVES_START, doFetchTripArchives);
 }
 
-export function* doCreateTripArchive({payload:{tripArchiveName}}){
+export function* doCreateTripArchive(action){
   try{
+    const {tripArchiveName} = action.payload;
     const user = yield call(GetCurrentUser);
     const tripArchive = yield call(CreateTripArchive, user.uid, tripArchiveName);
     yield put(CreateTripArchiveSuccessful(tripArchive));
@@ -56,7 +58,7 @@ export function* createTripArchiveReset(){
   }
 }
 
-export default function* TripManagerSaga() {
+export default function* TripArchiveSaga() {
   yield all([
     call(fetchTripArchives),
     call(createTripArchive),

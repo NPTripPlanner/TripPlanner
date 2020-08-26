@@ -8,6 +8,8 @@ import {TripArchive, TripArchiveRepository } from '../schema/firestore.schema';
 import { QueryDocumentSnapshot, DocumentReference, CollectionReference, DocumentSnapshot, QuerySnapshot } from "@google-cloud/firestore";
 import ImprovedRepository from "../schema/ImprovedRepository";
 
+export type FirebaseUser = firebasePro.User;
+
 type App = firebase.app.App;
 type Auth = firebase.auth.Auth;
 type FirestoreDB = firebase.firestore.Firestore | any;

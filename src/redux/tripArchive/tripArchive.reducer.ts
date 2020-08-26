@@ -1,6 +1,18 @@
 import actionType from "./tripArchive.actionType";
+import {TripArchive} from '../../schema/firestore.schema';
+import { Reducer } from "redux";
 
-const initState = {
+export interface ITripArchiveState {
+  fetchingTripArchives: boolean,
+  fetchingTripArchivesError: Error | null,
+  tripArchives: Array<TripArchive>,
+  moreTripArchives: boolean,
+  creatingTripArchive: string | null,
+  createTripArchiveError: Error | null,
+  createTripArchiveSuccessful: boolean,
+}
+
+const initState : ITripArchiveState = {
   fetchingTripArchives: false,
   fetchingTripArchivesError: null,
   tripArchives:[],
@@ -10,7 +22,7 @@ const initState = {
   createTripArchiveSuccessful: false,
 };
 
-const TripManagerReducer = (state = initState, action) => {
+const TripArchiveReducer : Reducer<ITripArchiveState> = (state = initState, action) => {
   switch (action.type) {
     case actionType.FETCH_TRIP_ARCHIVES_START:{
       const {fromStart} = action.payload;
@@ -83,4 +95,4 @@ const TripManagerReducer = (state = initState, action) => {
   }
 };
 
-export default TripManagerReducer;
+export default TripArchiveReducer;
