@@ -3,7 +3,7 @@ import {
     ChangeHeaderTitleSuccessful,
     ChangeHeaderTitleFail,
 } from './header.actions';
-import { call, all, put, takeEvery } from 'redux-saga/effects';
+import { call, all, put, actionChannel, take } from 'redux-saga/effects';
 
 function * doChangeHeaderTitle(action){
     try{
@@ -17,7 +17,12 @@ function * doChangeHeaderTitle(action){
 }
 
 function* changeHeaderTitle(){
-    yield takeEvery(actionType.CHANGE_HEADER_TITLE, doChangeHeaderTitle);
+    const headerTitleChan = yield actionChannel(actionType.CHANGE_HEADER_TITLE);
+
+    while(true){
+        const action = yield take(headerTitleChan);
+        yield call(doChangeHeaderTitle, action);
+    }
 }
 
 function* headerSaga(){
