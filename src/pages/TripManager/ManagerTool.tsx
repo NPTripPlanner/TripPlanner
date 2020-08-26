@@ -4,10 +4,8 @@ import {makeStyles, createStyles} from '@material-ui/core/styles';
 import InputField from "../../components/InputField/InputField";
 import { Search } from "@material-ui/icons";
 import classNames from 'classnames';
-import { Typography } from '@material-ui/core';
 
 type IProps = {
-    title:string;
     onSearchChanged?:(keyword:string)=>void;
     leftToolButtons?:Array<React.ReactNode>;
     rightToolButtons?:Array<React.ReactNode>;
@@ -52,11 +50,6 @@ const style = createStyles({
         justifyContent:'flex-start',
         alignItems:'center',
     },
-    title:{
-        width: '100%',
-        textAlign: 'center',
-        paddingBottom:'2%',
-    }
 });
 
 const renderToolButtons = (buttons:React.ReactNode[], left:boolean)=>{
@@ -75,15 +68,11 @@ const ManagerTool = React.forwardRef<Ref, IProps>((props, ref) => {
         onSearchChanged,
         leftToolButtons=Array<React.ReactNode>(),
         rightToolButtons=Array<React.ReactNode>(),
-        title,
     } = props
     const classes = makeStyles(style)();
 
     return (
         <div ref={ref} className={classes.tool}>
-            <div className={classes.title}>
-                <Typography variant='h4'>{title}</Typography>
-            </div>
             <div className={classes.toolArea}>
                 <div className={classes.leftTool}>
                     {renderToolButtons(leftToolButtons, true)}

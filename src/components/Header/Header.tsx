@@ -1,4 +1,4 @@
-import React, { RefObject } from "react";
+import React from "react";
 
 import { AppBar, Toolbar, Typography } from "@material-ui/core";
 
@@ -8,9 +8,8 @@ type IProps = {
   brand: any;
   title?: string;
   rightButtons?: Array<React.ReactNode>;
+  onBrandClick?: ()=>void;
 }
-
-type Ref = RefObject<HTMLDivElement>;
 
 const style = createStyles({
   group: {
@@ -20,51 +19,63 @@ const style = createStyles({
     alignItems: "center",
   },
   buttonGroup: {
+    flex: '1',
     display: "flex",
-    justifyContent: "center",
+    justifyContent: "flex-end",
     alignItems: "center",
   },
   title: {
     padding: "0 1%",
-    flex: "1",
+    // flex: "1",
   },
-  titleTypo: {
-    // fontWeight:'900'
-  },
+  brand: {
+    flex: '1',
+    display: 'flex',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    cursor: 'pointer',
+  }
 });
 
-const Header = React.forwardRef<Ref, IProps>((props, ref) => {
+const renderRightButtons = (buttons) => {
+      
+  return buttons.map((btn, i) => (
+    <div key={i}>{btn}</div>
+  ));
+};
+
+const Header = React.forwardRef<any, IProps>((props, ref) => {
 
   const { 
     brand, 
     title = '', 
     rightButtons = Array<React.ReactNode>(),
+    onBrandClick = null,
    } = props;
 
   const classes = makeStyles(style)();
 
-  const renderRightButtons = (buttons) => {
-    return (
-      <div className={classes.buttonGroup}>
-        {buttons.map((btn, i) => (
-          <div key={i}>{btn}</div>
-        ))}
-      </div>
-    );
-  };
+  const handleBrandClick = ()=>{
+    if(onBrandClick) onBrandClick();
+  }
+
   return (
     <AppBar ref={ref} color="primary">
       <Toolbar>
         <div className={classes.group}>
-          {!brand ? null : <div>{brand}</div>}
+          <div className={classes.brand}>
+            {!brand ? null : <div onClick={handleBrandClick}>{brand}</div>}
+          </div>
+          <div className={classes.title}>
           {!title ? null : (
-            <div className={classes.title}>
-              <Typography className={classes.titleTypo} variant="h4">
-                {title}
-              </Typography>
-            </div>
+            <Typography variant="h4">
+              {title}
+            </Typography>
           )}
+          </div>
+          <div className={classes.buttonGroup}>
           {!rightButtons ? null : renderRightButtons(rightButtons)}
+          </div>
         </div>
       </Toolbar>
     </AppBar>

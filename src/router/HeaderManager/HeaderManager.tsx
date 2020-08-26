@@ -14,9 +14,18 @@ import { ReactComponent as Signin } from "../../assets/images/Landing/sign-in.sv
 import Header from "../../components/Header/Header";
 import AvatarDropDown from './AvatarDropDown';
 import { UserLogout } from '../../redux/user/user.actions';
+import { StartChangeHeaderTitle} from '../../redux/header/header.actions';
 import UserLoginFlowDialog from '../../dialogs/UserLoginFlowDialog';
+import { selectHeaderTitle } from '../../redux/header/header.selector';
 
-const MemberHeader = ()=>{
+type IProps = {
+    title: string;
+}
+/**
+ * Header componenet for memeber login
+ */
+const MemberHeader = (props:IProps)=>{
+    const {title} = props; 
     const dispatch = useDispatch();
     const history = useHistory();
 
@@ -35,6 +44,10 @@ const MemberHeader = ()=>{
         },
     ];
 
+    const handleBrandClick = ()=>{
+        history.push("/");
+    }
+
     return (
         <Header
         brand={
@@ -42,20 +55,25 @@ const MemberHeader = ()=>{
             <Logo />
             </Avatar>
         }
-        title="Trip Planner"
+        title={title}
         rightButtons={[
             <IconButton onClick={() => history.push("/TripManager")}>
                 <Apps />
             </IconButton>,
             <AvatarDropDown items={items} />,
         ]}
+        onBrandClick={handleBrandClick}
         />
     );
 }
 
-
-const NoneMemberHeader = ()=>{
+/**
+ * Header component for not a memeber login
+ */
+const NoneMemberHeader = (props:IProps)=>{
+    const {title} = props; 
     const [loginFlow, setLoginFlow] = React.useState(null);
+    const history = useHistory();
 
     const handleLogin = ()=>{
         setLoginFlow(
@@ -67,6 +85,9 @@ const NoneMemberHeader = ()=>{
             />
         )
     }
+    const handleBrandClick = ()=>{
+        history.push("/");
+    }
 
     return (
         <React.Fragment>
@@ -76,12 +97,13 @@ const NoneMemberHeader = ()=>{
                 <Logo />
             </Avatar>
             }
-            title="Trip Planner"
+            title={title}
             rightButtons={[
             <IconButton onClick={handleLogin}>
                 <Signin />
             </IconButton>,
             ]}
+            onBrandClick={handleBrandClick}
             />
             {loginFlow?loginFlow:null}
         </React.Fragment>
@@ -91,8 +113,14 @@ const NoneMemberHeader = ()=>{
 const HeaderManager = () => {
 
     const user = useSelector(selectUserInfo);
+    const title = useSelector(selectHeaderTitle);
+    const dispatch = React.useCallback(useDispatch(),[]);
+
+    React.useEffect(()=>{
+        dispatch(StartChangeHeaderTitle('Trip Planner'));
+    }, [dispatch]);
     
-    return user?<MemberHeader />:<NoneMemberHeader/>;
+    return user?<MemberHeader title={title} />:<NoneMemberHeader title={title} />;
 };
 
 export default HeaderManager;

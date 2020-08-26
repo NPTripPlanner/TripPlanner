@@ -18,7 +18,7 @@ const Router = ()=>{
       <Toolbar />
       <Switch>
         <Route exact path="/" render={()=><Landing />} />
-        <PrivateRoute exact path='/TripManager' fallbackPath='/' component={<TripManager />}/>
+        <PrivateRoute path='/TripManager' fallbackPath='/' component={<TripManager />}/>
         <Route path="*" render={()=><Landing />} />
       </Switch>
       <FooterManager />
