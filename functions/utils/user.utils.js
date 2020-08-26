@@ -8,13 +8,14 @@ const commonUtils = require('./commom.utils');
 exports.createUserWith = async (userData, batchOrTrans)=>{
     if(!userData) throw Error('User data was not given');
 
-    const user = {
+    let user = {
         id: userData.id,
         displayName: userData.displayName,
         email: userData.email,
-        metadata: commonUtils.getMetadata(),
         ownedArchives:[],
     };
+    user = commonUtils.addCreateDateToObject(user);
+    user = commonUtils.addModifyDateToObject(user);
 
     const userDocRef = await firestore.collection('userArchive').doc(user.id);
 

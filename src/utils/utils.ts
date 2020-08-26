@@ -1,4 +1,5 @@
 import Fuse from "fuse.js";
+import ArraySort from 'array-sort';
 
 export const SearchObjectsInCollection = (
   collection,
@@ -21,3 +22,8 @@ export const SearchObjectsInCollection = (
     return acc;
   }, []);
 };
+
+export const SortArray = (array:Array<any>, objectPath:string)=>{
+  const result = ArraySort(array, objectPath);
+  return result;
+}

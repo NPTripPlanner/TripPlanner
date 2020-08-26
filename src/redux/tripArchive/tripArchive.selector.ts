@@ -1,5 +1,6 @@
 import { createSelector } from "reselect";
 import {IRootReducerState} from '../Root-Reducer';
+import {SortArray} from '../../utils/utils';
 
 const selectTripArchive = (state:IRootReducerState) => state.tripArchive;
 
@@ -19,6 +20,16 @@ export const selectTripArchives = createSelector(
   [selectTripArchive],
 
   (tripArchive)=>tripArchive.tripArchives
+)
+
+/**
+ * Return sorted Trip Archive items
+ * @param objectPath Have to match object property path e.g date.createAt
+ */
+export const selectSortedTripArchives = (objectPath:string)=> createSelector(
+  [selectTripArchive],
+
+  (tripArchive)=>SortArray(tripArchive.tripArchives, objectPath)
 )
 
 export const selectMoreTripArchives = createSelector(

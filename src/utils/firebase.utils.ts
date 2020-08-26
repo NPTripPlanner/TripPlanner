@@ -211,6 +211,7 @@ export const FetchTripArchiveAfter = async (userId:string,
     const tripArchiveRepo = await GetRepository<TripArchive, TripArchiveRepository>(TripArchive);
     tripArchiveRepo.qeryAfterSnap(startAfter);
     const results = await tripArchiveRepo.whereEqualTo('ownerId', userId)
+    .orderByAscending('createAt')
     .limit(amount)
     .find();
     return {

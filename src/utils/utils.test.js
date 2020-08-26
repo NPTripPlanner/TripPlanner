@@ -1,4 +1,7 @@
-import { SearchObjectsInCollection, ConverJsonObjToClass } from "./utils";
+import { 
+  SearchObjectsInCollection,
+  SortArray,
+} from "./utils";
 
 describe("Utility test", () => {
   afterAll((done) => {
@@ -38,5 +41,21 @@ describe("Utility test", () => {
         tripName: "second trip",
       },
     ]);
+  });
+  
+  it('sort array', async ()=>{
+    const fakeObjects = [
+      {name:'i'},
+      {name:'h'},
+      {name:'g'},
+      {name:'f'},
+      {name:'e'},
+      {name:'d'},
+      {name:'c'},
+      {name:'b'},
+      {name:'a'},
+    ];
+
+    return expect(SortArray(fakeObjects, 'name').length).toEqual(fakeObjects.length);
   });
 });

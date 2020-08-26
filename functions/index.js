@@ -61,24 +61,25 @@ exports.initUser = functions.https.onCall(async (data, context) => {
             return await trip.transferTripArchiveTo(userId, archiveId, trans);
         })
 
-        //uncomment to create 51 trip archives for test
-        // for(let i=0; i<50; i++){
-        //     const batch = firestore.batch();
-        //     const archiveIdd = await trip.createTripArchiveWith(userId, `archive ${i}`, batch);
-        //     await batch.commit();
+        //uncomment to create 50 trip archives for test
+        for(let i=0; i<50; i++){
+            const batch = firestore.batch();
+            const archiveIdd = await trip.createTripArchiveWith(userId, `archive ${i}`, batch);
+            await batch.commit();
 
-        //     //transfer trip archive to user
-        //     await firestore.runTransaction(async (trans)=>{
-        //         return await trip.transferTripArchiveTo(userId, archiveIdd, trans);
-        //     })
-        // }
+            //transfer trip archive to user
+            await firestore.runTransaction(async (trans)=>{
+                return await trip.transferTripArchiveTo(userId, archiveIdd, trans);
+            })
+        }
     
         const tripBatch = firestore.batch();
         //TODO:create trip template
-        const tripData = {
+        let tripData = {
             tripName:'My first trip',
-            metadata: commonUtils.getMetadata(),
         }
+        tripData = commonUtils.addCreateDateToObject(tripData);
+        tripData = commonUtils.addModifyDateToObject(tripData);
         //create trip under a trip archive
         await trip.createTripUnderArchiveWith(archiveId, tripData, tripBatch);
         await tripBatch.commit();

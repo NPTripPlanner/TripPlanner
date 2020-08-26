@@ -4,7 +4,7 @@ import {
     selectFetchingTripArchives,
     selectMoreTripArchives,
     selectFetchingTripArchiveError,
-    selectTripArchives,
+    selectSortedTripArchives,
 } from '../../redux/tripArchive/tripArchive.selector';
 import StaticBG from "../../components/StaticBG/StaticBG";
 import ManagerTool from './ManagerTool';
@@ -31,7 +31,7 @@ const TripArchives = () => {
     const [dialog, setDialog] = React.useState(null);
     const fetching = useSelector(selectFetchingTripArchives);
     const fetchingError = useSelector(selectFetchingTripArchiveError);
-    const archives = useSelector(selectTripArchives);
+    const archives = useSelector(selectSortedTripArchives('metadata.createAt'));
     const moreArchives = useSelector(selectMoreTripArchives);
     const fetchAmount = 6;
     const dispatch = React.useCallback(useDispatch(), []);
