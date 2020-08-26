@@ -31,7 +31,7 @@ const TripArchives = () => {
     const [dialog, setDialog] = React.useState(null);
     const fetching = useSelector(selectFetchingTripArchives);
     const fetchingError = useSelector(selectFetchingTripArchiveError);
-    const archives = useSelector(selectSortedTripArchives('metadata.createAt'));
+    const archives = useSelector(selectSortedTripArchives('createAt'));
     const moreArchives = useSelector(selectMoreTripArchives);
     const fetchAmount = 6;
     const dispatch = React.useCallback(useDispatch(), []);

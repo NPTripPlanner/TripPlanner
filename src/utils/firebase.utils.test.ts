@@ -12,9 +12,9 @@ import {
   GetTripArchive,
 } from "./firebase.utils";
 
-import sort from 'fast-sort';
 import { TripArchive } from "../schema/firestore.schema";
 import ImprovedRepository from "../schema/ImprovedRepository";
+import {SortArray} from './utils';
 
 describe("Firebase utility test", () => {
 
@@ -131,7 +131,7 @@ describe("Firebase utility test", () => {
 
       let batch = await FetchTripArchiveAfter(fakeUser.uid, 4);
 
-      const sortedResults = sort(batch.results).asc(t=>t.metadata.createAt);
+      const sortedResults = SortArray(batch.results, 'createAt');
       // sortedResults.map((val)=>{
       //   console.log(val.metadata.createAt, val);
       //   return val;

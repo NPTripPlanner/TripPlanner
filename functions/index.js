@@ -62,16 +62,16 @@ exports.initUser = functions.https.onCall(async (data, context) => {
         })
 
         //uncomment to create 50 trip archives for test
-        for(let i=0; i<50; i++){
-            const batch = firestore.batch();
-            const archiveIdd = await trip.createTripArchiveWith(userId, `archive ${i}`, batch);
-            await batch.commit();
+        // for(let i=0; i<50; i++){
+        //     const batch = firestore.batch();
+        //     const archiveIdd = await trip.createTripArchiveWith(userId, `archive ${i}`, batch);
+        //     await batch.commit();
 
-            //transfer trip archive to user
-            await firestore.runTransaction(async (trans)=>{
-                return await trip.transferTripArchiveTo(userId, archiveIdd, trans);
-            })
-        }
+        //     //transfer trip archive to user
+        //     await firestore.runTransaction(async (trans)=>{
+        //         return await trip.transferTripArchiveTo(userId, archiveIdd, trans);
+        //     })
+        // }
     
         const tripBatch = firestore.batch();
         //TODO:create trip template
