@@ -38,6 +38,7 @@ function* doFetchTripArchives(action){
   }
   catch(error){
     yield put(FetchTripArchivesFail(error));
+    yield put(PostNotification(`Something went wrong (${error.message})`, 'error'));
   }
 }
 
@@ -55,6 +56,9 @@ export function* doCreateTripArchive(action){
   }
   catch(error){
     yield put(CreateTripArchiveFail(error));
+    yield put(PostNotification(
+      `Unable to create collection (${error.message})`,
+      'error'));
   }
 }
 
@@ -79,6 +83,7 @@ export function* doDeleteTripArchive(action){
   }
   catch(err){
     yield put(DeleteTripArchiveFail(err));
+    yield put(PostNotification(`Unable to delete collection (${err.message})`, 'success'));
   }
 }
 
