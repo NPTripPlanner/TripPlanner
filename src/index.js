@@ -8,11 +8,14 @@ import {
   StylesProvider,
   jssPreset,
 } from "@material-ui/core/styles";
+import {IconButton} from '@material-ui/core';
+import {CloseOutlined} from '@material-ui/icons';
 import theme from "./themes/defaultTheme";
 import { Provider } from "react-redux";
 import store from "./redux/Store";
 import { InitFirebase } from "./utils/firebase.utils";
 import CheckSession from './session/CheckSession';
+import { SnackbarProvider } from 'notistack';
 import * as serviceWorker from "./serviceWorker";
 
 import { create } from "jss";
@@ -23,14 +26,27 @@ const jss = create({
   plugins: [...jssPreset().plugins],
 });
 
-
+const notistackRef = React.createRef();
+const onClickDismiss = key => () => { 
+    notistackRef.current.closeSnackbar(key);
+}
 
 ReactDOM.render(
   <BrowserRouter basename={process.env.PUBLIC_URL}>
     <StylesProvider jss={jss}>
       <ThemeProvider theme={theme}>
         <Provider store={store}>
-          <CheckSession component={<Router />} />
+          <SnackbarProvider 
+          ref={notistackRef} 
+          maxSnack={3} 
+          action={(key) => (
+            <IconButton color='primary' onClick={onClickDismiss(key)}>
+                <CloseOutlined />
+            </IconButton>
+          )}
+          >
+            <CheckSession component={<Router />} />
+          </SnackbarProvider>  
         </Provider>
       </ThemeProvider>
     </StylesProvider>

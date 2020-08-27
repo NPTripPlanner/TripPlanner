@@ -18,6 +18,7 @@ import {
 } from '../../utils/firebase.utils'; 
 
 import { call, put, all, takeLeading, takeLatest, take } from "redux-saga/effects";
+import { PostNotification } from "../notification/notification.actions";
 
 function* getCurrentUser(){
   const user = yield call(GetCurrentUser);
@@ -50,6 +51,7 @@ export function* doCreateTripArchive(action){
     const user = yield call(getCurrentUser);
     const tripArchive = yield call(CreateTripArchive, user.uid, tripArchiveName);
     yield put(CreateTripArchiveSuccessful(tripArchive));
+    yield put(PostNotification(`${tripArchiveName} has been created`, 'success'));
   }
   catch(error){
     yield put(CreateTripArchiveFail(error));
@@ -69,10 +71,11 @@ export function* createTripArchiveReset(){
 
 export function* doDeleteTripArchive(action){
   try{
-    const {tripArchiveId} = action.payload;
+    const {tripArchiveId, tripArchiveName} = action.payload;
     const user = yield call(getCurrentUser);
     yield call(DeleteTripArchive, user.uid, tripArchiveId);
     yield put(DeleteTripArchiveSuccessful(tripArchiveId));
+    yield put(PostNotification(`${tripArchiveName} has been deleted`, 'success'));
   }
   catch(err){
     yield put(DeleteTripArchiveFail(err));

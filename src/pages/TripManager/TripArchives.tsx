@@ -59,11 +59,16 @@ const TripArchives = () => {
         console.log('search trip archive ', keyword);
     }
 
+    const form = (
+    <CreateTripArchiveForm
+    onSuccess={()=>setDialog(null)} 
+    />
+    );
     const handleCreateTripArchive = ()=>{
         setDialog(
           CreateDialog(
             'New collection',
-            <CreateTripArchiveForm />,
+            form,
             'lg',
             [],
             ()=>setDialog(null)

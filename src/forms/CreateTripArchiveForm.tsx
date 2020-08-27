@@ -17,15 +17,27 @@ import { useFormik } from 'formik';
 import InputField from '../components/InputField/InputField';
 import * as Yup from 'yup';
 
-const CreateTripArchiveForm = () => {
+type IProps = {
+  onSuccess?: ()=>void
+}
+const CreateTripArchiveForm = (props:IProps) => {
+  const {
+    onSuccess = null,
+  } = props;
+
   const classes = makeStyles(style)();
   const createTripArchiveError = useSelector(selectCreatingTripArchiveError);
   const createTripArchiveSuccessful = useSelector(selectCreateTripArchiveSuccessful);
   const dispatch = React.useCallback(useDispatch(),[]);
 
   React.useEffect(()=>{
+    
     return ()=>dispatch(CreateTripArchiveReset());
   },[dispatch]);
+
+  React.useEffect(()=>{
+    if(createTripArchiveSuccessful && onSuccess) onSuccess();
+  }, [createTripArchiveSuccessful, onSuccess]);
 
   const validation = ()=>(Yup.object({
     tripArchiveName: Yup.string()
@@ -45,13 +57,6 @@ const CreateTripArchiveForm = () => {
 
   if(createTripArchiveError && formik.isSubmitting) formik.setSubmitting(false);
   if(createTripArchiveSuccessful && formik.isSubmitting) formik.setSubmitting(false);
-  if(createTripArchiveSuccessful){
-    return (
-      <div>
-        <Typography variant='h6'>{`${formik.values.tripArchiveName} was created`}</Typography>
-      </div>
-    )
-  }
 
   return(
     <form 

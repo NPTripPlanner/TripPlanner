@@ -21,6 +21,7 @@ import {
   GetCurrentUser,
   Logout,
 } from "../../utils/firebase.utils";
+import { PostNotification } from "../notification/notification.actions";
 
 function* userLogin(action) {
   try {
@@ -34,6 +35,7 @@ function* userLogin(action) {
 
 function* loginSuccessful(user) {
   yield put(LoginSuccessful(user));
+  yield put(PostNotification(`Welcome back ${user.displayName}`, 'default'));
 }
 
 function* loginStart() {
@@ -56,6 +58,7 @@ function* userSignup(action) {
       password,
       displayName
     );
+    yield put(PostNotification(`Thank you for sign up as a member`, 'info'));
     yield call(loginSuccessful, userCredential.user);
   } catch (err) {
     yield put(SignupFail(err));
@@ -110,6 +113,7 @@ function* checkUserSessionStart() {
 function* doLogout() {
   yield call(Logout);
   yield put(UserLogout());
+  yield put(PostNotification('You are loggout!!!', 'default'));
 }
 
 function* logout() {
