@@ -4,6 +4,7 @@ import {
     Card,
     CardMedia,
     CardContent,
+    CardActionArea,
     Typography,
 } from "@material-ui/core";
 
@@ -16,6 +17,7 @@ type IProps = {
     image?: string;
     bgColor?: string;
     title: string;
+    onClick?: ()=>void;
 }
 type Ref = HTMLDivElement;
 
@@ -35,12 +37,13 @@ const style = createStyles({
 });
 
 
-const TripItem = React.forwardRef<Ref,IProps>((props, ref) => {
+const TripCollection = React.forwardRef<Ref,IProps>((props, ref) => {
     const {
         maxWidth = 150,
         image = defaultImage,
         bgColor = 'transparent',
         title,
+        onClick = null,
     } = props;
 
     const classes = makeStyles(style)({
@@ -49,24 +52,30 @@ const TripItem = React.forwardRef<Ref,IProps>((props, ref) => {
         bgColor
     });
 
+    const handleClick = ()=>{
+        if(onClick) onClick();
+    }
+
     return (
         <div ref={ref} className={classes.main}>
             <Card raised className={classes.card}>
-                <CardMedia
-                component="img"
-                alt="Travel Image"
-                image={image}
-                title="Travel Image"
-                />
-                <CardContent>
-                    <div className={classes.content}>
-                        <div><Typography>{title}</Typography></div>
-                    </div>
-                </CardContent>
+                <CardActionArea onClick={handleClick}>
+                    <CardMedia
+                    component="img"
+                    alt="Travel Image"
+                    image={image}
+                    title="Travel Image"
+                    />
+                    <CardContent>
+                        <div className={classes.content}>
+                            <div><Typography>{title}</Typography></div>
+                        </div>
+                    </CardContent>
+                </CardActionArea>
             </Card>
       </div>
     );
   }
 );
 
-export default TripItem;
+export default TripCollection;

@@ -4,7 +4,7 @@
     "collectionGroup": "tripArchive",
     "queryScope": "COLLECTION",
     "fields": [
-      { "fieldPath": "createAt", "order": "ASCENDING" }
+      { "fieldPath": "createAt", "order": "DECENDING" }
     ]
   }
 ],

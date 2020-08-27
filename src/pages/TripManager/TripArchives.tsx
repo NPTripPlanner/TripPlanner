@@ -1,19 +1,20 @@
 import React from 'react';
+import {useHistory} from 'react-router-dom';
 import { useDispatch,useSelector } from "react-redux";
 import {
     selectFetchingTripArchives,
     selectMoreTripArchives,
     selectFetchingTripArchiveError,
-    selectSortedTripArchives,
+    selectTripArchives,
 } from '../../redux/tripArchive/tripArchive.selector';
 import StaticBG from "../../components/StaticBG/StaticBG";
 import ManagerTool from './ManagerTool';
-import { Fab, Backdrop, CircularProgress, makeStyles } from '@material-ui/core';
+import { Fab, CircularProgress, makeStyles, Button, Typography } from '@material-ui/core';
 import {createStyles} from '@material-ui/core/styles';
 import { AddBox } from '@material-ui/icons';
 import { CreateDialog } from '../../dialogs/CreateDialog';
 import Collection from '../../components/Collection/Collection';
-import TripArchive from '../../components/TripArchive/TripArchive';
+import TripCollection from '../../components/TripCollection/TripCollection';
 import CreateTripArchiveForm from '../../forms/CreateTripArchiveForm';
 import { StartChangeHeaderTitle } from '../../redux/header/header.actions';
 import {StartFetchTripArchives} from '../../redux/tripArchive/tripArchive.actions';
@@ -23,6 +24,11 @@ const style = (theme) => createStyles({
       zIndex: theme.zIndex.drawer + 1,
       color: '#fff',
     },
+    moreBtn:{
+        width: '100%',
+        textAlign: 'center',
+        paddingBottom: '1%',
+    }
 });
 
 const TripArchives = () => {
@@ -31,17 +37,18 @@ const TripArchives = () => {
     const [dialog, setDialog] = React.useState(null);
     const fetching = useSelector(selectFetchingTripArchives);
     const fetchingError = useSelector(selectFetchingTripArchiveError);
-    const archives = useSelector(selectSortedTripArchives('createAt'));
+    const archives = useSelector(selectTripArchives);
     const moreArchives = useSelector(selectMoreTripArchives);
     const fetchAmount = 6;
     const dispatch = React.useCallback(useDispatch(), []);
+    const history = useHistory();
 
     console.log(fetchingError);
     console.log(archives);
     console.log(moreArchives);
 
     React.useEffect(()=>{
-        dispatch(StartChangeHeaderTitle('Trip Archives'));
+        dispatch(StartChangeHeaderTitle('Collection'));
         dispatch(StartFetchTripArchives(fetchAmount));
     }, [dispatch]);
 
@@ -52,7 +59,7 @@ const TripArchives = () => {
     const handleCreateTripArchive = ()=>{
         setDialog(
           CreateDialog(
-            'Create a new trip archive',
+            'New collection',
             <CreateTripArchiveForm />,
             'lg',
             [],
@@ -63,6 +70,10 @@ const TripArchives = () => {
 
     const handleFetchMore = ()=>{
         dispatch(StartFetchTripArchives(fetchAmount, false));
+    }
+
+    const handleArchiveClick = (archiveId) =>{
+        history.push(`/TripManager/${archiveId}`);
     }
 
     const addArchiveFab = (
@@ -78,22 +89,39 @@ const TripArchives = () => {
                 rightToolButtons={[addArchiveFab]}
                 onSearchChanged={handleSearch}
                 />
-                <Collection 
-                moreItems={moreArchives}
-                onLoadMore={handleFetchMore}
-                >
+                <Collection>
                 {
                     archives.map((tripArchive,i)=>{
                         return(
-                            <TripArchive key={i} title={tripArchive.name} />
+                            <TripCollection 
+                            key={i}
+                            title={tripArchive.name}
+                            onClick={()=>handleArchiveClick(tripArchive.id)}
+                            />
                         );
                     })
                 }
+                {moreArchives && !fetching?
+                    <div className={classes.moreBtn}>
+                    <Button
+                    variant="contained"
+                    color="secondary"
+                    size="large"
+                    onClick={handleFetchMore}
+                    >
+                        <Typography variant="h6">More Collections</Typography>
+                    </Button>
+                    </div>
+                    :
+                    fetching?
+                    <div className={classes.moreBtn}>
+                        <CircularProgress color="secondary" />
+                    </div>
+                    :
+                    null
+                }
                 </Collection>
             </StaticBG>
-            <Backdrop className={classes.backdrop} open={fetching}>
-                <CircularProgress color="inherit" />
-            </Backdrop>
             {dialog?dialog:null}
         </React.Fragment>
     );

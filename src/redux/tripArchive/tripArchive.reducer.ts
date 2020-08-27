@@ -70,7 +70,7 @@ const TripArchiveReducer : Reducer<ITripArchiveState> = (state = initState, acti
         creatingTripArchive: null,
         createTripArchiveError: null,
         createTripArchiveSuccessful: true,
-        tripArchives:[...state.tripArchives, tripArchive],
+        tripArchives:[tripArchive, ...state.tripArchives],
       }
     }
     case actionType.CREATE_TRIP_ARCHIVE_FAIL:{

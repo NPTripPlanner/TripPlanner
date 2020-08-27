@@ -16,11 +16,17 @@ import {
 
 import { call, put, all, takeLeading, takeLatest, take } from "redux-saga/effects";
 
+function* getCurrentUser(){
+  const user = yield call(GetCurrentUser);
+  if(!user) throw new Error('User not logged in');
+  return user;
+}
+
 let lastFetchCursor = null;
 function* doFetchTripArchives(action){
   try{
     const {amount, fromStart} = action.payload;
-    const user = yield call(GetCurrentUser);
+    const user = yield call(getCurrentUser);
     lastFetchCursor = fromStart?null:lastFetchCursor;
     const result = yield call(FetchTripArchiveAfter, user.uid, amount, lastFetchCursor);
     lastFetchCursor = result.lastDocSnap;
@@ -38,7 +44,7 @@ export function* fetchTripArchives() {
 export function* doCreateTripArchive(action){
   try{
     const {tripArchiveName} = action.payload;
-    const user = yield call(GetCurrentUser);
+    const user = yield call(getCurrentUser);
     const tripArchive = yield call(CreateTripArchive, user.uid, tripArchiveName);
     yield put(CreateTripArchiveSuccessful(tripArchive));
   }

@@ -1,6 +1,6 @@
 import React from "react";
 
-import TripArchive from "./TripArchive";
+import TripArchive from "./TripCollection";
 import { ThemeProvider } from "@material-ui/core/styles";
 import theme from "../../themes/defaultTheme";
 

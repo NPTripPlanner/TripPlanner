@@ -1,7 +1,7 @@
 import React from "react";
-import { Redirect } from "react-router-dom";
+import { Redirect, useLocation } from "react-router-dom";
 
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { selectUserInfo } from "../../redux/user/user.selector";
 
 import Hero from "../../components/Hero/Hero";
@@ -23,6 +23,7 @@ import { makeStyles } from "@material-ui/core/styles";
 
 import style from "./Landing.style";
 import UserLoginFlowDialog from "../../dialogs/UserLoginFlowDialog";
+import { StartChangeHeaderTitle } from "../../redux/header/header.actions";
 
 const getIntro = () =>
   `Plan itinerary ahead has never been an easy task for majority of people. Have a list of places you want to visit but don’t know where to begin with?  Spend too much time on planning for a trip that you can enjoy and never forgot?
@@ -41,6 +42,16 @@ const Landing = () => {
   const classes = makeStyles(style)();
 
   const user = useSelector(selectUserInfo);
+  const dispatch = React.useCallback(useDispatch(), []);
+  const { pathname } = useLocation();
+
+  React.useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+
+  React.useEffect(()=>{
+    dispatch(StartChangeHeaderTitle('Trip Planner'));
+  }, [dispatch]);
 
   const handleGetStartClick = () => {
     if(!user){
