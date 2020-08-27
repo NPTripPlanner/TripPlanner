@@ -268,6 +268,27 @@ export const CreateTripArchive = async (userId:string, archiveName:string)=>{
 }
 //#endregion Firestore write
 
+//#region Firestore delete
+/**
+ * Delete a trip archive
+ * @param userId user id the trip archive will be deleted under
+ * @param archiveId trip archive Id
+ */
+export const DeleteTripArchive = async (userId:string, archiveId:string)=>{
+  try{
+    const result = await cloudFunctions.httpsCallable('deleteTripArchive')({
+      userId: userId,
+      tripArchiveId: archiveId,
+    });
+    
+    return result.data;
+  }
+  catch(err){
+    throw Error(getErrorMsg(err.code));
+  }
+}
+//#endregion Firestore delete
+
 //#region  Firestore listener
 type SnapshotCollection = CollectionReference;
 type SnapshotDocument = DocumentReference;

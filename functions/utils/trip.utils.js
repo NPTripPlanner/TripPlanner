@@ -75,3 +75,23 @@ exports.getTripArchive = async (archiveId)=>{
     if(!archiveSnapshot.exists) throw Error(`TripArchive ${archiveId} does not exists`);
     return archiveSnapshot.data();
 }
+
+exports.getAllDocumentsPathUnder = async (documentRef, includeSelf=true)=>{
+    const docSnap = await documentRef.get();
+    if(!docSnap.exists) throw new Error(`Document ${documentRef.id} do not exists`);
+
+    let refs = [];
+    const listCols = await documentRef.listCollections();
+
+    for (let col of listCols){
+        const listDocRefs = await col.listDocuments();
+        for(let docRef of listDocRefs){
+            const returnRefs = await this.getAllDocumentsPathUnder(docRef);
+            refs.push(returnRefs);
+        }
+    }
+
+    if(includeSelf) refs.push(documentRef);
+    return refs.flat();
+}
+

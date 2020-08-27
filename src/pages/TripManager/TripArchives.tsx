@@ -17,7 +17,10 @@ import Collection from '../../components/Collection/Collection';
 import TripCollection from '../../components/TripCollection/TripCollection';
 import CreateTripArchiveForm from '../../forms/CreateTripArchiveForm';
 import { StartChangeHeaderTitle } from '../../redux/header/header.actions';
-import {StartFetchTripArchives} from '../../redux/tripArchive/tripArchive.actions';
+import {
+    StartFetchTripArchives,
+    StartDeleteTripArchive
+} from '../../redux/tripArchive/tripArchive.actions';
 
 const style = (theme) => createStyles({
     backdrop: {
@@ -68,6 +71,10 @@ const TripArchives = () => {
         );
     }
 
+    const handleDelete = (id, name)=>{
+        dispatch(StartDeleteTripArchive(id, name));
+    }
+
     const handleFetchMore = ()=>{
         dispatch(StartFetchTripArchives(fetchAmount, false));
     }
@@ -97,6 +104,7 @@ const TripArchives = () => {
                             key={i}
                             title={tripArchive.name}
                             onClick={()=>handleArchiveClick(tripArchive.id)}
+                            onDelete={()=>handleDelete(tripArchive.id, tripArchive.name)}
                             />
                         );
                     })

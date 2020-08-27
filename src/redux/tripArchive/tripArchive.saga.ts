@@ -6,12 +6,15 @@ import {
   CreateTripArchiveSuccessful,
   CreateTripArchiveFail,
   CreateTripArchiveReset,
+  DeleteTripArchiveSuccessful,
+  DeleteTripArchiveFail,
 } from "./tripArchive.actions";
 
 import {
   GetCurrentUser,
   FetchTripArchiveAfter,
   CreateTripArchive,
+  DeleteTripArchive,
 } from '../../utils/firebase.utils'; 
 
 import { call, put, all, takeLeading, takeLatest, take } from "redux-saga/effects";
@@ -64,10 +67,27 @@ export function* createTripArchiveReset(){
   }
 }
 
+export function* doDeleteTripArchive(action){
+  try{
+    const {tripArchiveId} = action.payload;
+    const user = yield call(getCurrentUser);
+    yield call(DeleteTripArchive, user.uid, tripArchiveId);
+    yield put(DeleteTripArchiveSuccessful(tripArchiveId));
+  }
+  catch(err){
+    yield put(DeleteTripArchiveFail(err));
+  }
+}
+
+export function* deleteTripArchive(){
+  yield takeLeading(actionType.DELETE_TRIP_ARCHIVE_START, doDeleteTripArchive);
+}
+
 export default function* TripArchiveSaga() {
   yield all([
     call(fetchTripArchives),
     call(createTripArchive),
     call(createTripArchiveReset),
+    call(deleteTripArchive),
   ]);
 }

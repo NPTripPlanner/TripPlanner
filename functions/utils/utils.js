@@ -8,4 +8,18 @@ module.exports = {
     },
     adminApp: ()=>adminApp,
     firestore: ()=>firestore,
+    deleteDocuments: async (docRefs)=>{
+        if(!docRefs) return;
+        
+        const results = await firestore.runTransaction(async (trans)=>{
+            const deletedDocs = [];
+            for(let ref of docRefs){
+                deletedDocs.push(ref.path);
+                trans.delete(ref);
+            }
+            return deletedDocs;
+        });
+
+        console.log(`${results.length} documents was deleted`, results);
+    }
 }

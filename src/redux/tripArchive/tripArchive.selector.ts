@@ -55,3 +55,15 @@ export const selectCreateTripArchiveSuccessful = createSelector(
 
   (tripArchive)=>tripArchive.createTripArchiveSuccessful
 )
+
+export const selectDeletingTripArchive = createSelector(
+  [selectTripArchive],
+
+  (tripArchive)=>tripArchive.deletingTripArchive
+)
+
+export const selectDeleteTripArchiveError = createSelector(
+  [selectTripArchive],
+
+  (tripArchive)=>tripArchive.deleteTripArchiveError?tripArchive.deleteTripArchiveError.message:null
+)

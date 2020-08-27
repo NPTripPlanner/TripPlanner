@@ -10,6 +10,8 @@ export interface ITripArchiveState {
   creatingTripArchive: string | null,
   createTripArchiveError: Error | null,
   createTripArchiveSuccessful: boolean,
+  deletingTripArchive: string | null,
+  deleteTripArchiveError: Error | null,
 }
 
 const initState : ITripArchiveState = {
@@ -20,6 +22,8 @@ const initState : ITripArchiveState = {
   creatingTripArchive: null,
   createTripArchiveError: null,
   createTripArchiveSuccessful: false,
+  deletingTripArchive: null,
+  deleteTripArchiveError: null,
 };
 
 const TripArchiveReducer : Reducer<ITripArchiveState> = (state = initState, action) => {
@@ -88,6 +92,34 @@ const TripArchiveReducer : Reducer<ITripArchiveState> = (state = initState, acti
         creatingTripArchive: null,
         createTripArchiveError: null,
         createTripArchiveSuccessful: false,
+      }
+    }
+    case actionType.DELETE_TRIP_ARCHIVE_START:{
+      const {tripArchiveName} = action.payload
+      return {
+        ...state,
+        deletingTripArchive: tripArchiveName,
+        deleteTripArchiveError: null,
+      }
+    }
+    case actionType.DELETE_TRIP_ARCHIVE_FAIL:{
+      const {error} = action.payload;
+      return {
+        ...state,
+        deletingTripArchive: null,
+        deleteTripArchiveError: error,
+      } 
+    }
+    case actionType.DELETE_TRIP_ARCHIVE_SUCCESSFUL:{
+      const {tripArchiveId} = action.payload;
+      const newTripArchives = state.tripArchives.filter(archive=>{
+        return archive.id!==tripArchiveId;
+      });
+      return {
+        ...state,
+        tripArchives: newTripArchives,
+        deletingTripArchive: null,
+        deleteTripArchiveError: null
       }
     }
     default:

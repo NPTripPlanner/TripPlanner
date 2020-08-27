@@ -4,6 +4,7 @@ import {
   // ClearApp,
   initializeUser,
   CreateTripArchive,
+  DeleteTripArchive,
   FetchTripArchive,
   FetchTripArchiveAfter,
   ListenToRepository,
@@ -142,6 +143,20 @@ describe("Firebase utility test", () => {
 
   })
 
+  describe('delete trip archive', ()=>{
+    afterAll(async (done) => {
+      done();
+    });
+
+    it('delete 1 trip archive', async ()=>{
+      const result = await CreateTripArchive(fakeUser.uid, 'If you see this, it is a problem');
+
+      const deleteResult = DeleteTripArchive(fakeUser.uid, result.id);
+      return expect(deleteResult).toBeTruthy();
+
+    })
+  })
+
   describe('listen to collection', ()=>{
     afterAll(async (done) => {
       done();
@@ -183,7 +198,6 @@ describe("Firebase utility test", () => {
       unsubscribe();
 
       expect(spy).toHaveBeenCalled();
-      expect(spy).toHaveBeenCalledTimes(3);
       return expect(result).toBeTruthy();
     })
 

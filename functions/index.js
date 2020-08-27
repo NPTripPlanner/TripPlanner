@@ -5,7 +5,8 @@ const adminApp = admin.initializeApp({
 })
 const firestore = adminApp.firestore();
 
-require('./utils/utils').init(adminApp);
+const utils = require('./utils/utils');
+utils.init(adminApp);
 const trip = require('./utils/trip.utils');
 const user = require('./utils/user.utils');
 const commonUtils = require('./utils/commom.utils');
@@ -108,6 +109,20 @@ exports.createTripArchive = functions.https.onCall(async (data, context)=>{
             return await trip.transferTripArchiveTo(userId, archiveId, trans);
         });
 
+        //uncomment to create a dummy trip template
+        // const tripBatch = firestore.batch();
+        // for(let i=0; i<15; i++){
+        // //TODO:create trip template
+        // let tripData = {
+        //     tripName:'My first trip',
+        // }
+        // tripData = commonUtils.addCreateDateToObject(tripData);
+        // tripData = commonUtils.addModifyDateToObject(tripData);
+        // //create trip under a trip archive
+        // await trip.createTripUnderArchiveWith(archiveId, tripData, tripBatch);
+        // }
+        // await tripBatch.commit();
+
         const retData = {
             id: archiveId,
             ownerId: userId,
@@ -121,3 +136,26 @@ exports.createTripArchive = functions.https.onCall(async (data, context)=>{
     }
 });
 
+exports.deleteTripArchive = functions.https.onCall(async (data, context)=>{
+    try{
+        validateAuthFromFunctionContext(context, 'Delete trip archive fail');
+
+        const {userId, tripArchiveId} = data;
+        const docRef = await firestore.collection('tripArchive').doc(tripArchiveId);
+        const docSnapshot = await docRef.get();
+        if(!docSnapshot.exists){
+            throw new Error(`Trip archive ${tripArchiveId} do not exists`);
+        }
+        if(docSnapshot.data().ownerId !== userId){
+            throw new Error(`${tripArchiveId}'s ownerId do not match ${userId}`);
+        }
+
+        const allDocRefs = await trip.getAllDocumentsPathUnder(docRef);
+        await utils.deleteDocuments(allDocRefs);
+        return true;
+    }
+    catch(err){
+        console.log(err);
+        throw new functions.https.HttpsError(err.code, err.message);
+    }
+});

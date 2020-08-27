@@ -40,3 +40,18 @@ export const CreateTripArchiveFail = (error) =>action(
 export const CreateTripArchiveReset = () =>action(
   actionType.CREATE_TRIP_ARCHIVE_RESET,
 )
+
+export const StartDeleteTripArchive = (tripArchiveId, tripArchiveName) =>action(
+  actionType.DELETE_TRIP_ARCHIVE_START,
+  {tripArchiveId, tripArchiveName},
+);
+
+export const DeleteTripArchiveFail = (error) =>action(
+  actionType.DELETE_TRIP_ARCHIVE_FAIL,
+  {error},
+);
+
+export const DeleteTripArchiveSuccessful = (tripArchiveId) =>action(
+  actionType.DELETE_TRIP_ARCHIVE_SUCCESSFUL,
+  {tripArchiveId},
+);

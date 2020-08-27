@@ -42,4 +42,23 @@ describe('Firestore functions test', ()=>{
             });
         })
     })
+
+    describe('delete trip archive', ()=>{
+        it('test delete trip archive function', async ()=>{
+            let wrapped = test.wrap(firestoreFunctions.createTripArchive);
+            const result = await wrapped({
+                userId: userData.id,
+                name:'a new trip to be deleted',
+            });
+            expect(result).toMatchObject({
+                ownerId: userData.id,
+            });
+            wrapped = test.wrap(firestoreFunctions.deleteTripArchive);
+            const deleteResult = await wrapped({
+                userId: userData.id,
+                tripArchiveId: result.id,
+            });
+            expect(deleteResult).toBeTruthy();
+        })
+    })
 })

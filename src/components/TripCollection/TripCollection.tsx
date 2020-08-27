@@ -5,8 +5,11 @@ import {
     CardMedia,
     CardContent,
     CardActionArea,
+    CardActions,
     Typography,
+    IconButton,
 } from "@material-ui/core";
+import {Delete} from '@material-ui/icons';
 
 import { makeStyles, createStyles } from "@material-ui/core/styles";
 
@@ -18,6 +21,7 @@ type IProps = {
     bgColor?: string;
     title: string;
     onClick?: ()=>void;
+    onDelete?: ()=>void;
 }
 type Ref = HTMLDivElement;
 
@@ -44,6 +48,7 @@ const TripCollection = React.forwardRef<Ref,IProps>((props, ref) => {
         bgColor = 'transparent',
         title,
         onClick = null,
+        onDelete = null,
     } = props;
 
     const classes = makeStyles(style)({
@@ -54,6 +59,10 @@ const TripCollection = React.forwardRef<Ref,IProps>((props, ref) => {
 
     const handleClick = ()=>{
         if(onClick) onClick();
+    }
+
+    const handleDelete = ()=>{
+        if(onDelete) onDelete();
     }
 
     return (
@@ -72,6 +81,11 @@ const TripCollection = React.forwardRef<Ref,IProps>((props, ref) => {
                         </div>
                     </CardContent>
                 </CardActionArea>
+                <CardActions>
+                    <IconButton onClick={handleDelete}>
+                        <Delete />
+                    </IconButton>
+                </CardActions>
             </Card>
       </div>
     );
