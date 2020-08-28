@@ -35,6 +35,12 @@ class CommonUtils {
         object['modifyAt'] = mDate;
         return object;
     }
+
+    static getTagsfromName(name, splitBy=' '){
+        if(!name) return [];
+        const result = name.split(splitBy);
+        return result?result:[];
+    }
 }
 
 module.exports = CommonUtils;

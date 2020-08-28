@@ -10,6 +10,7 @@ utils.init(adminApp);
 const trip = require('./utils/trip.utils');
 const user = require('./utils/user.utils');
 const commonUtils = require('./utils/commom.utils');
+const trigger = require('./utils/trigger.utils');
 
 const mockAuth = require('./mock/mock.auth');
 
@@ -177,3 +178,9 @@ exports.updateTripArchiveName = functions.https.onCall(async (data, context)=>{
         throw new functions.https.HttpsError(err.code, err.message);
     }
 });
+
+exports.triggerTripArchiveCreate = functions.firestore.document('tripArchive/{archive_id}')
+.onCreate(trigger.onCreateTripArchive);
+
+exports.triggerTripArchiveUpdate = functions.firestore.document('tripArchive/{archive_id}')
+.onUpdate(trigger.onUpdateTripArchive);

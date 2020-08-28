@@ -8,10 +8,13 @@ const commonUtils = require('./commom.utils');
 exports.createTripArchiveWith = async (ownerId, archiveName, batchOrTrans)=>{
     const archiveDocRef = await firestore.collection('tripArchive').doc();
 
+    let name = archiveName?archiveName:'New collection';
+
     let archiveData = {
         id: archiveDocRef.id,
         ownerId: ownerId?ownerId:'System',
-        name: archiveName?archiveName:'New collection'
+        name,
+        tags: [],
     }
     archiveData = commonUtils.addCreateDateToObject(archiveData);
     archiveData = commonUtils.addModifyDateToObject(archiveData);
