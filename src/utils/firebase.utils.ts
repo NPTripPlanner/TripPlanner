@@ -178,10 +178,22 @@ ConvertToType = ImprovedRepository<T>
 //#endregion Fireorm
 
 //#region Firestore Search
-export const SearchTripArchive = async (keyword:string)=>{
+export const SearchTripArchive = async (userId:string, keyword:string)=>{
   try{
+    let words: string[] = keyword.split(' ');
+    if(!words) {
+      words = [keyword];
+    }
+    console.log(words);
     const tripArchiveRepo = await GetRepository(TripArchive);
-    return await tripArchiveRepo.whereEqualTo('name', keyword).find();
+    const q = await tripArchiveRepo.getCollectionReference()
+    .where('tags', 'array-contains-any', words).get();
+    const results = [];
+    for(let snap of q.docs){
+      const tripArchive = await GetTripArchive(userId, snap.id);
+      results.push(tripArchive);
+    }
+    return results;
   }
   catch(err){
     throw Error(getErrorMsg(err.code));

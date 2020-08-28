@@ -291,13 +291,11 @@ describe("Firebase utility test", () => {
 
     it('search trip archive by name', async ()=>{
 
-      const result = await SearchTripArchive('france');
-      expect(result).toHaveLength(0);
-      
-      return expect(SearchTripArchive('trip to france'))
-      .resolves
-      .toHaveLength(1);
+      const result = await SearchTripArchive(fakeUser.uid,'france');
+      expect(result).toHaveLength(1);
 
+      const moreResult = await SearchTripArchive(fakeUser.uid, 'trip to france');
+      return expect(moreResult.length).toBeGreaterThan(1);
     })
   })
 });

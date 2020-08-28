@@ -16,6 +16,7 @@ export class TripArchive {
     modifyAt : Date;
     ownerId: string;
     name: string;
+    tags: Array<string>;
 }
 
 
