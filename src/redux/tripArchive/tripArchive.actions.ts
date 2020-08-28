@@ -37,8 +37,12 @@ export const CreateTripArchiveFail = (error) =>action(
   {error},
 );
 
-export const CreateTripArchiveReset = () =>action(
-  actionType.CREATE_TRIP_ARCHIVE_RESET,
+export const CreateTripArchiveStateReset = () =>action(
+  actionType.CREATE_TRIP_ARCHIVE_STATE_RESET,
+)
+
+export const CreateTripArchiveResetSuccessful = () =>action(
+  actionType.CREATE_TRIP_ARCHIVE_RESET_SUCCESSFUL,
 )
 
 export const StartDeleteTripArchive = (tripArchiveId, tripArchiveName) =>action(
@@ -55,3 +59,26 @@ export const DeleteTripArchiveSuccessful = (tripArchiveId) =>action(
   actionType.DELETE_TRIP_ARCHIVE_SUCCESSFUL,
   {tripArchiveId},
 );
+
+export const StartUpdateTripArchiveName = (tripArchiveId, newName, oldName) =>action(
+  actionType.UPDATE_TRIP_ARCHIVE_NAME_START,
+  {tripArchiveId, newName, oldName},
+);
+
+export const UpdateTripArchiveNameFail = (error) =>action(
+  actionType.UPDATE_TRIP_ARCHIVE_NAME_FAIL,
+  {error},
+);
+
+export const UpdateTripArchiveNameSuccessful = (tripArchive) =>action(
+  actionType.UPDATE_TRIP_ARCHIVE_NAME_SUCCESSFUL,
+  {tripArchive},
+);
+
+export const UpdateTripArchiveNameStateReset = () =>action(
+  actionType.UPDATE_TRIP_ARCHIVE_NAME_STATE_RESET,
+)
+
+export const UpdateTripArchiveNameStateResetSuccessful = () =>action(
+  actionType.UPDATE_TRIP_ARCHIVE_NAME_STATE_RESET_SUCCESSFUL,
+)

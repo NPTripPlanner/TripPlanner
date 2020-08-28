@@ -235,7 +235,7 @@ export const GetTripArchive = async (userId:string, archiveId:string)=>{
     const result = await tripArchiveRepo.whereEqualTo('ownerId', userId)
     .whereEqualTo('id', archiveId)
     .findOne();
-    console.log(userId, archiveId, result);
+    
     return result;
   }
   catch(err){
@@ -267,6 +267,25 @@ export const CreateTripArchive = async (userId:string, archiveName:string)=>{
   }
 }
 //#endregion Firestore write
+
+//#region Firestore update
+export const UpdateTripArchiveName = async (userId:string, archiveId:string, archiveName:string)=>{
+  try{
+    await cloudFunctions.httpsCallable('updateTripArchiveName')({
+      userId: userId,
+      tripArchiveId: archiveId,
+      name: archiveName,
+    });
+
+    const data = await GetTripArchive(userId, archiveId);
+    
+    return data;
+  }
+  catch(err){
+    throw Error(getErrorMsg(err.code));
+  }
+}
+//#endregion Firestore update
 
 //#region Firestore delete
 /**

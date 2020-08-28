@@ -21,6 +21,8 @@ import {
     StartFetchTripArchives,
     StartDeleteTripArchive
 } from '../../redux/tripArchive/tripArchive.actions';
+import UpdateTripArchiveForm from '../../forms/UpdateTripArchiveForm';
+import { TripArchive } from '../../schema/firestore.schema';
 
 const style = (theme) => createStyles({
     backdrop: {
@@ -59,7 +61,7 @@ const TripArchives = () => {
         console.log('search trip archive ', keyword);
     }
 
-    const form = (
+    const createform = (
     <CreateTripArchiveForm
     onSuccess={()=>setDialog(null)} 
     />
@@ -68,7 +70,7 @@ const TripArchives = () => {
         setDialog(
           CreateDialog(
             'New collection',
-            form,
+            createform,
             'lg',
             [],
             ()=>setDialog(null)
@@ -76,8 +78,26 @@ const TripArchives = () => {
         );
     }
 
-    const handleDelete = (id, name)=>{
-        dispatch(StartDeleteTripArchive(id, name));
+    const updateForm = (tripArchive:TripArchive) => (
+        <UpdateTripArchiveForm 
+        tripArchive={tripArchive}
+        onSuccess={()=>setDialog(null)} 
+        />
+    );
+    const handleUpdateTripArchiveName = (tripArchive:TripArchive)=>{
+        setDialog(
+            CreateDialog(
+              'Change name',
+              updateForm(tripArchive),
+              'lg',
+              [],
+              ()=>setDialog(null)
+            )
+        );
+    }
+
+    const handleDelete = (tripArchive:TripArchive)=>{
+        dispatch(StartDeleteTripArchive(tripArchive.id, tripArchive.name));
     }
 
     const handleFetchMore = ()=>{
@@ -109,7 +129,10 @@ const TripArchives = () => {
                             key={i}
                             title={tripArchive.name}
                             onClick={()=>handleArchiveClick(tripArchive.id)}
-                            onDelete={()=>handleDelete(tripArchive.id, tripArchive.name)}
+                            onDelete={()=>handleDelete(tripArchive)}
+                            onChangeName={
+                                ()=>handleUpdateTripArchiveName(tripArchive)
+                            }
                             />
                         );
                     })

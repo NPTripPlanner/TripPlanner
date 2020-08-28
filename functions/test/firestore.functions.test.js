@@ -1,6 +1,5 @@
 const test = require('firebase-functions-test')();
 const firestoreFunctions = require('../index');
-const { user } = require('firebase-functions/lib/providers/auth');
 
 
 describe('Firestore functions test', ()=>{
@@ -58,7 +57,27 @@ describe('Firestore functions test', ()=>{
                 userId: userData.id,
                 tripArchiveId: result.id,
             });
-            expect(deleteResult).toBeTruthy();
+            return expect(deleteResult).toBeTruthy();
+        })
+    })
+
+    describe('update trip archive', ()=>{
+        it('test update trip archive name function', async ()=>{
+            let wrapped = test.wrap(firestoreFunctions.createTripArchive);
+            const result = await wrapped({
+                userId: userData.id,
+                name:'name must be changed',
+            });
+            expect(result).toMatchObject({
+                ownerId: userData.id,
+            });
+            wrapped = test.wrap(firestoreFunctions.updateTripArchiveName);
+            const returnResut = await wrapped({
+                userId: userData.id,
+                tripArchiveId: result.id,
+                name: 'Name has been changed'
+            });
+            return expect(returnResut).toBeTruthy();
         })
     })
 })

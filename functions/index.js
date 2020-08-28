@@ -159,3 +159,21 @@ exports.deleteTripArchive = functions.https.onCall(async (data, context)=>{
         throw new functions.https.HttpsError(err.code, err.message);
     }
 });
+
+exports.updateTripArchiveName = functions.https.onCall(async (data, context)=>{
+    try{
+        validateAuthFromFunctionContext(context, 'update trip archive name fail');
+
+        const {userId, tripArchiveId, name} = data;
+
+        const result = await firestore.runTransaction(async (trans)=>{
+            return await trip.updateTripArchiveName(userId, tripArchiveId, name, trans);
+        });
+
+        return result;
+    }
+    catch(err){
+        console.log(err);
+        throw new functions.https.HttpsError(err.code, err.message);
+    }
+});

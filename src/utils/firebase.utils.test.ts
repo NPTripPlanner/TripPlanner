@@ -11,6 +11,7 @@ import {
   GetRepository,
   ListenToDocument,
   GetTripArchive,
+  UpdateTripArchiveName,
 } from "./firebase.utils";
 
 import { TripArchive } from "../schema/firestore.schema";
@@ -153,6 +154,24 @@ describe("Firebase utility test", () => {
 
       const deleteResult = DeleteTripArchive(fakeUser.uid, result.id);
       return expect(deleteResult).toBeTruthy();
+
+    })
+  })
+
+  describe('update trip archive', ()=>{
+    afterAll(async (done) => {
+      done();
+    });
+
+    it('update trip archive name', async ()=>{
+      const oldName = 'name will be changed';
+      const newName = 'new name';
+
+      const result = await CreateTripArchive(fakeUser.uid, oldName);
+      expect(result.name).toEqual(oldName);
+
+      const updateResult = await UpdateTripArchiveName(fakeUser.uid, result.id, newName);
+      return expect(updateResult.name).toEqual(newName);
 
     })
   })

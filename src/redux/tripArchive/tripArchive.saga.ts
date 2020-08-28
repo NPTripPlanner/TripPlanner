@@ -5,9 +5,12 @@ import {
   FetchTripArchivesFail,
   CreateTripArchiveSuccessful,
   CreateTripArchiveFail,
-  CreateTripArchiveReset,
+  CreateTripArchiveResetSuccessful,
   DeleteTripArchiveSuccessful,
   DeleteTripArchiveFail,
+  UpdateTripArchiveNameSuccessful,
+  UpdateTripArchiveNameFail,
+  UpdateTripArchiveNameStateResetSuccessful,
 } from "./tripArchive.actions";
 
 import {
@@ -15,9 +18,10 @@ import {
   FetchTripArchiveAfter,
   CreateTripArchive,
   DeleteTripArchive,
+  UpdateTripArchiveName,
 } from '../../utils/firebase.utils'; 
 
-import { call, put, all, takeLeading, takeLatest, take } from "redux-saga/effects";
+import { call, put, all, takeLeading, takeLatest, take, actionChannel } from "redux-saga/effects";
 import { PostNotification } from "../notification/notification.actions";
 
 function* getCurrentUser(){
@@ -68,8 +72,8 @@ export function* createTripArchive(){
 
 export function* createTripArchiveReset(){
   while(true){
-    yield take(actionType.CREATE_TRIP_ARCHIVE_RESET);
-    yield put(CreateTripArchiveReset());
+    yield take(actionType.CREATE_TRIP_ARCHIVE_STATE_RESET);
+    yield put(CreateTripArchiveResetSuccessful());
   }
 }
 
@@ -83,12 +87,44 @@ export function* doDeleteTripArchive(action){
   }
   catch(err){
     yield put(DeleteTripArchiveFail(err));
-    yield put(PostNotification(`Unable to delete collection (${err.message})`, 'success'));
+    yield put(PostNotification(`Unable to delete collection (${err.message})`, 'error'));
   }
 }
 
 export function* deleteTripArchive(){
   yield takeLeading(actionType.DELETE_TRIP_ARCHIVE_START, doDeleteTripArchive);
+}
+
+export function* doUpdateTripArchiveName(action){
+  try{
+    const {tripArchiveId, newName, oldName} = action.payload;
+    const user = yield call(getCurrentUser);
+    if(newName !== oldName){
+      const tripArchive = yield call(UpdateTripArchiveName, user.uid, tripArchiveId, newName);
+      yield put(UpdateTripArchiveNameSuccessful(tripArchive));
+    }
+    yield put(PostNotification(`${oldName} changed to ${newName}`, 'success'));
+  }
+  catch(err){
+    yield put(UpdateTripArchiveNameFail(err));
+    yield put(PostNotification(`Unable to update collection name`, 'error'));
+  }
+}
+
+export function* updateTripArchiveName(){
+  const updateChan = yield actionChannel(actionType.UPDATE_TRIP_ARCHIVE_NAME_START);
+
+  while(true){
+    const action = yield take(updateChan);
+    yield call(doUpdateTripArchiveName, action);
+  }
+}
+
+export function* updateTripArchiveNameReset(){
+  while(true){
+    yield take(actionType.UPDATE_TRIP_ARCHIVE_NAME_STATE_RESET);
+    yield put(UpdateTripArchiveNameStateResetSuccessful());
+  }
 }
 
 export default function* TripArchiveSaga() {
@@ -97,5 +133,7 @@ export default function* TripArchiveSaga() {
     call(createTripArchive),
     call(createTripArchiveReset),
     call(deleteTripArchive),
+    call(updateTripArchiveName),
+    call(updateTripArchiveNameReset),
   ]);
 }

@@ -12,6 +12,8 @@ export interface ITripArchiveState {
   createTripArchiveSuccessful: boolean,
   deletingTripArchive: string | null,
   deleteTripArchiveError: Error | null,
+  updatingTripArchive: boolean,
+  updateTripArchiveError: Error | null,
 }
 
 const initState : ITripArchiveState = {
@@ -24,6 +26,8 @@ const initState : ITripArchiveState = {
   createTripArchiveSuccessful: false,
   deletingTripArchive: null,
   deleteTripArchiveError: null,
+  updatingTripArchive: false,
+  updateTripArchiveError: null,
 };
 
 const TripArchiveReducer : Reducer<ITripArchiveState> = (state = initState, action) => {
@@ -86,7 +90,7 @@ const TripArchiveReducer : Reducer<ITripArchiveState> = (state = initState, acti
         createTripArchiveSuccessful: false,
       }
     }
-    case actionType.CREATE_TRIP_ARCHIVE_RESET:{
+    case actionType.CREATE_TRIP_ARCHIVE_RESET_SUCCESSFUL:{
       return {
         ...state,
         creatingTripArchive: null,
@@ -120,6 +124,33 @@ const TripArchiveReducer : Reducer<ITripArchiveState> = (state = initState, acti
         tripArchives: newTripArchives,
         deletingTripArchive: null,
         deleteTripArchiveError: null
+      }
+    }
+    case actionType.UPDATE_TRIP_ARCHIVE_NAME_FAIL:{
+      const {error} = action.payload;
+      return {
+        ...state,
+        updatingTripArchive: false,
+        updateTripArchiveError: error,
+      }
+    }
+    case actionType.UPDATE_TRIP_ARCHIVE_NAME_SUCCESSFUL:{
+      const {tripArchive} = action.payload;
+      const newTripArchives = state.tripArchives.map<TripArchive>(archive=>{
+        return archive.id === tripArchive.id ? tripArchive : archive;
+      });
+      return{
+        ...state,
+        updatingTripArchive: true,
+        updateTripArchiveError: null,
+        tripArchives: newTripArchives,
+      }
+    }
+    case actionType.UPDATE_TRIP_ARCHIVE_NAME_STATE_RESET_SUCCESSFUL:{
+      return {
+        ...state,
+        updatingTripArchive: false,
+        updateTripArchiveError: null,
       }
     }
     default:

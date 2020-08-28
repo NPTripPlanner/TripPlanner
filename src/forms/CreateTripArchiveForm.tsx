@@ -2,7 +2,7 @@ import React from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { 
   StartCreateTripArchive,
-  CreateTripArchiveReset 
+  CreateTripArchiveStateReset 
 } from "../redux/tripArchive/tripArchive.actions";
 
 import { 
@@ -32,7 +32,7 @@ const CreateTripArchiveForm = (props:IProps) => {
 
   React.useEffect(()=>{
     
-    return ()=>dispatch(CreateTripArchiveReset());
+    return ()=>dispatch(CreateTripArchiveStateReset());
   },[dispatch]);
 
   React.useEffect(()=>{

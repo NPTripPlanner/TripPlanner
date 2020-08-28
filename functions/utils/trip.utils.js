@@ -95,3 +95,19 @@ exports.getAllDocumentsPathUnder = async (documentRef, includeSelf=true)=>{
     return refs.flat();
 }
 
+exports.updateTripArchiveName = async (userId, archiveId, archiveName, batchOrTrans)=>{
+ 
+    const querySnapshot = await firestore.collection('tripArchive')
+    .where('ownerId', '==', userId)
+    .where('id', '==', archiveId)
+    .limit(1)
+    .get();
+
+    const docSnapshot = querySnapshot.docs[0];
+    if(!docSnapshot) throw new Error(`${archiveId} do not exists`); 
+
+    batchOrTrans.update(docSnapshot.ref, {name: archiveName});
+
+    return true;
+}
+
