@@ -178,21 +178,69 @@ ConvertToType = ImprovedRepository<T>
 //#endregion Fireorm
 
 //#region Firestore Search
-export const SearchTripArchive = async (userId:string, keyword:string)=>{
+/**
+ * Search trip archive
+ * 
+ * Support keyword search and pagination loading
+ * 
+ * Note: keyword must has same string when pagination loading is required.
+ * 
+ * 
+ * @param userId user id that trip archive need to be searched under
+ * @param keyword keyword for trip archive name, given null or empty string to disable keyword search,
+ * in other word result return all trip archives by amount.
+ * 
+ * keyword must be the same through each search if pagination is required
+ * @param amount amount to return, given number equal or less than 0 to return all at once 
+ * @param startAfter QueryDocumentSnapshot, 
+ * if given then return trip archives by amount after this snapshot.
+ * 
+ * This is purposly for pagination loading, but only work if keyword is the same
+ * through each search. To do pagination loading, just give last document snapshot from
+ * this function's return value
+ *  
+ * This must be null if each searchs with different keyword, otherwise result would be unexpected.
+ * 
+ * @returns an object with last document snapshot and array of TripArchive
+ */
+export const SearchTripArchive = async (
+  userId:string,
+  keyword:string,
+  amount:number,
+  startAfter:null|QueryDocumentSnapshot=null 
+  )=>{
   try{
-    let words: string[] = keyword.split(' ');
-    if(!words) {
-      words = [keyword];
+    let words: string[]|null = null;
+    if(keyword){
+      words = keyword.split(' ');
+      if(!words) {
+        words = [keyword];
+      }
     }
+
     const tripArchiveRepo = await GetRepository(TripArchive);
-    const q = await tripArchiveRepo.getCollectionReference()
-    .where('tags', 'array-contains-any', words).get();
-    const results = [];
+    let query = tripArchiveRepo.getCollectionReference()
+    .where('ownerId', '==', userId);
+    if(words) query = query.where('tags', 'array-contains-any', words);
+    query = query.orderBy('createAt', 'desc');
+    if(startAfter) query = query.startAfter(startAfter);
+    if(amount > 0) query = query.limit(amount);
+    const q = await query.get();
+
+    if(q.empty) return {
+      lastDocSnapshot: startAfter,
+      results:Array<TripArchive>(),
+    };
+
+    const results: TripArchive[] = [];
     for(let snap of q.docs){
       const tripArchive = await GetTripArchive(userId, snap.id);
       results.push(tripArchive);
     }
-    return results;
+    return {
+      lastDocSnapshot: q.docs[q.docs.length - 1],
+      results
+    };
   }
   catch(err){
     throw Error(getErrorMsg(err.code));

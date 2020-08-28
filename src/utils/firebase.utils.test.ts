@@ -287,15 +287,29 @@ describe("Firebase utility test", () => {
       await CreateTripArchive(fakeUser.uid, 'my trip to nowhere');
       await CreateTripArchive(fakeUser.uid, 'Fun in Italy');
       await CreateTripArchive(fakeUser.uid, 'trip to france');
+      await CreateTripArchive(fakeUser.uid, '100 100 100');
+      await CreateTripArchive(fakeUser.uid, '200 200 200');
     })
 
     it('search trip archive by name', async ()=>{
 
-      const result = await SearchTripArchive(fakeUser.uid,'france');
-      expect(result).toHaveLength(1);
+      const result = await SearchTripArchive(fakeUser.uid,'france', 10);
+      expect(result.results).toHaveLength(1);
 
-      const moreResult = await SearchTripArchive(fakeUser.uid, 'trip to france');
-      return expect(moreResult.length).toBeGreaterThan(1);
+      const moreResult = await SearchTripArchive(fakeUser.uid, 'trip to france', 10);
+      expect(moreResult.results.length).toBeGreaterThan(1);
+
+      const fetch1 = await SearchTripArchive(fakeUser.uid, 'trip', 2);
+      expect(fetch1.results).toHaveLength(2);
+
+      const fetch2 = await SearchTripArchive(fakeUser.uid, 'trip', 2, fetch1.lastDocSnapshot);
+      expect(fetch2.results).toHaveLength(2);
+
+      const noKeyWords = await SearchTripArchive(fakeUser.uid, '', 5, fetch1.lastDocSnapshot);
+      expect(noKeyWords.results).toHaveLength(5);
+
+      const onlytwo = await SearchTripArchive(fakeUser.uid, '100 200', 0);
+      return expect(onlytwo.results).toHaveLength(2);
     })
   })
 });
