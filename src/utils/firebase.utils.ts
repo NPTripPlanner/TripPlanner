@@ -184,7 +184,6 @@ export const SearchTripArchive = async (userId:string, keyword:string)=>{
     if(!words) {
       words = [keyword];
     }
-    console.log(words);
     const tripArchiveRepo = await GetRepository(TripArchive);
     const q = await tripArchiveRepo.getCollectionReference()
     .where('tags', 'array-contains-any', words).get();
