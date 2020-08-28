@@ -177,6 +177,18 @@ ConvertToType = ImprovedRepository<T>
 }
 //#endregion Fireorm
 
+//#region Firestore Search
+export const SearchTripArchive = async (keyword:string)=>{
+  try{
+    const tripArchiveRepo = await GetRepository(TripArchive);
+    return await tripArchiveRepo.whereEqualTo('name', keyword).find();
+  }
+  catch(err){
+    throw Error(getErrorMsg(err.code));
+  }
+}
+//#endregion Firestore Search
+
 //#region Firestore Read
 /**
  * Return all trip archives under user id

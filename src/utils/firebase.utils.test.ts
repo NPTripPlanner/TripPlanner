@@ -12,6 +12,7 @@ import {
   ListenToDocument,
   GetTripArchive,
   UpdateTripArchiveName,
+  SearchTripArchive,
 } from "./firebase.utils";
 
 import { TripArchive } from "../schema/firestore.schema";
@@ -276,4 +277,27 @@ describe("Firebase utility test", () => {
       return expect(doc.name).toEqual(newName);
     })
   });
+
+  describe('search trip archive', ()=>{
+    afterAll(async (done) => {
+      done();
+    });
+
+    beforeAll(async ()=>{
+      await CreateTripArchive(fakeUser.uid, 'my trip to nowhere');
+      await CreateTripArchive(fakeUser.uid, 'Fun in Italy');
+      await CreateTripArchive(fakeUser.uid, 'trip to france');
+    })
+
+    it('search trip archive by name', async ()=>{
+
+      const result = await SearchTripArchive('france');
+      expect(result).toHaveLength(0);
+      
+      return expect(SearchTripArchive('trip to france'))
+      .resolves
+      .toHaveLength(1);
+
+    })
+  })
 });
