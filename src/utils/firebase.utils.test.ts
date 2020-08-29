@@ -6,7 +6,7 @@ import {
   CreateTripArchive,
   DeleteTripArchive,
   FetchTripArchive,
-  FetchTripArchiveAfter,
+  // FetchTripArchiveAfter,
   ListenToRepository,
   GetRepository,
   ListenToDocument,
@@ -107,10 +107,10 @@ describe("Firebase utility test", () => {
       .not
       .toThrowError();
 
-      let batch = await FetchTripArchiveAfter(fakeUser.uid, 1);
-      expect(batch.lastDocSnap).not.toBeNull();
-      batch = await FetchTripArchiveAfter(fakeUser.uid, 1, batch.lastDocSnap);
-      return expect(batch.lastDocSnap).not.toBeNull();
+      let batch = await SearchTripArchive(fakeUser.uid, '', 1);
+      expect(batch.lastDocSnapshotCursor).not.toBeNull();
+      batch = await SearchTripArchive(fakeUser.uid, '', 1, batch.lastDocSnapshotCursor);
+      return expect(batch.lastDocSnapshotCursor).not.toBeNull();
     })
 
     it('get trip archive in batch by 2', async ()=>{
@@ -119,10 +119,10 @@ describe("Firebase utility test", () => {
       .not
       .toThrowError();
 
-      let batch = await FetchTripArchiveAfter(fakeUser.uid, 2);
+      let batch = await SearchTripArchive(fakeUser.uid, '',2);
       expect(batch.results.length).toEqual(2);
 
-      batch = await FetchTripArchiveAfter(fakeUser.uid, 2, batch.lastDocSnap);
+      batch = await SearchTripArchive(fakeUser.uid, '',2, batch.lastDocSnapshotCursor);
       return expect(batch.results.length).toEqual(2);
     })
 
@@ -132,7 +132,7 @@ describe("Firebase utility test", () => {
       .not
       .toThrowError();
 
-      let batch = await FetchTripArchiveAfter(fakeUser.uid, 4);
+      let batch = await SearchTripArchive(fakeUser.uid, '',4);
 
       const sortedResults = SortArray(batch.results, 'createAt');
       // sortedResults.map((val)=>{

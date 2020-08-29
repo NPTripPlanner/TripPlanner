@@ -1,5 +1,10 @@
 // import store from "../Store";
-import { fetchTripArchives, createTripArchive } from "./tripArchive.saga";
+import actionType from "./tripArchive.actionType";
+import { 
+    fetchTripArchives,
+    createTripArchive,
+    doFetchTripArchives,
+} from "./tripArchive.saga";
 import { 
     StartFetchTripArchives,
     FetchTripArchivesSuccessful,
@@ -8,18 +13,19 @@ import {
     CreateTripArchiveSuccessful,
     CreateTripArchiveFail,
 } from './tripArchive.actions';
-import { expectSaga } from "redux-saga-test-plan";
+import { expectSaga, testSaga } from "redux-saga-test-plan";
 import * as matchers from 'redux-saga-test-plan/matchers';
 import { throwError } from 'redux-saga-test-plan/providers';
 import * as api from '../../utils/firebase.utils';
 import { TripArchive } from "../../schema/firestore.schema";
+import { debounce} from 'redux-saga/effects';
 
 describe("Test trip archive saga", () => {
     afterAll((done)=>{
       done();
     });
 
-    it("start fetch trip archives", () => {
+    it("start fetch trip archives", async () => {
         const fakeTripArchives = [
             new TripArchive(),
             new TripArchive(),
@@ -32,27 +38,39 @@ describe("Test trip archive saga", () => {
         const user = {
             uid:'fake id'
         }
-        
-        return expectSaga(fetchTripArchives)
+
+        testSaga(fetchTripArchives)
+        .next()
+        .is(debounce(1500, actionType.FETCH_TRIP_ARCHIVES_START, doFetchTripArchives))
+        .next()
+        .isDone();
+
+        return await expectSaga(doFetchTripArchives, StartFetchTripArchives(3, true))
         .provide([
             [matchers.call.fn(api.GetCurrentUser), user],
-            [matchers.call.fn(api.FetchTripArchiveAfter),fakeFetchResult]
+            [matchers.call.fn(api.SearchTripArchive),fakeFetchResult]
         ])
         .put(FetchTripArchivesSuccessful(fakeTripArchives, true))
         .dispatch(StartFetchTripArchives(3, true))
         .run();
     });
 
-    it("start fetch trip archives error", () => {
+    it("start fetch trip archives error", async () => {
         const user = {
             uid:'fake id'
         }
         const fakeError = new Error('error')
-        
-        return expectSaga(fetchTripArchives)
+
+        testSaga(fetchTripArchives)
+        .next()
+        .is(debounce(1500, actionType.FETCH_TRIP_ARCHIVES_START, doFetchTripArchives))
+        .next()
+        .isDone();
+
+        return await expectSaga(doFetchTripArchives, StartFetchTripArchives(3, true))
         .provide([
             [matchers.call.fn(api.GetCurrentUser), user],
-            [matchers.call.fn(api.FetchTripArchiveAfter), throwError(fakeError)]
+            [matchers.call.fn(api.SearchTripArchive), throwError(fakeError)]
         ])
         .put(FetchTripArchivesFail(fakeError))
         .dispatch(StartFetchTripArchives(3, true))
@@ -65,7 +83,7 @@ describe("Test trip archive saga", () => {
         const user = {
             uid:'fake id'
         }
-        
+
         return expectSaga(createTripArchive)
         .provide([
             [matchers.call.fn(api.GetCurrentUser), user],

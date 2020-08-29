@@ -291,27 +291,27 @@ export const FetchTripArchive = async (userId:string)=>{
  * @param startAfter a particualr document snapshot, usually from the last fetch, if null fetch will
  * start from the begining
  */
-export const FetchTripArchiveAfter = async (userId:string, 
-  amount:number=10,
-  startAfter:null|QueryDocumentSnapshot=null,
-  )=>{
-  try{
-    // const tripArchiveRepo = (await fireorm.getRepository(TripArchive)) as TripArchiveRepository;
-    const tripArchiveRepo = await GetRepository<TripArchive, TripArchiveRepository>(TripArchive);
-    tripArchiveRepo.qeryAfterSnap(startAfter);
-    const results = await tripArchiveRepo.whereEqualTo('ownerId', userId)
-    .orderByDescending('createAt')
-    .limit(amount)
-    .find();
-    return {
-      lastDocSnap: tripArchiveRepo.getLastDocQuerySnap(),
-      results: results,
-    }
-  }
-  catch(err){
-    throw Error(getErrorMsg(err.code));
-  }
-}
+// export const FetchTripArchiveAfter = async (userId:string, 
+//   amount:number=10,
+//   startAfter:null|QueryDocumentSnapshot=null,
+//   )=>{
+//   try{
+//     // const tripArchiveRepo = (await fireorm.getRepository(TripArchive)) as TripArchiveRepository;
+//     const tripArchiveRepo = await GetRepository<TripArchive, TripArchiveRepository>(TripArchive);
+//     tripArchiveRepo.qeryAfterSnap(startAfter);
+//     const results = await tripArchiveRepo.whereEqualTo('ownerId', userId)
+//     .orderByDescending('createAt')
+//     .limit(amount)
+//     .find();
+//     return {
+//       lastDocSnap: tripArchiveRepo.getLastDocQuerySnap(),
+//       results: results,
+//     }
+//   }
+//   catch(err){
+//     throw Error(getErrorMsg(err.code));
+//   }
+// }
 
 /**
  * Return trip archive under user with archive id

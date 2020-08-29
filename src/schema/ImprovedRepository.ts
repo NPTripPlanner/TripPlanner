@@ -1,16 +1,16 @@
 import { 
     BaseFirestoreRepository,
-    IFireOrmQueryLine,
-    IOrderByParams,
+    // IFireOrmQueryLine,
+    // IOrderByParams,
     IEntity,
 } from 'fireorm';
 
 import { 
     QuerySnapshot,
-    QueryDocumentSnapshot,
-    WhereFilterOp,
+    // QueryDocumentSnapshot,
+    // WhereFilterOp,
     CollectionReference,
-    Query,
+    // Query,
     DocumentSnapshot,
     DocumentReference,
  } from '@google-cloud/firestore';
@@ -23,8 +23,8 @@ import { getMetadataStorage } from 'fireorm/lib/src/MetadataStorage';
  */
 export default class ImprovedRepository<T extends IEntity> extends BaseFirestoreRepository<T>{
 
-    private startAfterSnap: QueryDocumentSnapshot|null;
-    private lastDocSnap: QueryDocumentSnapshot;
+    // private startAfterSnap: QueryDocumentSnapshot|null;
+    // private lastDocSnap: QueryDocumentSnapshot;
     private collectionRef: CollectionReference;
 
     constructor(colName: string, collectionPath?: string){
@@ -37,10 +37,10 @@ export default class ImprovedRepository<T extends IEntity> extends BaseFirestore
     }
 
 
-    protected extractTFromColSnap = (q: QuerySnapshot): T[] => {
-        this.lastDocSnap = q.docs[q.docs.length - 1];
-        return q.docs.map(this.extractTFromDocSnap);
-    };
+    // protected extractTFromColSnap = (q: QuerySnapshot): T[] => {
+    //     this.lastDocSnap = q.docs[q.docs.length - 1];
+    //     return q.docs.map(this.extractTFromDocSnap);
+    // };
 
     extractFromColSnap = (q: QuerySnapshot): T[] => {
         return q.docs.map(this.extractTFromDocSnap);
@@ -57,20 +57,20 @@ export default class ImprovedRepository<T extends IEntity> extends BaseFirestore
       return this.collectionRef;
     }
     
-    /**
-     * Qery start after document snapshot
-     * @param docSnapshot document snapshot or null to query from start
-     */
-    qeryAfterSnap = (docSnapshot:QueryDocumentSnapshot): void =>{
-      this.startAfterSnap = docSnapshot
-    }
+    // /**
+    //  * Qery start after document snapshot
+    //  * @param docSnapshot document snapshot or null to query from start
+    //  */
+    // qeryAfterSnap = (docSnapshot:QueryDocumentSnapshot): void =>{
+    //   this.startAfterSnap = docSnapshot
+    // }
 
-    /**
-     * Get last qery document snapshot
-     */
-    getLastDocQuerySnap = (): QueryDocumentSnapshot =>{
-      return this.lastDocSnap;
-    }
+    // /**
+    //  * Get last qery document snapshot
+    //  */
+    // getLastDocQuerySnap = (): QueryDocumentSnapshot =>{
+    //   return this.lastDocSnap;
+    // }
 
     /**
      * Return a firebase DocumentReference under collection
@@ -80,32 +80,32 @@ export default class ImprovedRepository<T extends IEntity> extends BaseFirestore
       return this.collectionRef.doc(pathOrId);
     }
 
-    async execute(
-        queries: Array<IFireOrmQueryLine>,
-        limitVal?: number,
-        orderByObj?: IOrderByParams,
-        single?: boolean
-      ): Promise<T[]> {
+    // async execute(
+    //     queries: Array<IFireOrmQueryLine>,
+    //     limitVal?: number,
+    //     orderByObj?: IOrderByParams,
+    //     single?: boolean
+    //   ): Promise<T[]> {
 
-        let query = queries.reduce((acc:CollectionReference|Query, cur:IFireOrmQueryLine) => {
-          const op = cur.operator as WhereFilterOp;
-          return acc.where(cur.prop, op, cur.val);
-        }, this.collectionRef);
+    //     let query = queries.reduce((acc:CollectionReference|Query, cur:IFireOrmQueryLine) => {
+    //       const op = cur.operator as WhereFilterOp;
+    //       return acc.where(cur.prop, op, cur.val);
+    //     }, this.collectionRef);
     
-        if (orderByObj) {
-          query = query.orderBy(orderByObj.fieldPath, orderByObj.directionStr);
-        }
+    //     if (orderByObj) {
+    //       query = query.orderBy(orderByObj.fieldPath, orderByObj.directionStr);
+    //     }
 
-        if(this.startAfterSnap) {
-            query = query.startAfter(this.startAfterSnap);
-        }
+    //     if(this.startAfterSnap) {
+    //         query = query.startAfter(this.startAfterSnap);
+    //     }
     
-        if (single) {
-          query = query.limit(1);
-        } else if (limitVal) {
-          query = query.limit(limitVal);
-        }
+    //     if (single) {
+    //       query = query.limit(1);
+    //     } else if (limitVal) {
+    //       query = query.limit(limitVal);
+    //     }
     
-        return query.get().then(this.extractTFromColSnap);
-      }
+    //     return query.get().then(this.extractTFromColSnap);
+    //   }
 }

@@ -33,7 +33,7 @@ function* getCurrentUser(){
 }
 
 let lastFetchCursor = null;
-function* doFetchTripArchives(action){
+export function* doFetchTripArchives(action){
   try{
     const {amount, fromStart, keyword} = action.payload;
     const user = yield call(getCurrentUser);
