@@ -61,6 +61,14 @@ export const DeleteTripArchiveSuccessful = (tripArchiveId) =>action(
   {tripArchiveId},
 );
 
+export const DeleteTripArchiveStateReset = () =>action(
+  actionType.DELETE_TRIP_ARCHIVE_STATE_RESET,
+)
+
+export const DeleteTripArchiveResetSuccessful = () =>action(
+  actionType.DELETE_TRIP_ARCHIVE_RESET_SUCCESSFUL,
+)
+
 export const StartUpdateTripArchiveName = (tripArchiveId, newName, oldName) =>action(
   actionType.UPDATE_TRIP_ARCHIVE_NAME_START,
   {tripArchiveId, newName, oldName},

@@ -11,6 +11,7 @@ import {
   UpdateTripArchiveNameSuccessful,
   UpdateTripArchiveNameFail,
   UpdateTripArchiveNameStateResetSuccessful,
+  DeleteTripArchiveResetSuccessful,
 } from "./tripArchive.actions";
 
 import {
@@ -96,6 +97,13 @@ export function* deleteTripArchive(){
   yield takeLeading(actionType.DELETE_TRIP_ARCHIVE_START, doDeleteTripArchive);
 }
 
+export function* deleteTripArchiveReset(){
+  while(true){
+    yield take(actionType.DELETE_TRIP_ARCHIVE_STATE_RESET);
+    yield put(DeleteTripArchiveResetSuccessful());
+  }
+}
+
 export function* doUpdateTripArchiveName(action){
   try{
     const {tripArchiveId, newName, oldName} = action.payload;
@@ -134,6 +142,7 @@ export default function* TripArchiveSaga() {
     call(createTripArchive),
     call(createTripArchiveReset),
     call(deleteTripArchive),
+    call(deleteTripArchiveReset),
     call(updateTripArchiveName),
     call(updateTripArchiveNameReset),
   ]);

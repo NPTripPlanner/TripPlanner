@@ -12,6 +12,7 @@ export interface ITripArchiveState {
   createTripArchiveSuccessful: boolean,
   deletingTripArchive: string | null,
   deleteTripArchiveError: Error | null,
+  deleteTripArchiveSuccessful: boolean,
   updatingTripArchive: boolean,
   updateTripArchiveError: Error | null,
 }
@@ -26,6 +27,7 @@ const initState : ITripArchiveState = {
   createTripArchiveSuccessful: false,
   deletingTripArchive: null,
   deleteTripArchiveError: null,
+  deleteTripArchiveSuccessful: false,
   updatingTripArchive: false,
   updateTripArchiveError: null,
 };
@@ -123,7 +125,16 @@ const TripArchiveReducer : Reducer<ITripArchiveState> = (state = initState, acti
         ...state,
         tripArchives: newTripArchives,
         deletingTripArchive: null,
-        deleteTripArchiveError: null
+        deleteTripArchiveError: null,
+        deleteTripArchiveSuccessful: true,
+      }
+    }
+    case actionType.DELETE_TRIP_ARCHIVE_RESET_SUCCESSFUL:{
+      return {
+        ...state,
+        deletingTripArchive: null,
+        deleteTripArchiveError: null,
+        deleteTripArchiveSuccessful: false,
       }
     }
     case actionType.UPDATE_TRIP_ARCHIVE_NAME_FAIL:{

@@ -16,10 +16,11 @@ import { CreateDialog } from '../../dialogs/CreateDialog';
 import Collection from '../../components/Collection/Collection';
 import TripCollection from '../../components/TripCollection/TripCollection';
 import CreateTripArchiveForm from '../../forms/CreateTripArchiveForm';
+import ConfirmDeleteForm from '../../forms/ConfirmDeleteForm';
 import { StartChangeHeaderTitle } from '../../redux/header/header.actions';
 import {
     StartFetchTripArchives,
-    StartDeleteTripArchive
+    // StartDeleteTripArchive
 } from '../../redux/tripArchive/tripArchive.actions';
 import UpdateTripArchiveForm from '../../forms/UpdateTripArchiveForm';
 import { TripArchive } from '../../schema/firestore.schema';
@@ -100,8 +101,24 @@ const TripArchives = () => {
         );
     }
 
+    const deleteForm = (tripArchive:TripArchive) => (
+        <ConfirmDeleteForm 
+        tripArchive={tripArchive} 
+        onSuccess={()=>setDialog(null)}
+        onCancel={()=>setDialog(null)}
+        />
+    )
     const handleDelete = (tripArchive:TripArchive)=>{
-        dispatch(StartDeleteTripArchive(tripArchive.id, tripArchive.name));
+        // dispatch(StartDeleteTripArchive(tripArchive.id, tripArchive.name));
+        setDialog(
+            CreateDialog(
+              'Delete collection',
+              deleteForm(tripArchive),
+              'lg',
+              [],
+              ()=>setDialog(null)
+            )
+        );
     }
 
     const handleFetchMore = ()=>{

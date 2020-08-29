@@ -1,6 +1,6 @@
 import { createStyles } from "@material-ui/core";
 
-export default createStyles({
+export default theme=>createStyles({
     form:{
       display:'flex',
       flexDirection:'column',
@@ -10,5 +10,21 @@ export default createStyles({
     error:{
       color: 'red',
       textAlign:'center',
+    },
+    buttonGroup:{
+      display:'flex',
+      wrap:'wrap',
+      justifyContent: 'center',
+      alignItems:'center',
+    },
+    deleteButton:{
+        backgroundColor: theme.palette.error.main,
+    },
+    centerText:{
+      textAlign:'center'
+    },
+    marginHorizontal:{
+      marginLeft:'1%',
+      marginRight: '1%',
     }
 });
