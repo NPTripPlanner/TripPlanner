@@ -15,13 +15,14 @@ import {
 
 import {
   GetCurrentUser,
-  FetchTripArchiveAfter,
+  // FetchTripArchiveAfter,
+  SearchTripArchive,
   CreateTripArchive,
   DeleteTripArchive,
   UpdateTripArchiveName,
 } from '../../utils/firebase.utils'; 
 
-import { call, put, all, takeLeading, takeLatest, take, actionChannel } from "redux-saga/effects";
+import { call, put, all, takeLeading, take, actionChannel, debounce } from "redux-saga/effects";
 import { PostNotification } from "../notification/notification.actions";
 
 function* getCurrentUser(){
@@ -33,11 +34,11 @@ function* getCurrentUser(){
 let lastFetchCursor = null;
 function* doFetchTripArchives(action){
   try{
-    const {amount, fromStart} = action.payload;
+    const {amount, fromStart, keyword} = action.payload;
     const user = yield call(getCurrentUser);
     lastFetchCursor = fromStart?null:lastFetchCursor;
-    const result = yield call(FetchTripArchiveAfter, user.uid, amount, lastFetchCursor);
-    lastFetchCursor = result.lastDocSnap;
+    const result = yield call(SearchTripArchive, user.uid, keyword, amount, lastFetchCursor);
+    lastFetchCursor = result.lastDocSnapshotCursor;
     yield put(FetchTripArchivesSuccessful(result.results, fromStart));
   }
   catch(error){
@@ -47,7 +48,7 @@ function* doFetchTripArchives(action){
 }
 
 export function* fetchTripArchives() {
-  yield takeLatest(actionType.FETCH_TRIP_ARCHIVES_START, doFetchTripArchives);
+  yield debounce(1500, actionType.FETCH_TRIP_ARCHIVES_START, doFetchTripArchives);
 }
 
 export function* doCreateTripArchive(action){

@@ -4,11 +4,12 @@ import {action} from 'typesafe-actions';
 /**
  * Start to fetch trip archives
  * @param {*} amount how many to fetch
- * @param {*} fromStart true start all over false to fetch next amout default true
+ * @param {*} fromStart true fetch from begining of index otherwise from last default true
+ * @param {*} keyword if provided return data wiil match keyword
  */
-export const StartFetchTripArchives = (amount=10, fromStart=true) =>action(
+export const StartFetchTripArchives = (amount=10, fromStart=true, keyword='') =>action(
   actionType.FETCH_TRIP_ARCHIVES_START,
-  {amount, fromStart},
+  {amount, fromStart, keyword},
 );
 
 export const FetchTripArchivesSuccessful = (tripArchiveData, fromStart) =>action(

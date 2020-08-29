@@ -39,6 +39,9 @@ const style = createStyles({
         justifyContent: "center",
         alignItems: "center",
     },
+    title:{
+        textAlign: 'center',
+    }
 });
 
 
@@ -83,7 +86,7 @@ const TripCollection = React.forwardRef<Ref,IProps>((props, ref) => {
                     />
                     <CardContent>
                         <div className={classes.content}>
-                            <div>
+                            <div className={classes.title}>
                                 <Typography>{title}</Typography>
                             </div>
                         </div>

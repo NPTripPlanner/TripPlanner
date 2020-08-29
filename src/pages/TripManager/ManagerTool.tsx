@@ -71,6 +71,10 @@ const ManagerTool = React.forwardRef<Ref, IProps>((props, ref) => {
     } = props
     const classes = makeStyles(style)();
 
+    const handleInputChange = (evt)=>{
+        if(onSearchChanged) onSearchChanged(evt.target.value);
+    }
+
     return (
         <div ref={ref} className={classes.tool}>
             <div className={classes.toolArea}>
@@ -83,7 +87,7 @@ const ManagerTool = React.forwardRef<Ref, IProps>((props, ref) => {
                     variant="outlined"
                     labelBgColor="rgba(0,0,0,0)"
                     startAdornment={<Search />}
-                    onChange={onSearchChanged}
+                    onChange={handleInputChange}
                     />
             </div>
             <div className={classes.rightTool}>

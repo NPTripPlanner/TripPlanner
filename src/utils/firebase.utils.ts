@@ -185,6 +185,21 @@ ConvertToType = ImprovedRepository<T>
  * 
  * Note: keyword must has same string when pagination loading is required.
  * 
+ * Search by keyword:
+ * keyword + amount(0 to return all)
+ * 
+ * Search by keyword with pagination:
+ * keyword + startAfter + amount(0 to return all). 
+ * keyword must keep exactly the same throughout each search.
+ * However, give startAfter null to start from begin of search index,
+ * if search first time.
+ * 
+ * Pagination only:
+ * startAfter + amount(0 to return all). 
+ * Give startAfter null to start from begin of search index,
+ * if search first time.
+ * 
+ * 
  * 
  * @param userId user id that trip archive need to be searched under
  * @param keyword keyword for trip archive name, given null or empty string to disable keyword search,
@@ -201,7 +216,10 @@ ConvertToType = ImprovedRepository<T>
  *  
  * This must be null if each searchs with different keyword, otherwise result would be unexpected.
  * 
- * @returns an object with last document snapshot and array of TripArchive
+ * @returns an object contain lastDocSnapshotCursor and array of TripArchive.
+ * 
+ * lastDocSnapshotCursor is a cursor that point to a document at end of this search,
+ * give this to next search with same or without keyword to return next amount of data 
  */
 export const SearchTripArchive = async (
   userId:string,
@@ -238,7 +256,7 @@ export const SearchTripArchive = async (
       results.push(tripArchive);
     }
     return {
-      lastDocSnapshot: q.docs[q.docs.length - 1],
+      lastDocSnapshotCursor: q.docs[q.docs.length - 1],
       results
     };
   }

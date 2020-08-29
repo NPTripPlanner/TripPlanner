@@ -40,6 +40,7 @@ const TripArchives = () => {
     const classes = makeStyles(style)();
 
     const [dialog, setDialog] = React.useState(null);
+    const [searchkeyword, setSearchKeyword] = React.useState(''); 
     const fetching = useSelector(selectFetchingTripArchives);
     const fetchingError = useSelector(selectFetchingTripArchiveError);
     const archives = useSelector(selectTripArchives);
@@ -54,11 +55,14 @@ const TripArchives = () => {
 
     React.useEffect(()=>{
         dispatch(StartChangeHeaderTitle('Collection'));
-        dispatch(StartFetchTripArchives(fetchAmount));
-    }, [dispatch]);
+    }, [dispatch])
+
+    React.useEffect(()=>{
+        dispatch(StartFetchTripArchives(fetchAmount, true, searchkeyword));
+    }, [dispatch, searchkeyword]);
 
     const handleSearch = (keyword)=>{
-        console.log('search trip archive ', keyword);
+        if(searchkeyword !== keyword) setSearchKeyword(keyword);
     }
 
     const createform = (
@@ -101,7 +105,7 @@ const TripArchives = () => {
     }
 
     const handleFetchMore = ()=>{
-        dispatch(StartFetchTripArchives(fetchAmount, false));
+        dispatch(StartFetchTripArchives(fetchAmount, false, searchkeyword));
     }
 
     const handleArchiveClick = (archiveId) =>{
