@@ -17,14 +17,18 @@ import {
 import {
   GetCurrentUser,
   // FetchTripArchiveAfter,
-  SearchTripArchive,
+  // SearchTripArchive,
   CreateTripArchive,
   DeleteTripArchive,
   UpdateTripArchiveName,
+  ConvertSearchKeywordToArray,
+  GetDataByQuery,
+  GetCollectionRef,
 } from '../../utils/firebase.utils'; 
 
 import { call, put, all, takeLeading, take, actionChannel, debounce } from "redux-saga/effects";
 import { PostNotification } from "../notification/notification.actions";
+import { TripArchive } from "../../schema/firestore.schema";
 
 function* getCurrentUser(){
   const user = yield call(GetCurrentUser);
@@ -37,9 +41,19 @@ export function* doFetchTripArchives(action){
   try{
     const {amount, fromStart, keyword} = action.payload;
     const user = yield call(getCurrentUser);
+
     lastFetchCursor = fromStart?null:lastFetchCursor;
-    const result = yield call(SearchTripArchive, user.uid, keyword, amount, lastFetchCursor);
+    // const result = yield call(SearchTripArchive, user.uid, keyword, amount, lastFetchCursor);
+    const colRef = yield call(GetCollectionRef, TripArchive);
+    let query = colRef.where('ownerId', '==', user.uid);
+    const splitedKeywords = ConvertSearchKeywordToArray(keyword);
+    if(splitedKeywords){
+      query = query.where('tags', 'array-contains-any', splitedKeywords);
+    }
+    query = query.orderBy('createAt', 'desc');
+    const result = yield call(GetDataByQuery, TripArchive, query, amount, lastFetchCursor);
     lastFetchCursor = result.lastDocSnapshotCursor;
+
     yield put(FetchTripArchivesSuccessful(result.results, fromStart));
   }
   catch(error){

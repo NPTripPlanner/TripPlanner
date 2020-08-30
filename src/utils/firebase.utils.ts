@@ -5,7 +5,7 @@ import 'firebase/firestore';
 import getErrorMsg from "./firebase.errors.utils";
 import * as fireorm from 'fireorm';
 import {TripArchive, TripArchiveRepository } from '../schema/firestore.schema';
-import { QueryDocumentSnapshot, DocumentReference, CollectionReference, DocumentSnapshot, QuerySnapshot } from "@google-cloud/firestore";
+import { QueryDocumentSnapshot, DocumentReference, CollectionReference, DocumentSnapshot, QuerySnapshot, Query } from "@google-cloud/firestore";
 import ImprovedRepository from "../schema/ImprovedRepository";
 
 export type FirebaseUser = firebasePro.User;
@@ -175,10 +175,101 @@ ConvertToType = ImprovedRepository<T>
 (entity:fireorm.Constructor<T>)=>{
   return (await fireorm.getRepository(entity)) as unknown as ConvertToType;
 }
+
+export const GetCollectionRef = async <T extends fireorm.IEntity>(entity:fireorm.Constructor<T>)=>{
+  return (await GetRepository(entity)).getCollectionReference();
+}
 //#endregion Fireorm
+
+//#region Firestore query
+interface QueryDataReturn<T> {
+  lastDocSnapshotCursor: QueryDocumentSnapshot | null,
+  results: T[]
+}
+
+/**
+ * Get data by firestore query
+ * 
+ * @param entity a class type that was defined as schema with fireorm
+ * @param query firebase query
+ * @param amount number of data to return. given less or equal to 0 to return all data.
+ * Default is 5
+ * 
+ * Note: If given firebase query had .limit() then will be replaced by this amount
+ * 
+ * @param startAfter a QueryDocumentSnapshot or null.
+ * 
+ * If given then return data are after given document snapshot.
+ * 
+ * If null then return data are alway from start
+ * 
+ * @returns {QueryDataReturn} an object that contain 2 properties:
+ * 
+ * @property {lastDocSnapshotCursor} a QueryDocumentSnapshot return from last document data
+ * 
+ * you can give this to startAfter at next GetDataByQuery to achive pagination.
+ * 
+ * @property {results} an array of data
+ */
+export const GetDataByQuery = async  <T extends fireorm.IEntity>(
+  entity:fireorm.Constructor<T>,
+  query:Query,
+  amount:number = 5,
+  startAfter:QueryDocumentSnapshot|null = null, 
+  ):Promise<QueryDataReturn<T>>=> {
+
+  const repo = await GetRepository(entity);
+
+  let newQuery = query;
+  if(startAfter) newQuery = newQuery.startAfter(startAfter);
+  if(amount > 0) newQuery = newQuery.limit(amount);
+
+  const q = await newQuery.get();
+
+  if(q.empty) return {
+    lastDocSnapshotCursor: startAfter,
+    results: Array<T>(),
+  };
+
+  const results: T[] = [];
+  for(let snap of q.docs){
+    const data = await repo.findById(snap.id);
+    results.push(data);
+  }
+  return {
+    lastDocSnapshotCursor: q.docs[q.docs.length - 1],
+    results
+  };
+
+}
+
+/**
+ * Convert a keyword string into an array splited by space in string
+ * 
+ * @param keyword a string to be splited into an array
+ * 
+ * @returns an array of string otherwise null if keyword is empty string or
+ * only whitespaces
+ */
+export const ConvertSearchKeywordToArray = (keyword:string):string[]=>{
+  let words: string[]|null = null;
+  if(keyword){
+    if (!keyword.replace(/\s/g, '').length) return words;
+
+    words = keyword.split(' ');
+    if(!words) {
+      words = [keyword];
+    }
+  }
+
+  return words;
+}
+//#endregion Firestore query
 
 //#region Firestore Search
 /**
+ * Deprecated use GetDataByQuery instead
+ * 
  * Search trip archive
  * 
  * Support keyword search and pagination loading
@@ -246,7 +337,7 @@ export const SearchTripArchive = async (
     const q = await query.get();
 
     if(q.empty) return {
-      lastDocSnapshot: startAfter,
+      lastDocSnapshotCursor: startAfter,
       results:Array<TripArchive>(),
     };
 

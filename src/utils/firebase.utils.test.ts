@@ -13,6 +13,9 @@ import {
   GetTripArchive,
   UpdateTripArchiveName,
   SearchTripArchive,
+  GetCollectionRef,
+  GetDataByQuery,
+  ConvertSearchKeywordToArray,
 } from "./firebase.utils";
 
 import { TripArchive } from "../schema/firestore.schema";
@@ -302,14 +305,83 @@ describe("Firebase utility test", () => {
       const fetch1 = await SearchTripArchive(fakeUser.uid, 'trip', 2);
       expect(fetch1.results).toHaveLength(2);
 
-      const fetch2 = await SearchTripArchive(fakeUser.uid, 'trip', 2, fetch1.lastDocSnapshot);
+      const fetch2 = await SearchTripArchive(fakeUser.uid, 'trip', 2, fetch1.lastDocSnapshotCursor);
       expect(fetch2.results).toHaveLength(2);
 
-      const noKeyWords = await SearchTripArchive(fakeUser.uid, '', 5, fetch1.lastDocSnapshot);
+      const noKeyWords = await SearchTripArchive(fakeUser.uid, '', 5, fetch1.lastDocSnapshotCursor);
       expect(noKeyWords.results).toHaveLength(5);
 
       const onlytwo = await SearchTripArchive(fakeUser.uid, '100 200', 0);
       return expect(onlytwo.results).toHaveLength(2);
+    })
+  })
+
+  describe('get data by query', ()=>{
+    afterAll(async (done) => {
+      done();
+    });
+
+    beforeAll(async ()=>{
+      await CreateTripArchive(fakeUser.uid, '@@ $$ %%');
+      await CreateTripArchive(fakeUser.uid, 'Germany Travel');
+      await CreateTripArchive(fakeUser.uid, 'Greece Travel');
+      await CreateTripArchive(fakeUser.uid, 'Australia Travel');
+      await CreateTripArchive(fakeUser.uid, 'USA Travel');
+      await CreateTripArchive(fakeUser.uid, 'France Travel');
+      await CreateTripArchive(fakeUser.uid, 'Hungary Travel');
+    })
+
+    it('find a data by keywords', async ()=>{
+      const keywords = ConvertSearchKeywordToArray('yy $$');
+
+      const colRef = await GetCollectionRef(TripArchive);
+      let query = colRef.where('ownerId', '==', fakeUser.uid);
+      query = query.where('tags', 'array-contains-any', keywords);
+      query = query.orderBy('createAt', 'desc');
+      const result = await GetDataByQuery(TripArchive, query, 1);
+      
+      expect(result.lastDocSnapshotCursor).not.toBeNull();
+      return expect(result.results).toHaveLength(1);
+    })
+
+    it('can not find a data by keywords', async ()=>{
+      const keywords = ConvertSearchKeywordToArray('^^^^^^^^^');
+
+      const colRef = await GetCollectionRef(TripArchive);
+      let query = colRef.where('ownerId', '==', fakeUser.uid);
+      query = query.where('tags', 'array-contains-any', keywords);
+      query = query.orderBy('createAt', 'desc');
+      const result = await GetDataByQuery(TripArchive, query, 1);
+      
+      expect(result.lastDocSnapshotCursor).toBeNull();
+      return expect(result.results).toHaveLength(0);
+    })
+
+    it('find multiple data by keywords in page', async ()=>{
+      const words = 'Germany Greece USA Australia Hungary France';
+      const keywords = ConvertSearchKeywordToArray(words);
+
+      const colRef = await GetCollectionRef(TripArchive);
+      let query = colRef.where('ownerId', '==', fakeUser.uid);
+      query = query.where('tags', 'array-contains-any', keywords);
+      query = query.orderBy('createAt', 'desc');
+      const result = await GetDataByQuery(TripArchive, query, 2);
+      
+      expect(result.lastDocSnapshotCursor).not.toBeNull();
+      expect(result.results).toHaveLength(2);
+
+      const result2 = await GetDataByQuery(TripArchive, query, 2, result.lastDocSnapshotCursor);
+      expect(result2.lastDocSnapshotCursor).not.toBeNull();
+      expect(result2.results).toHaveLength(2);
+
+      const result3 = await GetDataByQuery(TripArchive, query, 2, result2.lastDocSnapshotCursor);
+      expect(result3.lastDocSnapshotCursor).not.toBeNull();
+      expect(result3.results).toHaveLength(2);
+
+      const result4 = await GetDataByQuery(TripArchive, query, 2, result3.lastDocSnapshotCursor);
+      expect(result4.lastDocSnapshotCursor).not.toBeNull();
+      return expect(result4.results).toHaveLength(0);
+
     })
   })
 });
