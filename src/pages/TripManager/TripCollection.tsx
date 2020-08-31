@@ -3,11 +3,21 @@ import { useDispatch } from "react-redux";
 import {useParams, useHistory} from 'react-router-dom';
 import ManagerTool from './ManagerTool';
 import StaticBG from "../../components/StaticBG/StaticBG";
-import { Fab } from '@material-ui/core';
+import { Fab} from '@material-ui/core';
+import { createStyles, makeStyles } from '@material-ui/core/styles';
 import { PostAdd, ArrowBack } from '@material-ui/icons';
 import { StartChangeHeaderTitle } from '../../redux/header/header.actions';
+import {motion} from 'framer-motion';
+import {slideInOut} from '../../motions/motions';
 
+const style= createStyles({
+    main:{
+        height:'100%',
+    },
+});
 const TripCollection = () => {
+
+    const classes = makeStyles(style)();
 
     const params = useParams();
     const history = useHistory();
@@ -38,7 +48,13 @@ const TripCollection = () => {
     )
 
     return (
-        <React.Fragment>
+        <motion.div
+        className={classes.main}
+        initial='initial' 
+        animate='enter' 
+        exit='exit' 
+        variants={slideInOut('x', 200, 20)} 
+        >
             <StaticBG backgroundColor="rgba(166,166,166,0.5)">
                 <ManagerTool
                 rightToolButtons={[addTripFab]}
@@ -46,7 +62,7 @@ const TripCollection = () => {
                 onSearchChanged={handleSearch}
                 />
             </StaticBG>
-        </React.Fragment>
+        </motion.div>
     );
 };
 

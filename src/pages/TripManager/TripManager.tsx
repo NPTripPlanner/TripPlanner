@@ -1,27 +1,25 @@
 import React from "react";
-import {Switch, useRouteMatch, useLocation } from 'react-router-dom';
-import PrivateRoute from "../../router/PrivateRoute";
+import {Switch, useRouteMatch, useLocation, Route } from 'react-router-dom';
 import TripArchive from './TripArchives';
 import TripCollection from './TripCollection';
 
 const TripManager = () => {
   const match = useRouteMatch('/TripManager');
-  const { pathname } = useLocation();
+  const location = useLocation();
 
   React.useEffect(() => {
     window.scrollTo(0, 0);
-  }, [pathname]);
+  }, [location]);
   
   return (
-    <Switch>
-        <PrivateRoute exact path={match.path} fallbackPath='/' component={<TripArchive />}/>
-        <PrivateRoute
+    <Switch >
+        <Route exact path={match.path} render={()=><TripArchive />}/>
+        <Route
         exact 
         path={`${match.path}/:ArchiveId`} 
-        fallbackPath='/' 
-        component={<TripCollection />}
+        render={()=><TripCollection />}
         />
-        <PrivateRoute path='*' fallbackPath='/' component={<TripArchive />}/>
+        <Route path={`${match.path}/*`}  render={()=><TripArchive />}/>
     </Switch>
   );
 };

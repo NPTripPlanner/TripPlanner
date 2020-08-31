@@ -33,7 +33,9 @@ const style = createStyles({
     display: 'flex',
     justifyContent: 'flex-start',
     alignItems: 'center',
-    cursor: 'pointer',
+  },
+  brandIcon:{
+    cursor:'pointer'
   }
 });
 
@@ -64,7 +66,11 @@ const Header = React.forwardRef<any, IProps>((props, ref) => {
       <Toolbar>
         <div className={classes.group}>
           <div className={classes.brand}>
-            {!brand ? null : <div onClick={handleBrandClick}>{brand}</div>}
+            {!brand ? null : 
+              <div onClick={handleBrandClick}>
+                <div className={classes.brandIcon}>{brand}</div>
+              </div>
+            }
           </div>
           <div className={classes.title}>
           {!title ? null : (

@@ -1,5 +1,5 @@
 import React from "react";
-import { Redirect, useLocation } from "react-router-dom";
+import { useHistory, useLocation } from "react-router-dom";
 
 import { useDispatch, useSelector } from "react-redux";
 import { selectUserInfo } from "../../redux/user/user.selector";
@@ -24,6 +24,8 @@ import { makeStyles } from "@material-ui/core/styles";
 import style from "./Landing.style";
 import UserLoginFlowDialog from "../../dialogs/UserLoginFlowDialog";
 import { StartChangeHeaderTitle } from "../../redux/header/header.actions";
+import {motion} from 'framer-motion';
+import {slideInOut} from '../../motions/motions';
 
 const getIntro = () =>
   `Plan itinerary ahead has never been an easy task for majority of people. Have a list of places you want to visit but don’t know where to begin with?  Spend too much time on planning for a trip that you can enjoy and never forgot?
@@ -38,12 +40,12 @@ Trip planner is here to assist and help you to create a itinerary easily. Trip p
 const Landing = () => {
 
   const [loginFlow, setLoginFlow] = React.useState(null);
-  const [redirect, setRedirect] = React.useState(false);
   const classes = makeStyles(style)();
 
   const user = useSelector(selectUserInfo);
   const dispatch = React.useCallback(useDispatch(), []);
   const { pathname } = useLocation();
+  const history = useHistory();
 
   React.useEffect(() => {
     window.scrollTo(0, 0);
@@ -65,22 +67,17 @@ const Landing = () => {
       )
       return;
     }
-    setRedirect(true);
+    history.push("/TripManager");
   };
-
-  if(redirect) {
-    return (
-      <Redirect 
-      to={{pathname: '/TripManager',
-      state: { from: '/' }}} 
-      />
-    )
-  }
   
   return (
-    <React.Fragment>
-      {(loginFlow && !user)?loginFlow:null}
-      <div>
+      <motion.div 
+      initial='initial' 
+      animate='enter' 
+      exit='exit' 
+      variants={slideInOut('y', 200, 20)}
+      >
+        {(loginFlow && !user)?loginFlow:null}
         <Hero imageUrl={heroImageUrl} title="Plan your journey" />
         <Section
           title="Organize trip & Start your adventure"
@@ -128,8 +125,7 @@ const Landing = () => {
             </div>
           }
         />
-      </div>
-    </React.Fragment>
+      </motion.div>
   );
 };
 

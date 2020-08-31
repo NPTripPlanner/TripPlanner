@@ -4,7 +4,7 @@ import { useDispatch,useSelector } from "react-redux";
 import {
     selectFetchingTripArchives,
     selectMoreTripArchives,
-    selectFetchingTripArchiveError,
+    // selectFetchingTripArchiveError,
     selectTripArchives,
 } from '../../redux/tripArchive/tripArchive.selector';
 import StaticBG from "../../components/StaticBG/StaticBG";
@@ -24,8 +24,13 @@ import {
 } from '../../redux/tripArchive/tripArchive.actions';
 import UpdateTripArchiveForm from '../../forms/UpdateTripArchiveForm';
 import { TripArchive } from '../../schema/firestore.schema';
+import {motion} from 'framer-motion';
+import {slideInOut} from '../../motions/motions';
 
 const style = (theme) => createStyles({
+    main:{
+        height:'100%',
+    },
     backdrop: {
       zIndex: theme.zIndex.drawer + 1,
       color: '#fff',
@@ -43,16 +48,12 @@ const TripArchives = () => {
     const [dialog, setDialog] = React.useState(null);
     const [searchkeyword, setSearchKeyword] = React.useState(''); 
     const fetching = useSelector(selectFetchingTripArchives);
-    const fetchingError = useSelector(selectFetchingTripArchiveError);
+    // const fetchingError = useSelector(selectFetchingTripArchiveError);
     const archives = useSelector(selectTripArchives);
     const moreArchives = useSelector(selectMoreTripArchives);
     const fetchAmount = 6;
     const dispatch = React.useCallback(useDispatch(), []);
     const history = useHistory();
-
-    console.log(fetchingError);
-    console.log(archives);
-    console.log(moreArchives);
 
     React.useEffect(()=>{
         dispatch(StartChangeHeaderTitle('Collection'));
@@ -134,9 +135,15 @@ const TripArchives = () => {
           <AddBox />
         </Fab>
     )
-
+    
     return (
-        <React.Fragment>
+        <motion.div
+        className={classes.main}
+        initial='initial' 
+        animate='enter' 
+        exit='exit' 
+        variants={slideInOut('x', 200, 20)} 
+        >
             <StaticBG backgroundColor="rgba(166,166,166,0.5)">
                 <ManagerTool
                 rightToolButtons={[addArchiveFab]}
@@ -180,7 +187,7 @@ const TripArchives = () => {
                 </Collection>
             </StaticBG>
             {dialog?dialog:null}
-        </React.Fragment>
+        </motion.div>
     );
 };
 

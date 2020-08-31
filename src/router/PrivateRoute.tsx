@@ -1,7 +1,8 @@
 import React from 'react';
-import { Route, Redirect } from "react-router-dom";
+import { Route, Redirect, useLocation } from "react-router-dom";
 import { selectUserInfo } from "../redux/user/user.selector";
 import {useSelector } from "react-redux";
+import { motion } from 'framer-motion';
 
 type IProps = {
     [key:string]: {}|string;
@@ -17,24 +18,26 @@ const PrivateRoute = (props:IProps) => {
     } = props;
 
     const user = useSelector(selectUserInfo);
+    const location = useLocation();
+
+    if(!user){
+        return(
+        <motion.div exit="undefined">
+            <Redirect 
+            to={{
+                pathname: fallbackPath,
+                from: location.pathname,
+            }}
+            />
+        </motion.div>    
+        )
+    }
+        
+
     return (
         <Route
         {...rest}
-        render={
-            ({location})=>{
-                return (
-                user?
-                component
-                :
-                <Redirect 
-                to={{
-                    pathname: fallbackPath,
-                    state: { from: location }
-                }}
-                />
-                )
-            }
-        }
+        render={()=>component}
         />
     );
 };
