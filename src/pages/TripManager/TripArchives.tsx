@@ -19,7 +19,7 @@ import CreateTripArchiveForm from '../../forms/CreateTripArchiveForm';
 import ConfirmDeleteForm from '../../forms/ConfirmDeleteForm';
 import { StartChangeHeaderTitle } from '../../redux/header/header.actions';
 import {
-    StartFetchTripArchives,
+    StartFetchTripArchives, ClearTripArchiveStart,
     // StartDeleteTripArchive
 } from '../../redux/tripArchive/tripArchive.actions';
 import UpdateTripArchiveForm from '../../forms/UpdateTripArchiveForm';
@@ -64,6 +64,7 @@ const TripArchives = () => {
 
     React.useEffect(()=>{
         dispatch(StartFetchTripArchives(fetchAmount, true, searchkeyword));
+        return ()=>dispatch(ClearTripArchiveStart());
     }, [dispatch, searchkeyword]);
 
     const handleSearch = (keyword)=>{

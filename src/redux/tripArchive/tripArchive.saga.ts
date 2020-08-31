@@ -12,6 +12,7 @@ import {
   UpdateTripArchiveNameFail,
   UpdateTripArchiveNameStateResetSuccessful,
   DeleteTripArchiveResetSuccessful,
+  ClearTripArchiveSuccessful,
 } from "./tripArchive.actions";
 
 import {
@@ -150,6 +151,13 @@ export function* updateTripArchiveNameReset(){
   }
 }
 
+export function* clearTripArchive(){
+  while(true){
+    yield take(actionType.CLEAR_TRIP_ARCHIVE_START);
+    yield put(ClearTripArchiveSuccessful());
+  }
+}
+
 export default function* TripArchiveSaga() {
   yield all([
     call(fetchTripArchives),
@@ -159,5 +167,6 @@ export default function* TripArchiveSaga() {
     call(deleteTripArchiveReset),
     call(updateTripArchiveName),
     call(updateTripArchiveNameReset),
+    call(clearTripArchive),
   ]);
 }

@@ -164,6 +164,12 @@ const TripArchiveReducer : Reducer<ITripArchiveState> = (state = initState, acti
         updateTripArchiveError: null,
       }
     }
+    case actionType.CLEAR_TRIP_ARCHIVE_SUCCESSFUL:{
+      return {
+        ...state,
+        tripArchives:[],
+      }
+    }
     default:
       return state;
   }

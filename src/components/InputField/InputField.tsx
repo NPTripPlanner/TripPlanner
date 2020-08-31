@@ -95,7 +95,7 @@ const InputField = React.forwardRef<Ref, IProps>((props,ref) => {
         {labelText ? (
           <InputLabel htmlFor={htmlFor} required={required}>
             <div className={classes.label}>
-              <Typography variant="caption">{labelText}</Typography>
+              <Typography variant="subtitle1">{labelText}</Typography>
             </div>
           </InputLabel>
         ) : null}

@@ -91,3 +91,11 @@ export const UpdateTripArchiveNameStateReset = () =>action(
 export const UpdateTripArchiveNameStateResetSuccessful = () =>action(
   actionType.UPDATE_TRIP_ARCHIVE_NAME_STATE_RESET_SUCCESSFUL,
 )
+
+export const ClearTripArchiveStart = ()=>action(
+  actionType.CLEAR_TRIP_ARCHIVE_START,
+)
+
+export const ClearTripArchiveSuccessful = ()=>action(
+  actionType.CLEAR_TRIP_ARCHIVE_SUCCESSFUL,
+)
