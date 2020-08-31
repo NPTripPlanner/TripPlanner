@@ -3,7 +3,8 @@
 export const slideInOut = (
     direction:'x'|'y'='x',
     stiffness:number=300,
-    damping:number=200
+    damping:number=200,
+    staggerChildren:number=0.01
     ) => {
     return {
         initial:{
@@ -14,13 +15,16 @@ export const slideInOut = (
             [direction]:0,
             rotate:0,
             transition:{
-                [direction]:{ type: "spring", stiffness: stiffness, damping: damping }
+                when:'beforeChildren',
+                staggerChildren: staggerChildren,
+                [direction]:{ type: "spring", stiffness: stiffness, damping: damping },
             },
         },
         exit:{
             [direction]:'100%',
             rotate:45,
             transition:{
+                when:'afterChildren',
                 duration:0.7,
                 backout:[0.43, 0.13, 0.23, 0.96],
             },
@@ -28,20 +32,64 @@ export const slideInOut = (
     };
 }
 
-export const opacityInOut = (
+export const dropIn = (
+    stiffness:number=300,
+    damping:number=200,
+    staggerChildren:number=0.01
+    )=>{
+    return {
+        initial:{
+            y:'-100%',
+            opacity:0,
+        },
+        enter:{
+            y:0,
+            opacity:1,
+            transition:{
+                when:'beforeChildren',
+                staggerChildren: staggerChildren,
+                y:{ type: "spring", stiffness: stiffness, damping: damping }
+            },
+        },
+        exit:{
+            y:'-100%',
+            opacity:0,
+            transition:{
+                when:'afterChildren',
+                duration:0.7,
+                backout:[0.43, 0.13, 0.23, 0.96],
+            },
+        },
+    }
+}
+
+export const scaleInOut = (
     initial:number=0,
     enter:number=1,
-    exit:number=0
+    exit:number=0,
+    stiffness:number=300,
+    damping:number=200,
+    staggerChildren:number=0.01
     ) => {
     return {
         initial:{
-            opacity: initial,
+            scale: initial,
         },
         enter:{
-            opacity: enter,
+            scale: enter,
+            transition:{
+                when:'beforeChildren',
+                staggerChildren: staggerChildren,
+                y:{ type: "spring", stiffness: stiffness, damping: damping }
+            },
         },
         exit:{
-            opacity: exit,
+            scale: exit,
+            transition:{
+                when:'afterChildren',
+                staggerChildren: staggerChildren,
+                y:{ type: "spring", stiffness: stiffness, damping: damping }
+            },
         },
     }
 }

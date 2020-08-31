@@ -25,11 +25,14 @@ import {
 import UpdateTripArchiveForm from '../../forms/UpdateTripArchiveForm';
 import { TripArchive } from '../../schema/firestore.schema';
 import {motion} from 'framer-motion';
-import {slideInOut} from '../../motions/motions';
+import {slideInOut, dropIn} from '../../motions/motions';
 
 const style = (theme) => createStyles({
     main:{
         height:'100%',
+    },
+    tool:{
+        width:'100%'
     },
     backdrop: {
       zIndex: theme.zIndex.drawer + 1,
@@ -145,10 +148,18 @@ const TripArchives = () => {
         variants={slideInOut('x', 200, 20)} 
         >
             <StaticBG backgroundColor="rgba(166,166,166,0.5)">
-                <ManagerTool
-                rightToolButtons={[addArchiveFab]}
-                onSearchChanged={handleSearch}
-                />
+                <motion.div
+                className={classes.tool}
+                initial='initial' 
+                // animate='enter' 
+                exit='exit' 
+                variants={dropIn(200, 13)}
+                >
+                    <ManagerTool
+                    rightToolButtons={[addArchiveFab]}
+                    onSearchChanged={handleSearch}
+                    />
+                </motion.div>
                 <Collection>
                 {
                     archives.map((tripArchive,i)=>{
