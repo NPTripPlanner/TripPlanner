@@ -113,4 +113,75 @@ describe('Firestore functions test', ()=>{
             return expect(returnResut.tripArchiveId).toEqual(result.id);
         })
     })
+
+    describe('update itinerary name', ()=>{
+        it('test update itinerary name function', async ()=>{
+            let wrapped = test.wrap(firestoreFunctions.createTripArchive);
+            const result = await wrapped({
+                userId: userData.id,
+                name:'itinerary name will be changed',
+            });
+            expect(result).toMatchObject({
+                ownerId: userData.id,
+            });
+
+            const startDate = new Date();
+            const endDate = new Date();
+            endDate.setDate(endDate.getDate()+5);
+            console.log(startDate.toLocaleDateString(), endDate.toLocaleDateString());
+            wrapped = test.wrap(firestoreFunctions.createItineraryForTripArchive);
+            const returnResut = await wrapped({
+                tripArchiveId: result.id,
+                name: 'You can not see this itinerary name',
+                startDate: startDate.toUTCString(),
+                endDate: endDate.toUTCString(),
+            });
+            expect(returnResut).toBeTruthy();
+            expect(returnResut.tripArchiveId).toEqual(result.id);
+
+            wrapped = test.wrap(firestoreFunctions.updateItineraryName);
+            const newResult = await wrapped({
+                userId: userData.id,
+                tripArchiveId: returnResut.tripArchiveId,
+                itineraryId: returnResut.id,
+                name: 'name has been changed',
+            })
+            return expect(newResult).toBeTruthy();
+        })
+    })
+
+    describe('delete itinerary', ()=>{
+        it('test delete itinerary function', async ()=>{
+            let wrapped = test.wrap(firestoreFunctions.createTripArchive);
+            const result = await wrapped({
+                userId: userData.id,
+                name:'itinerary was deleted',
+            });
+            expect(result).toMatchObject({
+                ownerId: userData.id,
+            });
+
+            const startDate = new Date();
+            const endDate = new Date();
+            endDate.setDate(endDate.getDate()+5);
+            console.log(startDate.toLocaleDateString(), endDate.toLocaleDateString());
+            wrapped = test.wrap(firestoreFunctions.createItineraryForTripArchive);
+            const returnResut = await wrapped({
+                tripArchiveId: result.id,
+                name: 'You see itinerary there is something went wrong',
+                startDate: startDate.toUTCString(),
+                endDate: endDate.toUTCString(),
+            });
+            expect(returnResut).toBeTruthy();
+            expect(returnResut.tripArchiveId).toEqual(result.id);
+
+            wrapped = test.wrap(firestoreFunctions.deleteItinerary);
+            const deleteResult = await wrapped({
+                userId: userData.id,
+                tripArchiveId: returnResut.tripArchiveId,
+                itineraryId: returnResut.id,
+            });
+            return expect(deleteResult).toBeTruthy();
+        })
+    })
 })

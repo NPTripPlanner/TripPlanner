@@ -2,6 +2,29 @@ const firestore = require('./utils').firestore();
 const commonUtils = require('./commom.utils');
 const moment = require('moment');
 
+/**
+ * Create a itinerary under a trip archive
+ * 
+ * @param {*} archiveId trip archive id
+ * @param {*} itineraryName name for itinerary
+ * @param {*} startDateLocal string of start date for itinerary.
+ * 
+ * date string formate is like 2013-02-04T10:35:24-08:00
+ * 
+ * The date is from client in local and it will be converted into UTC time.
+ * 
+ * @param {*} endDateLocal string of end date for itinerary.
+ * 
+ * date string formate is like 2013-02-04T10:35:24-08:00
+ * 
+ * The date is from client in local and it will be converted into UTC time.
+ * 
+ * @param {*} writeHandler a handler for write. 
+ * 
+ * accept transaction, batch or writebulk
+ * 
+ * @returns return itinerary id
+ */
 exports.createItineraryForTripArchive = async (
     archiveId,
     itineraryName,
@@ -44,4 +67,18 @@ exports.createItineraryForTripArchive = async (
     writeHandler.create(itDocRef, itinerarydata);
 
     return itinerarydata.id;
+}
+
+exports.updateItineraryName = async (tripArchiveDocRef, itineraryId, itineraryName, writeHandler)=>{
+    const itinerariesRef = await tripArchiveDocRef.collection('itineraries');
+    const itDocRef = await itinerariesRef.doc(`${itineraryId}`);
+    const docSnapshot = await itDocRef.get();
+
+    if(!docSnapshot.exists) throw new Error(`Itinerary ${itineraryId} do not exists`);
+
+    const data = {name: itineraryName};
+
+    writeHandler.update(docSnapshot.ref, data);
+
+    return true;
 }

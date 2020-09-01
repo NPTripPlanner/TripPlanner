@@ -14,6 +14,7 @@ const commonUtils = require('./utils/commom.utils');
 const trigger = require('./utils/trigger.utils');
 
 const mockAuth = require('./mock/mock.auth');
+const { QuerySnapshot } = require('@google-cloud/firestore');
 
 const env = process.env.NODE_ENV;
 
@@ -190,7 +191,7 @@ exports.createItineraryForTripArchive = functions.https.onCall(
             });
 
             return {
-                itineraryId: itId,
+                id: itId,
                 tripArchiveId,
             }
         }
@@ -200,6 +201,63 @@ exports.createItineraryForTripArchive = functions.https.onCall(
         }
     }
 );
+
+exports.updateItineraryName = functions.https.onCall(
+    async (data, context)=>{
+        try{
+            validateAuthFromFunctionContext(context, 'update itinerary name fail');
+
+            const {userId, tripArchiveId, itineraryId, name} = data;
+            const tripArchiveRef = await firestore.collection('tripArchive');
+            const querySnapshots = await tripArchiveRef.where('ownerId', '==', userId)
+            .where('id', '==', tripArchiveId)
+            .get();
+
+            const tripArchiveDocSnap = querySnapshots.docs[0];
+            if(!tripArchiveDocSnap.exists) throw new Error(`TripArchive ${tripArchiveId} do not exists`);
+
+            const result = await firestore.runTransaction(async (trans)=>{
+                return await itinerary.updateItineraryName(
+                    tripArchiveDocSnap.ref, itineraryId, name, trans);
+            });
+
+            return result;
+
+        }
+        catch(err){
+            console.log(err);
+            throw new functions.https.HttpsError(err.code, err.message);
+        }
+    }
+);
+
+exports.deleteItinerary = functions.https.onCall(async (data, context)=>{
+    try{
+        validateAuthFromFunctionContext(context, 'Delete trip archive fail');
+
+        const {userId, tripArchiveId, itineraryId} = data;
+        const tripArchiveRef = await firestore.collection('tripArchive');
+        const querySnapshots = await tripArchiveRef.where('ownerId', '==', userId)
+        .where('id', '==', tripArchiveId)
+        .get();
+
+        const tripArchiveDocSnap = querySnapshots.docs[0];
+        if(!tripArchiveDocSnap.exists) throw new Error(`TripArchive ${tripArchiveId} do not exists`);
+
+        const itineraryColRef = tripArchiveDocSnap.ref.collection('itineraries');
+        const itDocRef = itineraryColRef.doc(`${itineraryId}`);
+        const itDocSnap = await itDocRef.get();
+        if(!itDocSnap.exists) throw new Error(`Itinerary ${itineraryId} do not exists`);
+        
+        const allDocRefs = await utils.getAllDocumentsPathUnder(itDocRef);
+        await utils.deleteDocuments(allDocRefs);
+        return true;
+    }
+    catch(err){
+        console.log(err.message);
+        throw new functions.https.HttpsError(err.code, err.message);
+    }
+});
 
 exports.triggerTripArchiveCreate = functions.firestore.document('tripArchive/{archive_id}')
 .onCreate(trigger.onCreateTripArchive);
