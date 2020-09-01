@@ -1,5 +1,6 @@
 const test = require('firebase-functions-test')();
 const firestoreFunctions = require('../index');
+const { delay } = require('redux-saga/effects');
 
 
 describe('Firestore functions test', ()=>{
@@ -49,6 +50,11 @@ describe('Firestore functions test', ()=>{
                 userId: userData.id,
                 name:'a new trip to be deleted',
             });
+            await new Promise(res=>{
+                const timer = setTimeout(()=>{
+                    res(clearTimeout(timer));
+                }, 200);
+            });
             expect(result).toMatchObject({
                 ownerId: userData.id,
             });
@@ -58,7 +64,7 @@ describe('Firestore functions test', ()=>{
                 tripArchiveId: result.id,
             });
             return expect(deleteResult).toBeTruthy();
-        })
+        }, 6000)
     })
 
     describe('update trip archive', ()=>{
@@ -78,6 +84,33 @@ describe('Firestore functions test', ()=>{
                 name: 'Name has been changed'
             });
             return expect(returnResut).toBeTruthy();
+        })
+    })
+
+    describe('create itinerary', ()=>{
+        it('test create itinerary function', async ()=>{
+            let wrapped = test.wrap(firestoreFunctions.createTripArchive);
+            const result = await wrapped({
+                userId: userData.id,
+                name:'This has 1 itineray',
+            });
+            expect(result).toMatchObject({
+                ownerId: userData.id,
+            });
+
+            const startDate = new Date();
+            const endDate = new Date();
+            endDate.setDate(endDate.getDate()+5);
+            console.log(startDate.toLocaleDateString(), endDate.toLocaleDateString());
+            wrapped = test.wrap(firestoreFunctions.createItineraryForTripArchive);
+            const returnResut = await wrapped({
+                tripArchiveId: result.id,
+                name: 'first itinerary',
+                startDate: startDate.toUTCString(),
+                endDate: endDate.toUTCString(),
+            });
+            expect(returnResut).toBeTruthy();
+            return expect(returnResut.tripArchiveId).toEqual(result.id);
         })
     })
 })

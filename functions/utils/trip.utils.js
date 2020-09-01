@@ -5,7 +5,7 @@ const commonUtils = require('./commom.utils');
 /**
  * Create a trip archive which contain number of trips
  */
-exports.createTripArchiveWith = async (ownerId, archiveName, batchOrTrans)=>{
+exports.createTripArchiveWith = async (ownerId, archiveName, writeHandler)=>{
     const archiveDocRef = await firestore.collection('tripArchive').doc();
 
     let name = archiveName?archiveName:'New collection';
@@ -19,34 +19,15 @@ exports.createTripArchiveWith = async (ownerId, archiveName, batchOrTrans)=>{
     archiveData = commonUtils.addCreateDateToObject(archiveData);
     archiveData = commonUtils.addModifyDateToObject(archiveData);
 
-    batchOrTrans.create(archiveDocRef, archiveData);
+    writeHandler.create(archiveDocRef, archiveData);
 
     return archiveData.id;
 }
 
 /**
- * Create a trip under specific trip archive
- */
-exports.createTripUnderArchiveWith = async (archiveId, tripData, batchOrTrans)=>{
-    if(!archiveId) throw Error('Archive id was not given');
-    if(!tripData) throw Error('Trip data is required');
-
-    const archiveDocRef = await firestore.collection('tripArchive').doc(archiveId);
-    const archiveFileExists = await (await archiveDocRef.get()).exists;
-    if(!archiveFileExists) throw Error(`Given archive id ${archiveId} do not exist`);
-
-    const tripDocRef = archiveDocRef.collection('tripCollection').doc();
-    const data = {...tripData, id:tripDocRef.id};
-
-    batchOrTrans.create(tripDocRef, data);
-
-    return tripData.id;
-}
-
-/**
  * transfer trip archive to specific user
  */
-exports.transferTripArchiveTo = async (userId, archiveId, batchOrTrans)=>{
+exports.transferTripArchiveTo = async (userId, archiveId, writeHandler)=>{
     const userDocRef = await firestore.collection('userArchive').doc(userId);
     const archiveDocRef = await firestore.collection('tripArchive').doc(archiveId);
     const errorMsg = 'Transfer trip archive fail';
@@ -58,7 +39,7 @@ exports.transferTripArchiveTo = async (userId, archiveId, batchOrTrans)=>{
 
     //update trip archive owerId
     const data = {ownerId: userId}
-    batchOrTrans.update(archiveDocRef, data);
+    writeHandler.update(archiveDocRef, data);
 
     //update user ownership
     const ownedArchives = userSnapshot.data().ownedArchives;
@@ -67,7 +48,7 @@ exports.transferTripArchiveTo = async (userId, archiveId, batchOrTrans)=>{
         ownedArchives.push(archiveId);
 
         const data = {ownedArchives: ownedArchives};
-        batchOrTrans.update(userDocRef, data);
+        writeHandler.update(userDocRef, data);
     }
 
     return true;
@@ -79,26 +60,7 @@ exports.getTripArchive = async (archiveId)=>{
     return archiveSnapshot.data();
 }
 
-exports.getAllDocumentsPathUnder = async (documentRef, includeSelf=true)=>{
-    const docSnap = await documentRef.get();
-    if(!docSnap.exists) throw new Error(`Document ${documentRef.id} do not exists`);
-
-    let refs = [];
-    const listCols = await documentRef.listCollections();
-
-    for (let col of listCols){
-        const listDocRefs = await col.listDocuments();
-        for(let docRef of listDocRefs){
-            const returnRefs = await this.getAllDocumentsPathUnder(docRef);
-            refs.push(returnRefs);
-        }
-    }
-
-    if(includeSelf) refs.push(documentRef);
-    return refs.flat();
-}
-
-exports.updateTripArchiveName = async (userId, archiveId, archiveName, batchOrTrans)=>{
+exports.updateTripArchiveName = async (userId, archiveId, archiveName, writeHandler)=>{
  
     const querySnapshot = await firestore.collection('tripArchive')
     .where('ownerId', '==', userId)
@@ -109,7 +71,10 @@ exports.updateTripArchiveName = async (userId, archiveId, archiveName, batchOrTr
     const docSnapshot = querySnapshot.docs[0];
     if(!docSnapshot) throw new Error(`${archiveId} do not exists`); 
 
-    batchOrTrans.update(docSnapshot.ref, {name: archiveName});
+    let data = {name:archiveName};
+    commonUtils.addModifyDateToObject(data);
+
+    writeHandler.update(docSnapshot.ref, data);
 
     return true;
 }

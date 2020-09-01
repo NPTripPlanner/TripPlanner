@@ -9,6 +9,7 @@ const utils = require('./utils/utils');
 utils.init(adminApp);
 const trip = require('./utils/trip.utils');
 const user = require('./utils/user.utils');
+const itinerary = require('./utils/itinerary.utils');
 const commonUtils = require('./utils/commom.utils');
 const trigger = require('./utils/trigger.utils');
 
@@ -75,16 +76,14 @@ exports.initUser = functions.https.onCall(async (data, context) => {
         //     })
         // }
     
-        const tripBatch = firestore.batch();
-        //TODO:create trip template
-        let tripData = {
-            tripName:'My first trip',
-        }
-        tripData = commonUtils.addCreateDateToObject(tripData);
-        tripData = commonUtils.addModifyDateToObject(tripData);
-        //create trip under a trip archive
-        await trip.createTripUnderArchiveWith(archiveId, tripData, tripBatch);
-        await tripBatch.commit();
+        // const itBatch = firestore.batch();
+        // //TODO:create trip template
+        // let itData = {
+        //     tripName:'My first trip',
+        // }
+        // //create trip under a trip archive
+        // await itinerary.createItineraryUnderArchive(archiveId, tripData, itBatch);
+        // await itBatch.commit();
         
         return true;
     }
@@ -150,13 +149,13 @@ exports.deleteTripArchive = functions.https.onCall(async (data, context)=>{
         if(docSnapshot.data().ownerId !== userId){
             throw new Error(`${tripArchiveId}'s ownerId do not match ${userId}`);
         }
-
-        const allDocRefs = await trip.getAllDocumentsPathUnder(docRef);
+        
+        const allDocRefs = await utils.getAllDocumentsPathUnder(docRef);
         await utils.deleteDocuments(allDocRefs);
         return true;
     }
     catch(err){
-        console.log(err);
+        console.log(err.message);
         throw new functions.https.HttpsError(err.code, err.message);
     }
 });
@@ -178,6 +177,29 @@ exports.updateTripArchiveName = functions.https.onCall(async (data, context)=>{
         throw new functions.https.HttpsError(err.code, err.message);
     }
 });
+
+exports.createItineraryForTripArchive = functions.https.onCall(
+    async (data, context)=>{
+        try{
+            validateAuthFromFunctionContext(context, 'create itinerary fail');
+    
+            const {tripArchiveId, name, startDate, endDate} = data;
+            const itId = await firestore.runTransaction(async (trans)=>{
+                return await itinerary.createItineraryForTripArchive(
+                    tripArchiveId, name, startDate, endDate, trans);
+            });
+
+            return {
+                itineraryId: itId,
+                tripArchiveId,
+            }
+        }
+        catch(err){
+            console.log(err);
+            throw new functions.https.HttpsError(err.code, err.message);
+        }
+    }
+);
 
 exports.triggerTripArchiveCreate = functions.firestore.document('tripArchive/{archive_id}')
 .onCreate(trigger.onCreateTripArchive);

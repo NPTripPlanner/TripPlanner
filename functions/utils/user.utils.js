@@ -5,7 +5,7 @@ const commonUtils = require('./commom.utils');
 /**
  * Create a new user
  */
-exports.createUserWith = async (userData, batchOrTrans)=>{
+exports.createUserWith = async (userData, writeHandler)=>{
     if(!userData) throw Error('User data was not given');
 
     let user = {
@@ -19,7 +19,7 @@ exports.createUserWith = async (userData, batchOrTrans)=>{
 
     const userDocRef = await firestore.collection('userArchive').doc(user.id);
 
-    batchOrTrans.create(userDocRef, user);
+    writeHandler.create(userDocRef, user);
 
     return user.id;
 }
