@@ -77,6 +77,7 @@ exports.updateItineraryName = async (tripArchiveDocRef, itineraryId, itineraryNa
     if(!docSnapshot.exists) throw new Error(`Itinerary ${itineraryId} do not exists`);
 
     const data = {name: itineraryName};
+    itinerarydata = commonUtils.addModifyDateToObject(itinerarydata);
 
     writeHandler.update(docSnapshot.ref, data);
 
