@@ -77,14 +77,11 @@ exports.initUser = functions.https.onCall(async (data, context) => {
         //     })
         // }
     
-        // const itBatch = firestore.batch();
-        // //TODO:create trip template
-        // let itData = {
-        //     tripName:'My first trip',
-        // }
-        // //create trip under a trip archive
-        // await itinerary.createItineraryUnderArchive(archiveId, tripData, itBatch);
-        // await itBatch.commit();
+        //test
+        const itBatch = firestore.batch();
+        //create trip under a trip archive
+        await itinerary.createItineraryForTripArchive(archiveId, null, null, null, itBatch);
+        await itBatch.commit();
         
         return true;
     }
