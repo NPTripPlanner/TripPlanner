@@ -6,7 +6,7 @@ import {
 } from 'fireorm';
 import ImprovedRepository from './ImprovedRepository';
 
-export class Itineraries{
+export class Itinerary{
     id: string;
     createAt: Date;
     modifyAt: Date;
@@ -26,10 +26,11 @@ export class TripArchive {
     name: string;
     tags: Array<string>;
 
-    @SubCollection(Itineraries, 'itineraries')
-    itineraries?:ISubCollection<Itineraries>
+    @SubCollection(Itinerary, 'itineraries')
+    itineraries?:ISubCollection<Itinerary>;
 }
 
 
 @CustomRepository(TripArchive)
 export class TripArchiveRepository extends ImprovedRepository<TripArchive>{}
+

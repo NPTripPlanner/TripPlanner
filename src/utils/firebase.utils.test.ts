@@ -16,6 +16,7 @@ import {
   GetCollectionRef,
   GetDataByQuery,
   ConvertSearchKeywordToArray,
+  CreateItineraryForTripArchive,
 } from "./firebase.utils";
 
 import { TripArchive } from "../schema/firestore.schema";
@@ -382,6 +383,44 @@ describe("Firebase utility test", () => {
       expect(result4.lastDocSnapshotCursor).not.toBeNull();
       return expect(result4.results).toHaveLength(0);
 
+    })
+  })
+
+  describe('create itinerary', ()=>{
+    afterAll(async (done) => {
+      done();
+    });
+
+    let tripArchive: TripArchive = null;
+    beforeAll(async ()=>{
+      tripArchive = await CreateTripArchive(fakeUser.uid, 'create itinerary');
+    })
+
+    it('create an itinerary', async ()=>{
+      const startDate = new Date();
+      const endDate = new Date();
+      endDate.setDate(startDate.getDate()+3);
+      const name = 'my new itinerary';
+
+      await CreateItineraryForTripArchive(
+        fakeUser.uid,
+        tripArchive.id,
+        'it name',
+        startDate.toUTCString(),
+        endDate.toUTCString()
+      );
+
+      const it = await CreateItineraryForTripArchive(
+        fakeUser.uid,
+        tripArchive.id,
+        name,
+        startDate.toUTCString(),
+        endDate.toUTCString()
+      );
+      console.log(it);
+      expect(it).not.toBeNull();
+      expect(it.tripArchiveId).toEqual(tripArchive.id);
+      return expect(it.name).toEqual(name);
     })
   })
 });

@@ -256,8 +256,8 @@ exports.deleteItinerary = functions.https.onCall(async (data, context)=>{
     }
 });
 
-exports.triggerTripArchiveCreate = functions.firestore.document('tripArchive/{archive_id}')
-.onCreate(trigger.onCreateTripArchive);
+// exports.triggerTripArchiveCreate = functions.firestore.document('tripArchive/{archive_id}')
+// .onCreate(trigger.onCreateTripArchive);
 
 exports.triggerTripArchiveUpdate = functions.firestore.document('tripArchive/{archive_id}')
-.onUpdate(trigger.onUpdateTripArchive);
+.onWrite(trigger.onUpdateTripArchive);

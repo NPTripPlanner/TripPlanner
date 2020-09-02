@@ -446,6 +446,40 @@ export const CreateTripArchive = async (userId:string, archiveName:string)=>{
     throw Error(getErrorMsg(err.code));
   }
 }
+
+/**
+ * Create an itinerary under trip archive
+ * @param userId user id
+ * @param archiveId archive id that itinerary will be created under
+ * @param itineraryName name for itinerary
+ * @param startDate itinerary start date in UTC string
+ * @param endDate itinerary end date in UTC string
+ */
+export const CreateItineraryForTripArchive = async (
+  userId:string,
+  archiveId:string,
+  itineraryName:string,
+  startDate:string,
+  endDate:string
+  )=>{
+    try{
+      const result = await cloudFunctions.httpsCallable('createItineraryForTripArchive')({
+        tripArchiveId: archiveId,
+        name: itineraryName,
+        startDate,
+        endDate,
+      });
+      const itineraryId = result.data.id;
+      const tripArchive = await GetTripArchive(userId, result.data.tripArchiveId);
+      const it = await tripArchive.itineraries.findById(itineraryId);
+      
+      return it;
+    }
+    catch(err){
+      console.log(err)
+      throw Error(getErrorMsg(err.code));
+    }
+}
 //#endregion Firestore write
 
 //#region Firestore update
