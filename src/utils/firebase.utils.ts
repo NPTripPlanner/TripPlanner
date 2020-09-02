@@ -485,19 +485,51 @@ export const CreateItineraryForTripArchive = async (
 //#region Firestore update
 export const UpdateTripArchiveName = async (userId:string, archiveId:string, archiveName:string)=>{
   try{
-    await cloudFunctions.httpsCallable('updateTripArchiveName')({
+    const result = await cloudFunctions.httpsCallable('updateTripArchiveName')({
       userId: userId,
       tripArchiveId: archiveId,
       name: archiveName,
     });
 
-    const data = await GetTripArchive(userId, archiveId);
+    if(!result) throw new Error(
+      `Can not update ${archiveId} trip archive name`
+    );
+
+    const tripArchive = await GetTripArchive(userId, archiveId);
     
-    return data;
+    return tripArchive;
   }
   catch(err){
     throw Error(getErrorMsg(err.code));
   }
+}
+
+export const UpdateItineraryName = async (
+  userId:string,
+  archiveId:string,
+  itineraryId:string,
+  name:string)=>{
+
+    try{
+      const result = await cloudFunctions.httpsCallable('updateItineraryName')({
+        userId: userId,
+        tripArchiveId: archiveId,
+        itineraryId: itineraryId,
+        name: name,
+      });
+      
+      if(!result) throw new Error(
+        `Can not update ${itineraryId} itinerary name under trip archive ${archiveId}`
+      );
+  
+      const tripArchive = await GetTripArchive(userId, archiveId);
+      const it = tripArchive.itineraries.findById(itineraryId);
+      
+      return it;
+    }
+    catch(err){
+      throw Error(getErrorMsg(err.code));
+    }
 }
 //#endregion Firestore update
 

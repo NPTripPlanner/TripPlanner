@@ -17,6 +17,7 @@ import {
   GetDataByQuery,
   ConvertSearchKeywordToArray,
   CreateItineraryForTripArchive,
+  UpdateItineraryName,
 } from "./firebase.utils";
 
 import { TripArchive } from "../schema/firestore.schema";
@@ -417,10 +418,45 @@ describe("Firebase utility test", () => {
         startDate.toUTCString(),
         endDate.toUTCString()
       );
-      console.log(it);
       expect(it).not.toBeNull();
       expect(it.tripArchiveId).toEqual(tripArchive.id);
       return expect(it.name).toEqual(name);
+    })
+  })
+
+  describe('update itinerary', ()=>{
+    afterAll(async (done) => {
+      done();
+    });
+
+    let tripArchive: TripArchive = null;
+    beforeAll(async ()=>{
+      tripArchive = await CreateTripArchive(fakeUser.uid, 'update itinerary');
+    })
+
+    it('update an itinerary name', async ()=>{
+      const startDate = new Date();
+      const endDate = new Date();
+      endDate.setDate(startDate.getDate()+3);
+      const oldName = 'you see this, something went wrong';
+      const newName = 'itinerary name has been changed';
+
+      const it = await CreateItineraryForTripArchive(
+        fakeUser.uid,
+        tripArchive.id,
+        oldName,
+        startDate.toUTCString(),
+        endDate.toUTCString()
+      );
+
+      expect(it).not.toBeNull();
+      expect(it.tripArchiveId).toEqual(tripArchive.id);
+      
+      const updatedIt = await UpdateItineraryName(fakeUser.uid, tripArchive.id, it.id, newName);
+      expect(updatedIt).not.toBeNull();
+      expect(updatedIt.tripArchiveId).toEqual(tripArchive.id);
+      expect(updatedIt.id).toEqual(it.id);
+      return expect(updatedIt.name).toEqual(newName);
     })
   })
 });
