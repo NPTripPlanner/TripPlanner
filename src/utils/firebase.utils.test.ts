@@ -18,6 +18,7 @@ import {
   ConvertSearchKeywordToArray,
   CreateItineraryForTripArchive,
   UpdateItineraryName,
+  DeleteItinerary,
 } from "./firebase.utils";
 
 import { TripArchive } from "../schema/firestore.schema";
@@ -457,6 +458,41 @@ describe("Firebase utility test", () => {
       expect(updatedIt.tripArchiveId).toEqual(tripArchive.id);
       expect(updatedIt.id).toEqual(it.id);
       return expect(updatedIt.name).toEqual(newName);
+    })
+  })
+
+  describe('delete itinerary', ()=>{
+    afterAll(async (done) => {
+      done();
+    });
+
+    let tripArchive: TripArchive = null;
+    beforeAll(async ()=>{
+      tripArchive = await CreateTripArchive(fakeUser.uid, 'delete itinerary');
+    })
+
+    it('delete an itinerary', async ()=>{
+      const startDate = new Date();
+      const endDate = new Date();
+      endDate.setDate(startDate.getDate()+3);
+      const name = 'deleted not able to see this';
+
+      const it = await CreateItineraryForTripArchive(
+        fakeUser.uid,
+        tripArchive.id,
+        name,
+        startDate.toUTCString(),
+        endDate.toUTCString()
+      );
+
+      expect(it).not.toBeNull();
+      expect(it.tripArchiveId).toEqual(tripArchive.id);
+      
+      const result = await DeleteItinerary(fakeUser.uid, tripArchive.id, it.id);
+      expect(result).toBeTruthy();
+      console.log(tripArchive.id);
+      const nonExists = await tripArchive.itineraries.findById(it.id);
+      return expect(nonExists).toBeNull();
     })
   })
 });

@@ -552,6 +552,25 @@ export const DeleteTripArchive = async (userId:string, archiveId:string)=>{
     throw Error(getErrorMsg(err.code));
   }
 }
+
+export const DeleteItinerary = async (
+  userId:string,
+  archiveId:string,
+  itineraryId:string
+  )=>{
+    try{
+      const result = await cloudFunctions.httpsCallable('deleteItinerary')({
+        userId: userId,
+        tripArchiveId: archiveId,
+        itineraryId: itineraryId,
+      });
+      
+      return result.data;
+    }
+    catch(err){
+      throw Error(getErrorMsg(err.code));
+    }
+}
 //#endregion Firestore delete
 
 //#region  Firestore listener
