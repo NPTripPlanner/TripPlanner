@@ -1,7 +1,7 @@
 import React from "react";
 import {Switch, useRouteMatch, useLocation, Route } from 'react-router-dom';
-import TripArchive from './TripArchives';
-import TripCollection from './TripCollection';
+import ArchiveManager from './ArchiveManager';
+import ItineraryManager from './ItineraryManager';
 
 const TripManager = () => {
   const match = useRouteMatch('/TripManager');
@@ -13,13 +13,13 @@ const TripManager = () => {
   
   return (
     <Switch >
-        <Route exact path={match.path} render={()=><TripArchive />}/>
+        <Route exact path={match.path} render={()=><ArchiveManager />}/>
         <Route
         exact 
         path={`${match.path}/:ArchiveId`} 
-        render={()=><TripCollection />}
+        render={()=><ItineraryManager />}
         />
-        <Route path={`${match.path}/*`}  render={()=><TripArchive />}/>
+        <Route path={`${match.path}/*`}  render={()=><ArchiveManager />}/>
     </Switch>
   );
 };

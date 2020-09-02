@@ -7,6 +7,9 @@ export interface IItinerayState{
     fetchingItineraries: boolean;
     fetchingItinerariesError: Error | null;
     itieraries: Array<Itinerary> | null;
+    creatingItinerary: string | null,
+    createItineraryError: Error | null,
+    createItinerarySuccessful: boolean,
 }
 
 const initState: IItinerayState ={
@@ -14,6 +17,9 @@ const initState: IItinerayState ={
     fetchingItineraries: false,
     fetchingItinerariesError: null,
     itieraries: null,
+    creatingItinerary: null,
+    createItineraryError: null,
+    createItinerarySuccessful: false,
 
 } 
 
@@ -30,6 +36,7 @@ const ItineraryReducer : Reducer<IItinerayState> = (state=initState, action=null
             return {
                 ...state,
                 underTripArchive: null,
+                itieraries: null,
             }
         }
         case actionType.FETCH_ITINERARIES_START:{
@@ -59,6 +66,42 @@ const ItineraryReducer : Reducer<IItinerayState> = (state=initState, action=null
                 itieraries: newIts,
             }
         }
+        case actionType.CREATE_ITINERARY_START:{
+            const {itineraryName} = action.payload;
+            return {
+              ...state,
+              creatingItinerary: itineraryName,
+              createItineraryError: null,
+              createItinerarySuccessful: false,
+            }
+          }
+          case actionType.CREATE_ITINERARY_SUCCESSFUL:{
+            const {itinerary} = action.payload;
+            return {
+              ...state,
+              creatingItinerary: null,
+              createItineraryError: null,
+              createItinerarySuccessful: true,
+              itieraries:[itinerary, ...state.itieraries],
+            }
+          }
+          case actionType.CREATE_ITINERARY_FAIL:{
+            const {error} = action.payload;
+            return {
+              ...state,
+              creatingItinerary: null,
+              createItineraryError: error,
+              createItinerarySuccessful: false,
+            }
+          }
+          case actionType.CREATE_ITINERARY_RESET_SUCCESSFUL:{
+            return {
+              ...state,
+              creatingItinerary: null,
+              createItineraryError: null,
+              createItinerarySuccessful: false,
+            }
+          }
         default:{
             return state;
         }

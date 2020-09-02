@@ -46,7 +46,60 @@ const style = (theme) => createStyles({
     }
 });
 
-const TripArchives = () => {
+const renderTripArchives = (
+    fetching:boolean,
+    archives:Array<TripArchive>,
+    moreArchives:boolean,
+    handleArchiveClick:(tripArchive:TripArchive)=>void,
+    handleDelete:(tripArchive:TripArchive)=>void,
+    handleUpdateTripArchiveName:(tripArchive:TripArchive)=>void,
+    handleFetchMore:()=>void
+     )=>{
+    const classes = makeStyles(style)();
+
+    if(!archives && fetching) return (<CircularProgress color="secondary" />);
+
+    return(
+    <Collection>
+        {
+            archives.map((tripArchive,i)=>{
+                return(
+                    <TripCollection 
+                    key={i}
+                    title={tripArchive.name}
+                    onClick={()=>handleArchiveClick(tripArchive)}
+                    onDelete={()=>handleDelete(tripArchive)}
+                    onChangeName={
+                        ()=>handleUpdateTripArchiveName(tripArchive)
+                    }
+                    />
+                );
+            })
+        }
+        {moreArchives && !fetching?
+            <div className={classes.moreBtn}>
+            <Button
+            variant="contained"
+            color="secondary"
+            size="large"
+            onClick={handleFetchMore}
+            >
+                <Typography variant="h6">More Collections</Typography>
+            </Button>
+            </div>
+            :
+            fetching?
+            <div className={classes.moreBtn}>
+                <CircularProgress color="secondary" />
+            </div>
+            :
+            null 
+        }
+    </Collection>
+    );
+}
+
+const ArchiveManager = () => {
     const classes = makeStyles(style)();
 
     const [dialog, setDialog] = React.useState(null);
@@ -163,46 +216,17 @@ const TripArchives = () => {
                     onSearchChanged={handleSearch}
                     />
                 </motion.div>
-                <Collection>
                 {
-                    archives.map((tripArchive,i)=>{
-                        return(
-                            <TripCollection 
-                            key={i}
-                            title={tripArchive.name}
-                            onClick={()=>handleArchiveClick(tripArchive)}
-                            onDelete={()=>handleDelete(tripArchive)}
-                            onChangeName={
-                                ()=>handleUpdateTripArchiveName(tripArchive)
-                            }
-                            />
-                        );
-                    })
+                renderTripArchives(fetching, archives,
+                    moreArchives, handleArchiveClick,
+                    handleDelete, handleUpdateTripArchiveName,
+                    handleFetchMore
+                )
                 }
-                {moreArchives && !fetching?
-                    <div className={classes.moreBtn}>
-                    <Button
-                    variant="contained"
-                    color="secondary"
-                    size="large"
-                    onClick={handleFetchMore}
-                    >
-                        <Typography variant="h6">More Collections</Typography>
-                    </Button>
-                    </div>
-                    :
-                    fetching?
-                    <div className={classes.moreBtn}>
-                        <CircularProgress color="secondary" />
-                    </div>
-                    :
-                    null
-                }
-                </Collection>
             </StaticBG>
             {dialog?dialog:null}
         </motion.div>
     );
 };
 
-export default TripArchives;
+export default ArchiveManager;

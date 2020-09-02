@@ -3,25 +3,61 @@ import { useDispatch, useSelector } from "react-redux";
 import {useHistory} from 'react-router-dom';
 import ManagerTool from './ManagerTool';
 import StaticBG from "../../components/StaticBG/StaticBG";
-import { Fab} from '@material-ui/core';
+import { Fab, CircularProgress} from '@material-ui/core';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 import { PostAdd, ArrowBack } from '@material-ui/icons';
 import { StartChangeHeaderTitle } from '../../redux/header/header.actions';
 import {motion} from 'framer-motion';
 import {slideInOut} from '../../motions/motions';
-import { selectUnderTripArchive } from '../../redux/itinerary/itinerary.selector';
+import { selectUnderTripArchive, selectItineraries, selectFetchingItineraries } from '../../redux/itinerary/itinerary.selector';
 import {ClearAllItineraryState, StartFetchItineraries} from '../../redux/itinerary/itinerary.actions';
+import Collection from '../../components/Collection/Collection';
+import TripCollection from '../../components/TripCollection/TripCollection';
+import { Itinerary } from '../../schema/firestore.schema';
 
 const style= createStyles({
     main:{
         height:'100%',
     },
 });
-const TripCollection = () => {
+
+const renderItineraries = (
+    fetching:boolean, itineraries:Array<Itinerary>,
+    handleItineraryClick:(itinerary:Itinerary)=>void,
+    handleDelete:(itinerary:Itinerary)=>void,
+    handleUpdateItineraryName:(itinerary:Itinerary)=>void
+    )=>{
+    if(fetching) return (<CircularProgress color="secondary" />);
+    if(!itineraries) return null;
+
+    return( 
+        <Collection>
+        {
+        itineraries.map((itinerary,i)=>{
+            return(
+                <TripCollection 
+                key={i}
+                title={itinerary.name}
+                onClick={()=>handleItineraryClick(itinerary)}
+                onDelete={()=>handleDelete(itinerary)}
+                onChangeName={
+                    ()=>handleUpdateItineraryName(itinerary)
+                }
+                />
+            );
+        })
+        }
+        </Collection>
+    );
+}
+
+const ItinerayManager = () => {
 
     const classes = makeStyles(style)();
 
     const underTripArchive = useSelector(selectUnderTripArchive);
+    const fetching = useSelector(selectFetchingItineraries);
+    const itineraries = useSelector(selectItineraries);
     const fetchAmount = 6;
     const [searchkeyword, setSearchKeyword] = React.useState(''); 
 
@@ -46,8 +82,20 @@ const TripCollection = () => {
         history.push('/TripManager');
     }
 
+    const handleItineraryClick = (_itinerary)=>{
+        //TODO: handle itinerary click
+    }
+
+    const handleDelete = (_itinerary)=>{
+        //TODO: handle itinerary delete
+    }
+
+    const handleUpdateItineraryName = (_itinerary)=>{
+        //TODO: handle update itinerary name
+    }
+
     const addTripFab = (
-        <Fab color="secondary" aria-label="add trip">
+        <Fab color="secondary" aria-label="add itinerary">
           <PostAdd />
         </Fab>
     )
@@ -71,9 +119,14 @@ const TripCollection = () => {
                 leftToolButtons={[backFab]}
                 onSearchChanged={handleSearch}
                 />
+                {
+                renderItineraries(fetching,itineraries, handleItineraryClick,
+                    handleDelete, handleUpdateItineraryName
+                )
+                }
             </StaticBG>
         </motion.div>
     );
 };
 
-export default TripCollection;
+export default ItinerayManager;
