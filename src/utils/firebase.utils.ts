@@ -183,6 +183,8 @@ ConvertToType = ImprovedRepository<T>
  * A special function that convert fireorm repo, which extends from BaseRepository
  * into a custom ImprovedRepository
  * 
+ * This is intend to be use with subcollections.
+ * 
  * Given type is recommend
  * @param repo which is class extends from fireorm BaseRepository
  */
