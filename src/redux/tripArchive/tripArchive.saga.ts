@@ -25,6 +25,7 @@ import {
   ConvertSearchKeywordToArray,
   GetDataByQuery,
   GetCollectionRef,
+  GetRepository,
 } from '../../utils/firebase.utils'; 
 
 import { call, put, all, takeLeading, take, actionChannel, debounce } from "redux-saga/effects";
@@ -52,7 +53,8 @@ export function* doFetchTripArchives(action){
       query = query.where('tags', 'array-contains-any', splitedKeywords);
     }
     query = query.orderBy('createAt', 'desc');
-    const result = yield call(GetDataByQuery, TripArchive, query, amount, lastFetchCursor);
+    const repo = yield call(GetRepository, TripArchive);
+    const result = yield call(GetDataByQuery, repo, query, amount, lastFetchCursor);
     lastFetchCursor = result.lastDocSnapshotCursor;
 
     yield put(FetchTripArchivesSuccessful(result.results, fromStart));

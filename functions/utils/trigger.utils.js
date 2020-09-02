@@ -7,8 +7,10 @@ exports.onUpdateTripArchive = async (change, _context)=>{
         const nameBefore = change.before?change.before.get('name'):null;
         const nameAfter = change.after?change.after.get('name'):null;
 
+        console.log(nameBefore ,nameAfter);
+
         //document deleted
-        if(nameAfter === null) return;
+        if(!nameAfter) return;
 
         //to break infinite loop risk
         if(nameBefore === nameAfter) return;

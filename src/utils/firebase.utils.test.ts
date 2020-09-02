@@ -19,9 +19,10 @@ import {
   CreateItineraryForTripArchive,
   UpdateItineraryName,
   DeleteItinerary,
+  ConvertRepo,
 } from "./firebase.utils";
 
-import { TripArchive } from "../schema/firestore.schema";
+import { TripArchive, Itinerary } from "../schema/firestore.schema";
 import ImprovedRepository from "../schema/ImprovedRepository";
 import {SortArray} from './utils';
 
@@ -324,7 +325,9 @@ describe("Firebase utility test", () => {
       done();
     });
 
+    let repo = null;
     beforeAll(async ()=>{
+      repo = await GetRepository(TripArchive);
       await CreateTripArchive(fakeUser.uid, '@@ $$ %%');
       await CreateTripArchive(fakeUser.uid, 'Germany Travel');
       await CreateTripArchive(fakeUser.uid, 'Greece Travel');
@@ -341,7 +344,7 @@ describe("Firebase utility test", () => {
       let query = colRef.where('ownerId', '==', fakeUser.uid);
       query = query.where('tags', 'array-contains-any', keywords);
       query = query.orderBy('createAt', 'desc');
-      const result = await GetDataByQuery(TripArchive, query, 1);
+      const result = await GetDataByQuery(repo, query, 1);
       
       expect(result.lastDocSnapshotCursor).not.toBeNull();
       return expect(result.results).toHaveLength(1);
@@ -354,7 +357,7 @@ describe("Firebase utility test", () => {
       let query = colRef.where('ownerId', '==', fakeUser.uid);
       query = query.where('tags', 'array-contains-any', keywords);
       query = query.orderBy('createAt', 'desc');
-      const result = await GetDataByQuery(TripArchive, query, 1);
+      const result = await GetDataByQuery(repo, query, 1);
       
       expect(result.lastDocSnapshotCursor).toBeNull();
       return expect(result.results).toHaveLength(0);
@@ -368,20 +371,20 @@ describe("Firebase utility test", () => {
       let query = colRef.where('ownerId', '==', fakeUser.uid);
       query = query.where('tags', 'array-contains-any', keywords);
       query = query.orderBy('createAt', 'desc');
-      const result = await GetDataByQuery(TripArchive, query, 2);
+      const result = await GetDataByQuery(repo, query, 2);
       
       expect(result.lastDocSnapshotCursor).not.toBeNull();
       expect(result.results).toHaveLength(2);
 
-      const result2 = await GetDataByQuery(TripArchive, query, 2, result.lastDocSnapshotCursor);
+      const result2 = await GetDataByQuery(repo, query, 2, result.lastDocSnapshotCursor);
       expect(result2.lastDocSnapshotCursor).not.toBeNull();
       expect(result2.results).toHaveLength(2);
 
-      const result3 = await GetDataByQuery(TripArchive, query, 2, result2.lastDocSnapshotCursor);
+      const result3 = await GetDataByQuery(repo, query, 2, result2.lastDocSnapshotCursor);
       expect(result3.lastDocSnapshotCursor).not.toBeNull();
       expect(result3.results).toHaveLength(2);
 
-      const result4 = await GetDataByQuery(TripArchive, query, 2, result3.lastDocSnapshotCursor);
+      const result4 = await GetDataByQuery(repo, query, 2, result3.lastDocSnapshotCursor);
       expect(result4.lastDocSnapshotCursor).not.toBeNull();
       return expect(result4.results).toHaveLength(0);
 
@@ -490,9 +493,48 @@ describe("Firebase utility test", () => {
       
       const result = await DeleteItinerary(fakeUser.uid, tripArchive.id, it.id);
       expect(result).toBeTruthy();
-      console.log(tripArchive.id);
+
       const nonExists = await tripArchive.itineraries.findById(it.id);
       return expect(nonExists).toBeNull();
+    })
+  })
+
+  describe('query itinerary', ()=>{
+    afterAll(async (done) => {
+      done();
+    });
+
+    let tripArchive: TripArchive = null;
+    beforeAll(async ()=>{
+      tripArchive = await CreateTripArchive(fakeUser.uid, 'delete itinerary');
+
+      const startDate = new Date();
+      const endDate = new Date();
+      endDate.setDate(startDate.getDate()+3);
+      const names = [];
+
+      for(let i=0; i<12; i++){
+        names.push(`itinerary name ${i}`);
+      }
+
+      for(let name of names){
+        await CreateItineraryForTripArchive(
+          fakeUser.uid,
+          tripArchive.id,
+          name,
+          startDate.toUTCString(),
+          endDate.toUTCString()
+        );
+      }
+    })
+
+    it('query itineraries', async ()=>{
+
+      const repo = await ConvertRepo<Itinerary>(tripArchive.itineraries);
+      let query = repo.getCollectionReference().orderBy('createAt', 'desc');
+      const results = await GetDataByQuery(repo, query, 0);
+      console.log(results);
+      return expect(results.results).toHaveLength(12);
     })
   })
 });

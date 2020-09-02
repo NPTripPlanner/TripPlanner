@@ -34,3 +34,6 @@ export class TripArchive {
 @CustomRepository(TripArchive)
 export class TripArchiveRepository extends ImprovedRepository<TripArchive>{}
 
+@CustomRepository(Itinerary)
+export class ItineraryRepository extends ImprovedRepository<Itinerary>{}
+

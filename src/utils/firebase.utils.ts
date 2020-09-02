@@ -7,6 +7,8 @@ import * as fireorm from 'fireorm';
 import {TripArchive, TripArchiveRepository } from '../schema/firestore.schema';
 import { QueryDocumentSnapshot, DocumentReference, CollectionReference, DocumentSnapshot, QuerySnapshot, Query } from "@google-cloud/firestore";
 import ImprovedRepository from "../schema/ImprovedRepository";
+import { BaseRepository } from "fireorm/lib/src/BaseRepository";
+import { IEntity } from "fireorm";
 
 export type FirebaseUser = firebasePro.User;
 
@@ -165,7 +167,8 @@ export const ClearTestFirestore = async ()=>{
 
 //#region Fireorm
 /**
- * An easy way to get fireorm's repository with type conversion if provided
+ * An easy way to get fireorm's repository from root collection
+ * with type conversion if provided
  * @param entity 
  */
 export const GetRepository = async <
@@ -174,6 +177,17 @@ ConvertToType = ImprovedRepository<T>
 >
 (entity:fireorm.Constructor<T>)=>{
   return (await fireorm.getRepository(entity)) as unknown as ConvertToType;
+}
+
+/**
+ * A special function that convert fireorm repo, which extends from BaseRepository
+ * into a custom ImprovedRepository
+ * 
+ * Given type is recommend
+ * @param repo which is class extends from fireorm BaseRepository
+ */
+export const ConvertRepo = async <T extends IEntity,>(repo:BaseRepository)=>{
+  return repo as unknown as ImprovedRepository<T>;
 }
 
 export const GetCollectionRef = async <T extends fireorm.IEntity>(entity:fireorm.Constructor<T>)=>{
@@ -212,13 +226,13 @@ interface QueryDataReturn<T> {
  * @property {results} an array of data
  */
 export const GetDataByQuery = async  <T extends fireorm.IEntity>(
-  entity:fireorm.Constructor<T>,
+  repository:ImprovedRepository<T>,
   query:Query,
   amount:number = 5,
   startAfter:QueryDocumentSnapshot|null = null, 
   ):Promise<QueryDataReturn<T>>=> {
 
-  const repo = await GetRepository(entity);
+  const repo = repository;
 
   let newQuery = query;
   if(startAfter) newQuery = newQuery.startAfter(startAfter);
