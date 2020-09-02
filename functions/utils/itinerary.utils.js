@@ -6,18 +6,22 @@ const moment = require('moment');
  * Create a itinerary under a trip archive
  * 
  * @param {*} archiveId trip archive id
- * @param {*} itineraryName name for itinerary
+ * @param {*} itineraryName name for itinerary, if null then default name will be used
  * @param {*} startDateLocal string of start date for itinerary.
  * 
  * date string formate is like 2013-02-04T10:35:24-08:00
  * 
  * The date is from client in local and it will be converted into UTC time.
  * 
+ * Given null to set it to today
+ * 
  * @param {*} endDateLocal string of end date for itinerary.
  * 
  * date string formate is like 2013-02-04T10:35:24-08:00
  * 
  * The date is from client in local and it will be converted into UTC time.
+ * 
+ * If startDateLocal was null then this will set to 1 day after startDateLocal
  * 
  * @param {*} writeHandler a handler for write. 
  * 
@@ -38,15 +42,30 @@ exports.createItineraryForTripArchive = async (
     //check if archive do exists
     const archiveDocRef = await firestore.collection('tripArchive').doc(archiveId);
     const archiveFileExists = await (await archiveDocRef.get()).exists;
-    if(!archiveFileExists) throw Error(`Given archive id ${archiveId} do not exist`);
+    if(!archiveFileExists) throw new Error(`Given archive id ${archiveId} do not exist`);
 
     //get a new ref for itinerary
     const itDocRef = archiveDocRef.collection('itineraries').doc();
 
-    //time conversion and day calculation
-    let startDateUTC = moment.utc(startDateLocal);
-    let endDateUTC = moment.utc(endDateLocal);
-    const totalDays = endDateUTC.diff(startDateUTC, 'days') + 1;
+    let defaultStartDateLocal = startDateLocal;
+    let defaultEndDateLocal = endDateLocal;
+
+    if(!defaultStartDateLocal){
+        defaultStartDateLocal = moment.utc().format();
+        defaultEndDateLocal = moment.utc().add(1, 'days').format();
+    }
+    else if(!defaultEndDateLocal){
+        throw new Error('startDateLocal was given but endDateLocal was not');
+    }
+
+    //convert time to UTC
+    let startDateUTC = moment.utc(defaultStartDateLocal);
+    let endDateUTC = moment.utc(defaultEndDateLocal);
+
+    //different days between start to end date
+    const diffDays = endDateUTC.diff(startDateUTC, 'days');
+    if(diffDays < 0) throw new Error('start date is after end date');
+    const totalDays = diffDays + 1;
 
     //convert to server timestamp
     startDateUTCTS = commonUtils.convertToServerTimestamp(startDateUTC.toDate());
@@ -55,7 +74,7 @@ exports.createItineraryForTripArchive = async (
     //transform data
     let itinerarydata = {
         id: itDocRef.id,
-        name: itineraryName, 
+        name: itineraryName?itineraryName:'First itinerary', 
         startDateUTC: startDateUTCTS,
         endDateUTC: endDateUTCTS,
         totalDays,
@@ -77,7 +96,7 @@ exports.updateItineraryName = async (tripArchiveDocRef, itineraryId, itineraryNa
     if(!docSnapshot.exists) throw new Error(`Itinerary ${itineraryId} do not exists`);
 
     const data = {name: itineraryName};
-    itinerarydata = commonUtils.addModifyDateToObject(itinerarydata);
+    itinerarydata = commonUtils.addModifyDateToObject(data);
 
     writeHandler.update(docSnapshot.ref, data);
 
