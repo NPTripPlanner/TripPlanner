@@ -1,14 +1,17 @@
 import actionType from "./notification.actionType";
 import { Reducer } from "redux";
 
-export interface INotificationState {
+export interface INotification{
     message: string;
     variant: 'success'|'error'|'warning'|'info';
 }
 
+export interface INotificationState {
+    notifcation: INotification|null
+}
+
 const initState : INotificationState ={
-    message: '',
-    variant: 'info',
+    notifcation: null,
 }
 
 const notificationReducer: Reducer<INotificationState> = (state=initState, action)=>{
@@ -17,8 +20,7 @@ const notificationReducer: Reducer<INotificationState> = (state=initState, actio
             const {message, variant} = action.payload;
             return {
                 ...state,
-                message,
-                variant,
+                notifcation:{message, variant},
             }
         }
         default:

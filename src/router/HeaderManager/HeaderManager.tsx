@@ -7,16 +7,14 @@ import MemberHeader from './MemberHeader';
 import NonMemberHeader from './NonMemberHeader';
 import { useSnackbar } from 'notistack';
 import { 
-    selectNotificationMessage,
-    selectNotificationVariant 
+    selectNotificationInfo
 } from '../../redux/notification/notification.selector';
 
 const HeaderManager = () => {
 
     const user = useSelector(selectUserInfo);
     const title = useSelector(selectHeaderTitle);
-    const notifyMessage = useSelector(selectNotificationMessage);
-    const notifyVariant = useSelector(selectNotificationVariant);
+    const notifyInfo = useSelector(selectNotificationInfo);
     const { enqueueSnackbar, closeSnackbar } = useSnackbar();
     const dispatch = React.useCallback(useDispatch(),[]);
 
@@ -26,12 +24,12 @@ const HeaderManager = () => {
     }, [dispatch]);
 
     React.useEffect(()=>{
-        if(notifyMessage){
-            enqueueSnackbar(notifyMessage, {
-                variant: notifyVariant,
+        if(notifyInfo){
+            enqueueSnackbar(notifyInfo.message, {
+                variant: notifyInfo.variant,
             });
         }
-    },[notifyMessage, notifyVariant, enqueueSnackbar, closeSnackbar]);
+    },[notifyInfo, enqueueSnackbar, closeSnackbar]);
     
     return user?<MemberHeader title={title} />:<NonMemberHeader title={title} />;
 };

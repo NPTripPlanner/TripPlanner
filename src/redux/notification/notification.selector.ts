@@ -3,14 +3,8 @@ import {IRootReducerState} from '../Root-Reducer';
 
 const selectNotification = (state:IRootReducerState) => state.notification;
 
-export const selectNotificationMessage = createSelector(
+export const selectNotificationInfo = createSelector(
     [selectNotification],
 
-    (notify)=>notify.message
-);
-
-export const selectNotificationVariant = createSelector(
-    [selectNotification],
-
-    (notify)=>notify.variant
+    (notify)=>notify.notifcation
 );

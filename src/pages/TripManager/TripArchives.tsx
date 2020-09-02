@@ -26,6 +26,7 @@ import UpdateTripArchiveForm from '../../forms/UpdateTripArchiveForm';
 import { TripArchive } from '../../schema/firestore.schema';
 import {motion} from 'framer-motion';
 import {slideInOut, dropIn} from '../../motions/motions';
+import { SetTripArchive } from '../../redux/itinerary/itinerary.actions';
 
 const style = (theme) => createStyles({
     main:{
@@ -130,8 +131,9 @@ const TripArchives = () => {
         dispatch(StartFetchTripArchives(fetchAmount, false, searchkeyword));
     }
 
-    const handleArchiveClick = (archiveId) =>{
-        history.push(`/TripManager/${archiveId}`);
+    const handleArchiveClick = (tripArchive) =>{
+        dispatch(SetTripArchive(tripArchive));
+        history.push(`/TripManager/${tripArchive.id}`);
     }
 
     const addArchiveFab = (
@@ -168,7 +170,7 @@ const TripArchives = () => {
                             <TripCollection 
                             key={i}
                             title={tripArchive.name}
-                            onClick={()=>handleArchiveClick(tripArchive.id)}
+                            onClick={()=>handleArchiveClick(tripArchive)}
                             onDelete={()=>handleDelete(tripArchive)}
                             onChangeName={
                                 ()=>handleUpdateTripArchiveName(tripArchive)

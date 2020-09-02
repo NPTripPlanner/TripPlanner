@@ -1,6 +1,6 @@
 import React from 'react';
-import { useDispatch } from "react-redux";
-import {useParams, useHistory} from 'react-router-dom';
+import { useDispatch, useSelector } from "react-redux";
+import {useHistory} from 'react-router-dom';
 import ManagerTool from './ManagerTool';
 import StaticBG from "../../components/StaticBG/StaticBG";
 import { Fab} from '@material-ui/core';
@@ -9,6 +9,8 @@ import { PostAdd, ArrowBack } from '@material-ui/icons';
 import { StartChangeHeaderTitle } from '../../redux/header/header.actions';
 import {motion} from 'framer-motion';
 import {slideInOut} from '../../motions/motions';
+import { selectUnderTripArchive } from '../../redux/itinerary/itinerary.selector';
+import {ClearAllItineraryState, StartFetchItineraries} from '../../redux/itinerary/itinerary.actions';
 
 const style= createStyles({
     main:{
@@ -19,17 +21,25 @@ const TripCollection = () => {
 
     const classes = makeStyles(style)();
 
-    const params = useParams();
+    const underTripArchive = useSelector(selectUnderTripArchive);
+    const fetchAmount = 6;
+    const [searchkeyword, setSearchKeyword] = React.useState(''); 
+
     const history = useHistory();
-    console.log(params, history);
     const dispatch = React.useCallback(useDispatch(), []);
 
     React.useEffect(()=>{
-        dispatch(StartChangeHeaderTitle('Trips'));
-    }, [dispatch]);
+        dispatch(StartChangeHeaderTitle(underTripArchive?underTripArchive.name:'Itineraries'));
+        
+    }, [dispatch, underTripArchive]);
+
+    React.useEffect(()=>{
+        dispatch(StartFetchItineraries(fetchAmount, true, searchkeyword));
+        return ()=>dispatch(ClearAllItineraryState());
+    }, [dispatch, searchkeyword]);
 
     const handleSearch = (keyword)=>{
-        console.log('search trip collection ', keyword);
+        if(searchkeyword !== keyword) setSearchKeyword(keyword);
     }
 
     const handleGoBack = ()=>{
