@@ -14,6 +14,8 @@ import {ClearAllItineraryState, StartFetchItineraries} from '../../redux/itinera
 import Collection from '../../components/Collection/Collection';
 import TripCollection from '../../components/TripCollection/TripCollection';
 import { Itinerary } from '../../schema/firestore.schema';
+import CreateItineraryForm from '../../forms/CreateItineraryForm';
+import { CreateDialog } from '../../dialogs/CreateDialog';
 
 const style= createStyles({
     main:{
@@ -55,6 +57,7 @@ const ItinerayManager = () => {
 
     const classes = makeStyles(style)();
 
+    const [dialog, setDialog] = React.useState(null);
     const underTripArchive = useSelector(selectUnderTripArchive);
     const fetching = useSelector(selectFetchingItineraries);
     const itineraries = useSelector(selectItineraries);
@@ -85,6 +88,23 @@ const ItinerayManager = () => {
         history.push('/TripManager');
     }
 
+    const createform = (
+        <CreateItineraryForm
+        onSuccess={()=>setDialog(null)} 
+        />
+    );
+    const handleCreateItinerary = ()=>{
+        setDialog(
+            CreateDialog(
+            'New itinerary',
+            createform,
+            'lg',
+            [],
+            ()=>setDialog(null)
+            )
+        );
+    }
+
     const handleItineraryClick = (_itinerary)=>{
         //TODO: handle itinerary click
     }
@@ -97,8 +117,8 @@ const ItinerayManager = () => {
         //TODO: handle update itinerary name
     }
 
-    const addTripFab = (
-        <Fab color="secondary" aria-label="add itinerary">
+    const additineraryFab = (
+        <Fab color="secondary" aria-label="add itinerary" onClick={handleCreateItinerary}>
           <PostAdd />
         </Fab>
     )
@@ -118,7 +138,7 @@ const ItinerayManager = () => {
         >
             <StaticBG backgroundColor="rgba(166,166,166,0.5)">
                 <ManagerTool
-                rightToolButtons={[addTripFab]}
+                rightToolButtons={[additineraryFab]}
                 leftToolButtons={[backFab]}
                 onSearchChanged={handleSearch}
                 />
@@ -128,6 +148,7 @@ const ItinerayManager = () => {
                 )
                 }
             </StaticBG>
+            {dialog?dialog:null}
         </motion.div>
     );
 };

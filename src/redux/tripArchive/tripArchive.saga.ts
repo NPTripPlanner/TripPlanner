@@ -33,7 +33,7 @@ function* getTripArchiveCollectionState(){
   return yield select(selectTripArchiveCol);
 }
 
-function * updateCollectionData(state:IGenericState<TripArchive>){
+export function * updateCollectionData(state:IGenericState<TripArchive>){
   yield put(SetCollectionData(StateKeys.TRIP_ARCHIVE, state));
 }
 
