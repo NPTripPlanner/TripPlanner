@@ -16,8 +16,6 @@ import TripCollection from '../../components/TripCollection/TripCollection';
 import { Itinerary } from '../../schema/firestore.schema';
 import CreateItineraryForm from '../../forms/CreateItineraryForm';
 import { CreateDialog } from '../../dialogs/CreateDialog';
-import 'moment-timezone';
-import moment from 'moment';
 
 const style= createStyles({
     main:{
@@ -38,14 +36,6 @@ const renderItineraries = (
         <Collection>
         {
         itineraries.map((itinerary,i)=>{
-            const utcTime = moment.utc(itinerary.startDateUTC);
-            console.log('server saved time in js ISO:', itinerary.startDateUTC.toISOString());
-            console.log('server saved time in moment:', moment(itinerary.startDateUTC).format('DD-MM-YYYY h:mm:ss A'));
-            console.log('UTC:',utcTime.format('DD-MM-YYYY h:mm:ss A'));
-            console.log('local:', utcTime.clone().local().format('DD-MM-YYYY h:mm:ss A'));
-            console.log('New York:', utcTime.clone().tz('America/New_York').format('DD-MM-YYYY h:mm:ss A'));
-            console.log('Melbourne:', utcTime.clone().tz('Australia/Melbourne').format('DD-MM-YYYY h:mm:ss A'));
-
             return(
                 <TripCollection 
                 key={i}
