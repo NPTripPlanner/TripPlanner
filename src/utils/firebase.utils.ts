@@ -475,15 +475,18 @@ export const CreateItineraryForTripArchive = async (
   userId:string,
   archiveId:string,
   itineraryName:string,
-  startDate:string,
-  endDate:string
+  startDate:Date,
+  endDate:Date
   )=>{
     try{
+      console.log(startDate, endDate, itineraryName);
+      const start = startDate.toUTCString();
+      const end = endDate.toUTCString();
       const result = await cloudFunctions.httpsCallable('createItineraryForTripArchive')({
         tripArchiveId: archiveId,
         name: itineraryName,
-        startDate,
-        endDate,
+        startDate: start,
+        endDate: end,
       });
       const itineraryId = result.data.id;
       const tripArchive = await GetTripArchive(userId, result.data.tripArchiveId);

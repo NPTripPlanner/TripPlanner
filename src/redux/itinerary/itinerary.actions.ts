@@ -30,7 +30,7 @@ export const StartFetchMore = (amount=10) =>action(
     {amount, fromStart:false, keyword:null},
 );
 
-export const StartCreateItinerary = (itineraryName, startDate, endDate) =>action(
+export const StartCreateItinerary = (itineraryName, startDate:Date, endDate:Date) =>action(
     actionType.CREATE_ITINERARY_START,
     {itineraryName, startDate, endDate},
 );

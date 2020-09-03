@@ -74,7 +74,6 @@ const collectionReducer: Reducer<ICollectionState> = (state=initState, action)=>
     switch(action.type){
         case actionType.SET_COLLECTION_DATA_SUCCESSFUL:{
             const {key, object} = action.payload;
-            console.log(object);
             return {
                 ...state,
                 [key]: {...object},

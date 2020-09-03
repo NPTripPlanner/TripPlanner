@@ -2,7 +2,7 @@ import React from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { makeStyles } from "@material-ui/core/styles";
 import { selectCreateItineraryError, selectCreateItinerarySuccessful } from "../redux/itinerary/itinerary.selector";
-import { CreateItineraryStateReset } from "../redux/itinerary/itinerary.actions";
+import { CreateItineraryStateReset, StartCreateItinerary } from "../redux/itinerary/itinerary.actions";
 import style from './FormStyle';
 import { useFormik } from 'formik';
 import InputField from '../components/InputField/InputField';
@@ -63,16 +63,14 @@ const CreateItineraryForm = (props:IProps) => {
         endDate: getDate(null, 2).toDate(),
         },
         validationSchema: validation,
-        onSubmit:(_values,{setSubmitting}) => {
-        // dispatch(StartCreateItinerary(values.tripArchiveName));
-        setSubmitting(false);
+        onSubmit:(values,{setSubmitting}) => {
+        dispatch(StartCreateItinerary(values.itineraryName, values.startDate, values.endDate));
+        setSubmitting(true);
         },
     });
 
     if(createItineraryError && formik.isSubmitting) formik.setSubmitting(false);
     if(createItinerarySuccessful && formik.isSubmitting) formik.setSubmitting(false);
-
-    console.log(formik.touched.endDate ,formik.errors);
 
     return(
         <form 
@@ -107,7 +105,7 @@ const CreateItineraryForm = (props:IProps) => {
         value={formik.values.startDate}
         onChange={date =>{
             formik.setFieldTouched('startDate', true);
-            formik.setFieldValue('startDate', date, true);
+            formik.setFieldValue('startDate', date.toDate(), true);
         }}
         onBlur={formik.handleBlur}
         disabled={formik.isSubmitting}
@@ -126,7 +124,7 @@ const CreateItineraryForm = (props:IProps) => {
         value={formik.values.endDate}
         onChange={date =>{
             formik.setFieldTouched('endDate', true);
-            formik.setFieldValue('endDate', date, true);
+            formik.setFieldValue('endDate', date.toDate(), true);
         }}
         onBlur={formik.handleBlur}
         disabled={formik.isSubmitting}
