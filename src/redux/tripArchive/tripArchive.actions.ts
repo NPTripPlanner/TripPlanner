@@ -13,7 +13,7 @@ export const StartFetchTripArchives = (amount=10, fromStart=true, keyword='') =>
 );
 
 export const StartFetchMoreTripArchives = (amount=10) =>action(
-  actionType.FETCH_MORE_START,
+  actionType.FETCH_MORE_TRIP_ARCHIVES_START,
   {amount, fromStart:false, keyword:null},
 );
 
@@ -45,5 +45,5 @@ export const UpdateTripArchiveNameStateReset = () =>action(
 )
 
 export const ClearTripArchiveStart = ()=>action(
-  actionType.CLEAR_TRIP_ARCHIVE_START,
+  actionType.CLEAR_ALL_TRIP_ARCHIVE_STATE,
 )

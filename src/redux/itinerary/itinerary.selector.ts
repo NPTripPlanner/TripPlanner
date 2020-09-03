@@ -1,46 +1,58 @@
 import { createSelector } from "reselect";
 import {IRootReducerState} from '../Root-Reducer';
 
+//Select itinerary state
 const selectItinerary = (state:IRootReducerState) => state.itinerary;
 
 export const selectUnderTripArchive = createSelector(
-  [selectItinerary],
-  
-  (itinerary)=>itinerary.underTripArchive
+    [selectItinerary],
+    
+    (itinerary)=>itinerary.underTripArchive
 )
 
-export const selectFetchingItineraries = createSelector(
-    [selectItinerary],
 
-    (itinerary)=>itinerary.fetchingItineraries
+
+//Select itinerary state under collection state
+export const selectItineraryCol = (state:IRootReducerState) => state.collection.itinerary;
+
+export const selectFetchingItineraries = createSelector(
+    [selectItineraryCol],
+
+    (collection)=>collection.fetchingData
 )
 
 export const selectFetchItinerariesError = createSelector(
-    [selectItinerary],
+    [selectItineraryCol],
 
-    (itinerary)=>itinerary.fetchingItinerariesError?itinerary.fetchingItinerariesError.message:null
+    (collection)=>collection.fetchDataError?collection.fetchDataError.message:null
+)
+
+export const selectMoreItineraries = createSelector(
+    [selectItineraryCol],
+
+    (collection)=>collection.moreData
 )
 
 export const selectItineraries = createSelector(
-    [selectItinerary],
+    [selectItineraryCol],
 
-    (itinerary)=>itinerary.itieraries
+    (collection)=>collection.dataArray
 )
 
 export const selectCreatingItinerary = createSelector(
-    [selectItinerary],
+    [selectItineraryCol],
 
-    (itinerary)=>itinerary.creatingItinerary
+    (collection)=>collection.creatingData
 )
   
 export const selectCreateItineraryError = createSelector(
-    [selectItinerary],
+    [selectItineraryCol],
 
-    (itinerary)=>itinerary.createItineraryError?itinerary.createItineraryError.message:null
+    (collection)=>collection.createDataError?collection.createDataError.message:null
 )
 
 export const selectCreateItinerarySuccessful = createSelector(
-    [selectItinerary],
+    [selectItineraryCol],
 
-    (itinerary)=>itinerary.createItinerarySuccessful
+    (collection)=>collection.createDataSuccessful
 )

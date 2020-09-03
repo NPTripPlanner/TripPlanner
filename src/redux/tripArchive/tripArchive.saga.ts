@@ -15,7 +15,7 @@ import { call, put, all, takeLeading, take, actionChannel, debounce } from "redu
 import { PostNotification } from "../notification/notification.actions";
 import { TripArchive } from "../../schema/firestore.schema";
 import { select } from "redux-saga-test-plan/matchers";
-import { selctTripArchiveCol } from "./tripArchive.selector";
+import { selectTripArchiveCol } from "./tripArchive.selector";
 import { IGenericState } from "../collection/collection.reducer";
 import { SetCollectionData } from "../collection/collection.actions";
 import StateKeys from "../collection/collection.stateKeys";
@@ -30,7 +30,11 @@ function* getCurrentUser(){
 }
 
 function* getTripArchiveCollectionState(){
-  return yield select(selctTripArchiveCol);
+  return yield select(selectTripArchiveCol);
+}
+
+function * updateCollectionData(state:IGenericState<TripArchive>){
+  yield put(SetCollectionData(StateKeys.TRIP_ARCHIVE, state));
 }
 
 let lastFetchCursor = null;
@@ -61,7 +65,7 @@ function* fetchTripArchivesWorker(userId, amount, fromStart, keyword){
   const result = yield call(GetDataByQuery, repo, query, amount, lastFetchCursor);
   lastFetchCursor = result.lastDocSnapshotCursor;
 
-  return result;
+  return result.results;
 }
 export function* doFetchTripArchives(action){
   try{
@@ -71,24 +75,25 @@ export function* doFetchTripArchives(action){
     const state:IGenericState<TripArchive> = yield call(getTripArchiveCollectionState);
     state.fetchingData = true;
     state.fetchDataError = null;
-    yield put(SetCollectionData(StateKeys.TRIP_ARCHIVE, state));
+    yield call(updateCollectionData, state);
 
     const user = yield call(getCurrentUser);
     //call worker
-    const result = yield call(fetchTripArchivesWorker, user.uid, amount, fromStart, keyword);
+    const results = yield call(fetchTripArchivesWorker, user.uid, amount, fromStart, keyword);
 
     //fetch successful
-    state.dataArray = fromStart?result.results:state.dataArray.concat(result.results);
     state.fetchingData = false;
-    state.moreData = result.results.length?true:false;
-    yield put(SetCollectionData(StateKeys.TRIP_ARCHIVE, state));
+    state.fetchDataError = null;
+    state.dataArray = fromStart?results:state.dataArray.concat(results);
+    state.moreData = results.length?true:false;
+    yield call(updateCollectionData, state);
   }
   catch(error){
     //fetch error
     const state:IGenericState<TripArchive> = yield call(getTripArchiveCollectionState);
     state.fetchingData = false;
     state.fetchDataError = error;
-    yield put(SetCollectionData(StateKeys.TRIP_ARCHIVE, state));
+    yield call(updateCollectionData, state);
 
     yield put(PostNotification(`Something went wrong (${error.message})`, 'error'));
   }
@@ -99,7 +104,7 @@ export function* fetchTripArchives() {
 }
 
 export function* fetchMoreTripArchives() {
-  yield takeLeading(actionType.FETCH_MORE_START, doFetchTripArchives);
+  yield takeLeading(actionType.FETCH_MORE_TRIP_ARCHIVES_START, doFetchTripArchives);
 }
 
 export function* createTripArchiveWorker(userId, tripArchiveName){
@@ -116,7 +121,7 @@ export function* doCreateTripArchive(action){
     state.creatingData = tripArchiveName;
     state.createDataError = null;
     state.createDataSuccessful = false;
-    yield put(SetCollectionData(StateKeys.TRIP_ARCHIVE, state));
+    yield call(updateCollectionData, state);
 
     const user = yield call(getCurrentUser);
     //call worker
@@ -126,7 +131,7 @@ export function* doCreateTripArchive(action){
     state.dataArray = [tripArchive, ...state.dataArray];
     state.creatingData = null;
     state.createDataSuccessful = true;
-    yield put(SetCollectionData(StateKeys.TRIP_ARCHIVE, state));
+    yield call(updateCollectionData, state);
 
     yield put(PostNotification(`${tripArchiveName} has been created`, 'success'));
   }
@@ -135,7 +140,7 @@ export function* doCreateTripArchive(action){
     state.createDataError = error;
     state.creatingData = null;
     state.createDataSuccessful = false;
-    yield put(SetCollectionData(StateKeys.TRIP_ARCHIVE, state));
+    yield call(updateCollectionData, state);
 
     yield put(PostNotification(
       `Unable to create collection (${error.message})`,
@@ -153,7 +158,7 @@ export function* createTripArchiveReset(){
 
     let state:IGenericState<TripArchive> = yield call(getTripArchiveCollectionState);
     state = state.resetCreateState(state);
-    yield put(SetCollectionData(StateKeys.TRIP_ARCHIVE, state));
+    yield call(updateCollectionData, state);
 
   }
 }
@@ -170,7 +175,7 @@ export function* doDeleteTripArchive(action){
     state.deletingData = tripArchiveName;
     state.deleteDataError = null;
     state.deleteDataSuccessful = false;
-    yield put(SetCollectionData(StateKeys.TRIP_ARCHIVE, state));
+    yield call(updateCollectionData, state);
 
     const user = yield call(getCurrentUser);
     //call worker
@@ -185,7 +190,7 @@ export function* doDeleteTripArchive(action){
           return archive.id!==tripArchiveId;
     });
     state.dataArray = filterArchives;
-    yield put(SetCollectionData(StateKeys.TRIP_ARCHIVE, state));
+    yield call(updateCollectionData, state);
 
     yield put(PostNotification(`${tripArchiveName} has been deleted`, 'success'));
   }
@@ -194,7 +199,7 @@ export function* doDeleteTripArchive(action){
     state.deletingData = null;
     state.deleteDataError = error;
     state.deleteDataSuccessful = false;
-    yield put(SetCollectionData(StateKeys.TRIP_ARCHIVE, state));
+    yield call(updateCollectionData, state);
 
     yield put(PostNotification(`Unable to delete collection (${error.message})`, 'error'));
   }
@@ -210,7 +215,7 @@ export function* deleteTripArchiveReset(){
 
     let state:IGenericState<TripArchive> = yield call(getTripArchiveCollectionState);
     state = state.resetDeleteState(state);
-    yield put(SetCollectionData(StateKeys.TRIP_ARCHIVE, state));
+    yield call(updateCollectionData, state);
 
   }
 }
@@ -231,7 +236,7 @@ export function* doUpdateTripArchiveName(action){
     state.updatingData = oldName;
     state.updateDataError = null;
     state.updateDataSuccessful = false;
-    yield put(SetCollectionData(StateKeys.TRIP_ARCHIVE, state));
+    yield call(updateCollectionData, state);
 
     const user = yield call(getCurrentUser);
     const tripArchive = yield call(updateTripArchiveNameWorker, user.uid, tripArchiveId, newName, oldName);
@@ -246,7 +251,7 @@ export function* doUpdateTripArchiveName(action){
         return archive.id === tripArchive.id ? tripArchive : archive;
       });
     }
-    yield put(SetCollectionData(StateKeys.TRIP_ARCHIVE, state));
+    yield call(updateCollectionData, state);
 
     yield put(PostNotification(`${oldName} changed to ${newName}`, 'success'));
   }
@@ -255,7 +260,7 @@ export function* doUpdateTripArchiveName(action){
     state.updatingData = null;
     state.updateDataError = error;
     state.updateDataSuccessful = false;
-    yield put(SetCollectionData(StateKeys.TRIP_ARCHIVE, state));
+    yield call(updateCollectionData, state);
 
     yield put(PostNotification(`Unable to update collection name`, 'error'));
   }
@@ -276,17 +281,17 @@ export function* updateTripArchiveNameReset(){
 
     let state:IGenericState<TripArchive> = yield call(getTripArchiveCollectionState);
     state = state.resetUpdateState(state);
-    yield put(SetCollectionData(StateKeys.TRIP_ARCHIVE, state));
+    yield call(updateCollectionData, state);
   }
 }
 
-export function* clearTripArchive(){
+export function* clearAllTripArchiveState(){
   while(true){
-    yield take(actionType.CLEAR_TRIP_ARCHIVE_START);
+    yield take(actionType.CLEAR_ALL_TRIP_ARCHIVE_STATE);
 
     let state:IGenericState<TripArchive> = yield call(getTripArchiveCollectionState);
     state = state.getInitSate();
-    yield put(SetCollectionData(StateKeys.TRIP_ARCHIVE, state));
+    yield call(updateCollectionData, state);
   }
 }
 
@@ -300,6 +305,6 @@ export default function* TripArchiveSaga() {
     call(deleteTripArchiveReset),
     call(updateTripArchiveName),
     call(updateTripArchiveNameReset),
-    call(clearTripArchive),
+    call(clearAllTripArchiveState),
   ]);
 }

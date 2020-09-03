@@ -25,36 +25,16 @@ export const StartFetchItineraries = (amount=10, fromStart=true, keyword='') =>a
     {amount, fromStart, keyword},
 );
 
-export const FetchItinerariesSuccessful = (itineraryData, fromStart) =>action(
-    actionType.FETCH_ITINERARIES_SUCCESSFUL,
-    {itineraryData, fromStart},
-);
-  
-export const FetchItinerariesFail = (error)=>action(
-    actionType.FETCH_ITINERARIES_FAIL,
-    {error},
+export const StartFetchMore = (amount=10) =>action(
+    actionType.FETCH_MORE_ITINERARIES_START,
+    {amount, fromStart:false, keyword:null},
 );
 
 export const StartCreateItinerary = (itineraryName, startDate, endDate) =>action(
     actionType.CREATE_ITINERARY_START,
     {itineraryName, startDate, endDate},
 );
-  
-export const CreateItinerarySuccessful = (itinerary) =>action(
-    actionType.CREATE_ITINERARY_SUCCESSFUL,
-    {itinerary},
-);
-
-
-export const CreateItineraryFail = (error) =>action(
-    actionType.CREATE_ITINERARY_FAIL,
-    {error},
-);
 
 export const CreateItineraryStateReset = () =>action(
     actionType.CREATE_ITINERARY_STATE_RESET,
-);
-
-export const CreateItineraryResetSuccessful = () =>action(
-    actionType.CREATE_ITINERARY_RESET_SUCCESSFUL,
 );

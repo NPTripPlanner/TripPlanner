@@ -1,17 +1,30 @@
 import actionType from "./itinerary.actionType";
 
 import {call, all, put, take, select, debounce, takeLeading} from 'redux-saga/effects';
-import { SetTripArchiveSuccessful, ClearAllItineraryStateSuccessful, FetchItinerariesSuccessful, FetchItinerariesFail, CreateItineraryResetSuccessful, CreateItineraryFail, CreateItinerarySuccessful } from "./itinerary.actions";
-import { selectUnderTripArchive } from "./itinerary.selector";
+import { 
+    SetTripArchiveSuccessful,
+} from "./itinerary.actions";
+import { selectUnderTripArchive, selectItineraryCol } from "./itinerary.selector";
 import { TripArchive, Itinerary } from "../../schema/firestore.schema";
 import { ConvertRepo, ConvertSearchKeywordToArray, GetDataByQuery, CreateItineraryForTripArchive, GetCurrentUser } from "../../utils/firebase.utils";
 import ImprovedRepository from "../../schema/ImprovedRepository";
 import { PostNotification } from "../notification/notification.actions";
+import { IGenericState } from "../collection/collection.reducer";
+import { SetCollectionData } from "../collection/collection.actions";
+import StateKeys from "../collection/collection.stateKeys";
 
 function* getCurrentUser(){
     const user = yield call(GetCurrentUser);
     if(!user) throw new Error('User not logged in');
     return user;
+}
+
+function* getItineraryCollectionState(){
+    return yield select(selectItineraryCol);
+}
+
+function * updateCollectionData(state:IGenericState<Itinerary>){
+    yield put(SetCollectionData(StateKeys.ITINERARY, state));
 }
 
 function * setTripArchive(){
@@ -22,35 +35,68 @@ function * setTripArchive(){
     }
 }
 
-function* clearAllState(){
+function* clearAllItineraryState(){
     while(true){
         yield take(actionType.CLEAR_ALL_ITINERARY_STATE);
-        yield put(ClearAllItineraryStateSuccessful());
+
+        let state:IGenericState<Itinerary> = yield call(getItineraryCollectionState);
+        state = state.getInitSate();
+        yield call(updateCollectionData, state);
     }
 }
 
 let lastFetchCursor = null;
+let lastSearchKeyword = '';
+function* fetchItinerariesWorker(amount, fromStart, keyword){
+
+    lastFetchCursor = fromStart?null:lastFetchCursor;
+    if(keyword!==null && keyword!==undefined){
+        if(lastSearchKeyword !== keyword){ 
+        lastSearchKeyword = keyword;
+        }
+    }
+
+    const tripArchive:TripArchive = yield select(selectUnderTripArchive);
+    const itRepo : ImprovedRepository<Itinerary> = yield call(ConvertRepo, tripArchive.itineraries);
+    
+    let query = itRepo.getCollectionReference().orderBy('createAt', 'desc');
+    const splitedKeywords = ConvertSearchKeywordToArray(keyword);
+    if(splitedKeywords){
+        query = query.where('tags', 'array-contains-any', splitedKeywords);
+    }
+
+    const result = yield call(GetDataByQuery, itRepo, query, amount, lastFetchCursor);
+    lastFetchCursor = result.lastDocSnapshotCursor;
+    
+    return result.results;
+}
 function* doFetchItineraries(action){
     try{
         const {amount, fromStart, keyword} = action.payload;
 
-        lastFetchCursor = fromStart?null:lastFetchCursor;
-        const tripArchive:TripArchive = yield select(selectUnderTripArchive);
-        const itRepo : ImprovedRepository<Itinerary> = yield call(ConvertRepo, tripArchive.itineraries);
+        //prepare fetching
+        const state:IGenericState<Itinerary> = yield call(getItineraryCollectionState);
+        state.fetchingData = true;
+        state.fetchDataError = null;
+        yield call(updateCollectionData, state);
         
-        let query = itRepo.getCollectionReference().orderBy('createAt', 'desc');
-        const splitedKeywords = ConvertSearchKeywordToArray(keyword);
-        if(splitedKeywords){
-            query = query.where('tags', 'array-contains-any', splitedKeywords);
-        }
+        //call worker
+        const results = yield call(fetchItinerariesWorker, amount, fromStart, keyword);
 
-        const result = yield call(GetDataByQuery, itRepo, query, amount, lastFetchCursor);
-        lastFetchCursor = result.lastDocSnapshotCursor;
+        //fetch successful
+        state.fetchingData = false;
+        state.fetchDataError = null;
+        state.dataArray = fromStart?results:state.dataArray.concat(results);
+        state.moreData = results.length?true:false;
+        yield call(updateCollectionData, state);
 
-        yield put(FetchItinerariesSuccessful(result.results, fromStart));
     }
     catch(error){
-        yield put(FetchItinerariesFail(error));
+        const state:IGenericState<Itinerary> = yield call(getItineraryCollectionState);
+        state.fetchingData = false;
+        state.fetchDataError = error;
+        yield call(updateCollectionData, state);
+
         yield put(PostNotification(`Something went wrong (${error.message})`, 'error'));
     }
 }
@@ -59,25 +105,53 @@ function* fetchItineraries(){
     yield debounce(1500, actionType.FETCH_ITINERARIES_START, doFetchItineraries);
 }
 
-function* doCreateItinerary(action){
+function* fetchMoreItineraries(){
+    yield debounce(1500, actionType.FETCH_MORE_ITINERARIES_START, doFetchItineraries);
+}
 
+
+function* createItineraryWorker(userId, itineraryName, startDate, endDate){
+    const tripArchive:TripArchive = yield select(selectUnderTripArchive);
+
+    const itinerary = yield call(CreateItineraryForTripArchive,
+        userId, tripArchive.id, itineraryName,
+        startDate, endDate
+    );
+
+    return itinerary;
+}
+function* doCreateItinerary(action){
     try{
         const {itineraryName, startDate, endDate} = action.payload;
 
-        const tripArchive:TripArchive = yield select(selectUnderTripArchive);
+        //prepare create
+        const state:IGenericState<Itinerary> = yield call(getItineraryCollectionState);
+        state.creatingData = itineraryName;
+        state.createDataError = null;
+        state.createDataSuccessful = false;
+        yield call(updateCollectionData, state);
 
         const user = yield call(getCurrentUser);
-
-        const itinerary = yield call(CreateItineraryForTripArchive,
-            user.uid, tripArchive.id, itineraryName,
-            startDate, endDate
+        //call worker
+        const itinerary = yield call(createItineraryWorker, user.uid,
+            itineraryName, startDate, endDate
         );
-
-        yield put(CreateItinerarySuccessful(itinerary));
+        
+        //crate successful
+        state.creatingData = null;
+        state.createDataError = null;
+        state.createDataSuccessful = true;
+        state.dataArray = [itinerary, ...state.dataArray];
+        yield call(updateCollectionData, state);
 
     }
     catch(error){
-        yield put(CreateItineraryFail(error));
+        const state:IGenericState<Itinerary> = yield call(getItineraryCollectionState);
+        state.creatingData = null;
+        state.createDataError = error;
+        state.createDataSuccessful = false;
+        yield call(updateCollectionData, state);
+
         yield put(PostNotification(`Something went wrong (${error.message})`, 'error'));
     }
 }
@@ -89,15 +163,19 @@ export function* createItinerary(){
 export function* createItineraryStateReset(){
     while(true){
         yield take(actionType.CREATE_ITINERARY_STATE_RESET);
-        yield put(CreateItineraryResetSuccessful());
+
+        let state:IGenericState<Itinerary> = yield call(getItineraryCollectionState);
+        state = state.resetCreateState(state);
+        yield call(updateCollectionData, state);
     }
 }
 
 export default function* itinerarySaga(){
     yield all([
         call(setTripArchive),
-        call(clearAllState),
+        call(clearAllItineraryState),
         call(fetchItineraries),
+        call(fetchMoreItineraries),
         call(createItinerary),
         call(createItineraryStateReset),
     ]);

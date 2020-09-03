@@ -1,76 +1,77 @@
 import { createSelector } from "reselect";
 import {IRootReducerState} from '../Root-Reducer';
 
-export const selctTripArchiveCol = (state:IRootReducerState) => state.collection.tripArchive;
+//select tripArchive state under collection state
+export const selectTripArchiveCol = (state:IRootReducerState) => state.collection.tripArchive;
 
 export const selectTripArchives = createSelector(
-  [selctTripArchiveCol],
+  [selectTripArchiveCol],
 
   (collection)=>collection.dataArray
 )
 
 export const selectFetchingTripArchives = createSelector(
-  [selctTripArchiveCol],
+  [selectTripArchiveCol],
   
   (collection)=>collection.fetchingData
 )
 
 export const selectFetchingTripArchiveError = createSelector(
-  [selctTripArchiveCol],
+  [selectTripArchiveCol],
 
   (collection)=>collection.fetchDataError?collection.fetchDataError.message:null
 )
 
 export const selectMoreTripArchives = createSelector(
-  [selctTripArchiveCol],
+  [selectTripArchiveCol],
 
   (collection)=>collection.moreData
 )
 
 export const selectCreatingTripArchive = createSelector(
-  [selctTripArchiveCol],
+  [selectTripArchiveCol],
 
   (collection)=>collection.creatingData
 )
 
 export const selectCreatingTripArchiveError = createSelector(
-  [selctTripArchiveCol],
+  [selectTripArchiveCol],
 
   (collection)=>collection.createDataError?collection.createDataError.message:null
 )
 
 export const selectCreateTripArchiveSuccessful = createSelector(
-  [selctTripArchiveCol],
+  [selectTripArchiveCol],
 
   (collection)=>collection.createDataSuccessful
 )
 
 export const selectDeletingTripArchive = createSelector(
-  [selctTripArchiveCol],
+  [selectTripArchiveCol],
 
   (collection)=>collection.deletingData
 )
 
 export const selectDeleteTripArchiveError = createSelector(
-  [selctTripArchiveCol],
+  [selectTripArchiveCol],
 
   (collection)=>collection.deleteDataError?collection.deleteDataError.message:null
 )
 
 export const selectDeleteTripArchiveSuccessful = createSelector(
-  [selctTripArchiveCol],
+  [selectTripArchiveCol],
 
   (collection)=>collection.deleteDataSuccessful
 )
 
 export const selectUpdateTripArchiveSuccessful = createSelector(
-  [selctTripArchiveCol],
+  [selectTripArchiveCol],
 
   (collection)=>collection.updateDataSuccessful
 )
 
 export const selectUpdateTripArchiveError = createSelector(
-  [selctTripArchiveCol],
+  [selectTripArchiveCol],
 
   (collection)=>collection.updateDataError?collection.updateDataError.message:null
 )

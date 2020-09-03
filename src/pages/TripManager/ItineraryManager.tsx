@@ -71,8 +71,11 @@ const ItinerayManager = () => {
 
     React.useEffect(()=>{
         dispatch(StartFetchItineraries(fetchAmount, true, searchkeyword));
-        return ()=>dispatch(ClearAllItineraryState());
     }, [dispatch, searchkeyword]);
+
+    React.useEffect(()=>{
+        return ()=>dispatch(ClearAllItineraryState());
+    }, [dispatch]);
 
     const handleSearch = (keyword)=>{
         if(searchkeyword !== keyword) setSearchKeyword(keyword);
