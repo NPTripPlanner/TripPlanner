@@ -1,24 +1,7 @@
 import actionType from "./tripArchive.actionType";
 
 import {
-  FetchTripArchivesSuccessful,
-  FetchTripArchivesFail,
-  CreateTripArchiveSuccessful,
-  CreateTripArchiveFail,
-  CreateTripArchiveResetSuccessful,
-  DeleteTripArchiveSuccessful,
-  DeleteTripArchiveFail,
-  UpdateTripArchiveNameSuccessful,
-  UpdateTripArchiveNameFail,
-  UpdateTripArchiveNameStateResetSuccessful,
-  DeleteTripArchiveResetSuccessful,
-  ClearTripArchiveSuccessful,
-} from "./tripArchive.actions";
-
-import {
   GetCurrentUser,
-  // FetchTripArchiveAfter,
-  // SearchTripArchive,
   CreateTripArchive,
   DeleteTripArchive,
   UpdateTripArchiveName,
@@ -31,36 +14,82 @@ import {
 import { call, put, all, takeLeading, take, actionChannel, debounce } from "redux-saga/effects";
 import { PostNotification } from "../notification/notification.actions";
 import { TripArchive } from "../../schema/firestore.schema";
+import { select } from "redux-saga-test-plan/matchers";
+import { selctTripArchiveCol } from "./tripArchive.selector";
+import { IGenericState } from "../collection/collection.reducer";
+import { SetCollectionData } from "../collection/collection.actions";
+import StateKeys from "../collection/collection.stateKeys";
 
+/**
+ * Get current user
+ */
 function* getCurrentUser(){
   const user = yield call(GetCurrentUser);
   if(!user) throw new Error('User not logged in');
   return user;
 }
 
+function* getTripArchiveCollectionState(){
+  return yield select(selctTripArchiveCol);
+}
+
 let lastFetchCursor = null;
+let lastSearchKeyword = '';
+/**
+ * worker for fetch trip archive data
+ * @param amount 
+ * @param fromStart 
+ * @param keyword 
+ */
+function* fetchTripArchivesWorker(userId, amount, fromStart, keyword){
+
+  lastFetchCursor = fromStart?null:lastFetchCursor;
+  if(keyword!==null && keyword!==undefined){
+    if(lastSearchKeyword !== keyword){ 
+      lastSearchKeyword = keyword;
+    }
+  }
+  
+  const colRef = yield call(GetCollectionRef, TripArchive);
+  let query = colRef.where('ownerId', '==', userId);
+  const splitedKeywords = ConvertSearchKeywordToArray(lastSearchKeyword);
+  if(splitedKeywords){
+    query = query.where('tags', 'array-contains-any', splitedKeywords);
+  }
+  query = query.orderBy('createAt', 'desc');
+  const repo = yield call(GetRepository, TripArchive);
+  const result = yield call(GetDataByQuery, repo, query, amount, lastFetchCursor);
+  lastFetchCursor = result.lastDocSnapshotCursor;
+
+  return result;
+}
 export function* doFetchTripArchives(action){
   try{
     const {amount, fromStart, keyword} = action.payload;
+
+    //prepare fetching
+    const state:IGenericState<TripArchive> = yield call(getTripArchiveCollectionState);
+    state.fetchingData = true;
+    state.fetchDataError = null;
+    yield put(SetCollectionData(StateKeys.TRIP_ARCHIVE, state));
+
     const user = yield call(getCurrentUser);
+    //call worker
+    const result = yield call(fetchTripArchivesWorker, user.uid, amount, fromStart, keyword);
 
-    lastFetchCursor = fromStart?null:lastFetchCursor;
-    // const result = yield call(SearchTripArchive, user.uid, keyword, amount, lastFetchCursor);
-    const colRef = yield call(GetCollectionRef, TripArchive);
-    let query = colRef.where('ownerId', '==', user.uid);
-    const splitedKeywords = ConvertSearchKeywordToArray(keyword);
-    if(splitedKeywords){
-      query = query.where('tags', 'array-contains-any', splitedKeywords);
-    }
-    query = query.orderBy('createAt', 'desc');
-    const repo = yield call(GetRepository, TripArchive);
-    const result = yield call(GetDataByQuery, repo, query, amount, lastFetchCursor);
-    lastFetchCursor = result.lastDocSnapshotCursor;
-
-    yield put(FetchTripArchivesSuccessful(result.results, fromStart));
+    //fetch successful
+    state.dataArray = fromStart?result.results:state.dataArray.concat(result.results);
+    state.fetchingData = false;
+    state.moreData = result.results.length?true:false;
+    yield put(SetCollectionData(StateKeys.TRIP_ARCHIVE, state));
   }
   catch(error){
-    yield put(FetchTripArchivesFail(error));
+    //fetch error
+    const state:IGenericState<TripArchive> = yield call(getTripArchiveCollectionState);
+    state.fetchingData = false;
+    state.fetchDataError = error;
+    yield put(SetCollectionData(StateKeys.TRIP_ARCHIVE, state));
+
     yield put(PostNotification(`Something went wrong (${error.message})`, 'error'));
   }
 }
@@ -69,16 +98,45 @@ export function* fetchTripArchives() {
   yield debounce(1500, actionType.FETCH_TRIP_ARCHIVES_START, doFetchTripArchives);
 }
 
+export function* fetchMoreTripArchives() {
+  yield takeLeading(actionType.FETCH_MORE_START, doFetchTripArchives);
+}
+
+export function* createTripArchiveWorker(userId, tripArchiveName){
+  
+  const tripArchive = yield call(CreateTripArchive, userId, tripArchiveName);
+  return tripArchive;
+}
 export function* doCreateTripArchive(action){
   try{
     const {tripArchiveName} = action.payload;
+
+    //prepare create
+    const state:IGenericState<TripArchive> = yield call(getTripArchiveCollectionState);
+    state.creatingData = tripArchiveName;
+    state.createDataError = null;
+    state.createDataSuccessful = false;
+    yield put(SetCollectionData(StateKeys.TRIP_ARCHIVE, state));
+
     const user = yield call(getCurrentUser);
-    const tripArchive = yield call(CreateTripArchive, user.uid, tripArchiveName);
-    yield put(CreateTripArchiveSuccessful(tripArchive));
+    //call worker
+    const tripArchive = yield call(createTripArchiveWorker, user.uid, tripArchiveName);
+
+    //create successful
+    state.dataArray = [tripArchive, ...state.dataArray];
+    state.creatingData = null;
+    state.createDataSuccessful = true;
+    yield put(SetCollectionData(StateKeys.TRIP_ARCHIVE, state));
+
     yield put(PostNotification(`${tripArchiveName} has been created`, 'success'));
   }
   catch(error){
-    yield put(CreateTripArchiveFail(error));
+    const state:IGenericState<TripArchive> = yield call(getTripArchiveCollectionState);
+    state.createDataError = error;
+    state.creatingData = null;
+    state.createDataSuccessful = false;
+    yield put(SetCollectionData(StateKeys.TRIP_ARCHIVE, state));
+
     yield put(PostNotification(
       `Unable to create collection (${error.message})`,
       'error'));
@@ -92,21 +150,53 @@ export function* createTripArchive(){
 export function* createTripArchiveReset(){
   while(true){
     yield take(actionType.CREATE_TRIP_ARCHIVE_STATE_RESET);
-    yield put(CreateTripArchiveResetSuccessful());
+
+    let state:IGenericState<TripArchive> = yield call(getTripArchiveCollectionState);
+    state = state.resetCreateState(state);
+    yield put(SetCollectionData(StateKeys.TRIP_ARCHIVE, state));
+
   }
 }
 
+export function* deleteTripArchiveWorker(userId, tripArchiveId){
+  yield call(DeleteTripArchive, userId, tripArchiveId);
+}
 export function* doDeleteTripArchive(action){
   try{
     const {tripArchiveId, tripArchiveName} = action.payload;
+
+    //prepare delete
+    const state:IGenericState<TripArchive> = yield call(getTripArchiveCollectionState);
+    state.deletingData = tripArchiveName;
+    state.deleteDataError = null;
+    state.deleteDataSuccessful = false;
+    yield put(SetCollectionData(StateKeys.TRIP_ARCHIVE, state));
+
     const user = yield call(getCurrentUser);
-    yield call(DeleteTripArchive, user.uid, tripArchiveId);
-    yield put(DeleteTripArchiveSuccessful(tripArchiveId));
+    //call worker
+    yield call(deleteTripArchiveWorker, user.uid, tripArchiveId);
+
+    //delete successful
+    state.deletingData = null;
+    state.deleteDataError = null;
+    state.deleteDataSuccessful = true;
+    //filter out the trip archive we deleted
+    const filterArchives = state.dataArray.filter(archive=>{
+          return archive.id!==tripArchiveId;
+    });
+    state.dataArray = filterArchives;
+    yield put(SetCollectionData(StateKeys.TRIP_ARCHIVE, state));
+
     yield put(PostNotification(`${tripArchiveName} has been deleted`, 'success'));
   }
-  catch(err){
-    yield put(DeleteTripArchiveFail(err));
-    yield put(PostNotification(`Unable to delete collection (${err.message})`, 'error'));
+  catch(error){
+    const state:IGenericState<TripArchive> = yield call(getTripArchiveCollectionState);
+    state.deletingData = null;
+    state.deleteDataError = error;
+    state.deleteDataSuccessful = false;
+    yield put(SetCollectionData(StateKeys.TRIP_ARCHIVE, state));
+
+    yield put(PostNotification(`Unable to delete collection (${error.message})`, 'error'));
   }
 }
 
@@ -117,22 +207,56 @@ export function* deleteTripArchive(){
 export function* deleteTripArchiveReset(){
   while(true){
     yield take(actionType.DELETE_TRIP_ARCHIVE_STATE_RESET);
-    yield put(DeleteTripArchiveResetSuccessful());
+
+    let state:IGenericState<TripArchive> = yield call(getTripArchiveCollectionState);
+    state = state.resetDeleteState(state);
+    yield put(SetCollectionData(StateKeys.TRIP_ARCHIVE, state));
+
   }
 }
 
+export function* updateTripArchiveNameWorker(userId, tripArchiveId, newName, oldName){
+  if(newName !== oldName){
+    const tripArchive = yield call(UpdateTripArchiveName, userId, tripArchiveId, newName);
+    return tripArchive;
+  }
+  return null
+}
 export function* doUpdateTripArchiveName(action){
   try{
     const {tripArchiveId, newName, oldName} = action.payload;
+
+    //prepare update
+    const state:IGenericState<TripArchive> = yield call(getTripArchiveCollectionState);
+    state.updatingData = oldName;
+    state.updateDataError = null;
+    state.updateDataSuccessful = false;
+    yield put(SetCollectionData(StateKeys.TRIP_ARCHIVE, state));
+
     const user = yield call(getCurrentUser);
-    if(newName !== oldName){
-      const tripArchive = yield call(UpdateTripArchiveName, user.uid, tripArchiveId, newName);
-      yield put(UpdateTripArchiveNameSuccessful(tripArchive));
+    const tripArchive = yield call(updateTripArchiveNameWorker, user.uid, tripArchiveId, newName, oldName);
+    
+    //update successful
+    state.updatingData = null;
+    state.updateDataError = null;
+    state.updateDataSuccessful = true;
+    //replace the old trip archive with new one
+    if(tripArchive){
+      state.dataArray = state.dataArray.map<TripArchive>(archive=>{
+        return archive.id === tripArchive.id ? tripArchive : archive;
+      });
     }
+    yield put(SetCollectionData(StateKeys.TRIP_ARCHIVE, state));
+
     yield put(PostNotification(`${oldName} changed to ${newName}`, 'success'));
   }
-  catch(err){
-    yield put(UpdateTripArchiveNameFail(err));
+  catch(error){
+    const state:IGenericState<TripArchive> = yield call(getTripArchiveCollectionState);
+    state.updatingData = null;
+    state.updateDataError = error;
+    state.updateDataSuccessful = false;
+    yield put(SetCollectionData(StateKeys.TRIP_ARCHIVE, state));
+
     yield put(PostNotification(`Unable to update collection name`, 'error'));
   }
 }
@@ -149,20 +273,27 @@ export function* updateTripArchiveName(){
 export function* updateTripArchiveNameReset(){
   while(true){
     yield take(actionType.UPDATE_TRIP_ARCHIVE_NAME_STATE_RESET);
-    yield put(UpdateTripArchiveNameStateResetSuccessful());
+
+    let state:IGenericState<TripArchive> = yield call(getTripArchiveCollectionState);
+    state = state.resetUpdateState(state);
+    yield put(SetCollectionData(StateKeys.TRIP_ARCHIVE, state));
   }
 }
 
 export function* clearTripArchive(){
   while(true){
     yield take(actionType.CLEAR_TRIP_ARCHIVE_START);
-    yield put(ClearTripArchiveSuccessful());
+
+    let state:IGenericState<TripArchive> = yield call(getTripArchiveCollectionState);
+    state = state.getInitSate();
+    yield put(SetCollectionData(StateKeys.TRIP_ARCHIVE, state));
   }
 }
 
 export default function* TripArchiveSaga() {
   yield all([
     call(fetchTripArchives),
+    call(fetchMoreTripArchives),
     call(createTripArchive),
     call(createTripArchiveReset),
     call(deleteTripArchive),

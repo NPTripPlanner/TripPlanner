@@ -1,87 +1,76 @@
 import { createSelector } from "reselect";
 import {IRootReducerState} from '../Root-Reducer';
-import {SortArray} from '../../utils/utils';
 
-const selectTripArchive = (state:IRootReducerState) => state.tripArchive;
+export const selctTripArchiveCol = (state:IRootReducerState) => state.collection.tripArchive;
+
+export const selectTripArchives = createSelector(
+  [selctTripArchiveCol],
+
+  (collection)=>collection.dataArray
+)
 
 export const selectFetchingTripArchives = createSelector(
-  [selectTripArchive],
+  [selctTripArchiveCol],
   
-  (tripArchive)=>tripArchive.fetchingTripArchives
+  (collection)=>collection.fetchingData
 )
 
 export const selectFetchingTripArchiveError = createSelector(
-  [selectTripArchive],
+  [selctTripArchiveCol],
 
-  (tripArchive)=>tripArchive.fetchingTripArchivesError?tripArchive.fetchingTripArchivesError.message:null
-)
-
-export const selectTripArchives = createSelector(
-  [selectTripArchive],
-
-  (tripArchive)=>tripArchive.tripArchives
-)
-
-/**
- * Return sorted Trip Archive items
- * @param objectPath Have to match object property path e.g date.createAt
- */
-export const selectSortedTripArchives = (objectPath:string)=> createSelector(
-  [selectTripArchive],
-
-  (tripArchive)=>SortArray(tripArchive.tripArchives, objectPath)
+  (collection)=>collection.fetchDataError?collection.fetchDataError.message:null
 )
 
 export const selectMoreTripArchives = createSelector(
-  [selectTripArchive],
+  [selctTripArchiveCol],
 
-  (tripArchive)=>tripArchive.moreTripArchives
+  (collection)=>collection.moreData
 )
 
 export const selectCreatingTripArchive = createSelector(
-  [selectTripArchive],
+  [selctTripArchiveCol],
 
-  (tripArchive)=>tripArchive.creatingTripArchive
+  (collection)=>collection.creatingData
 )
 
 export const selectCreatingTripArchiveError = createSelector(
-  [selectTripArchive],
+  [selctTripArchiveCol],
 
-  (tripArchive)=>tripArchive.createTripArchiveError?tripArchive.createTripArchiveError.message:null
+  (collection)=>collection.createDataError?collection.createDataError.message:null
 )
 
 export const selectCreateTripArchiveSuccessful = createSelector(
-  [selectTripArchive],
+  [selctTripArchiveCol],
 
-  (tripArchive)=>tripArchive.createTripArchiveSuccessful
+  (collection)=>collection.createDataSuccessful
 )
 
 export const selectDeletingTripArchive = createSelector(
-  [selectTripArchive],
+  [selctTripArchiveCol],
 
-  (tripArchive)=>tripArchive.deletingTripArchive
+  (collection)=>collection.deletingData
 )
 
 export const selectDeleteTripArchiveError = createSelector(
-  [selectTripArchive],
+  [selctTripArchiveCol],
 
-  (tripArchive)=>tripArchive.deleteTripArchiveError?tripArchive.deleteTripArchiveError.message:null
+  (collection)=>collection.deleteDataError?collection.deleteDataError.message:null
 )
 
 export const selectDeleteTripArchiveSuccessful = createSelector(
-  [selectTripArchive],
+  [selctTripArchiveCol],
 
-  (tripArchive)=>tripArchive.deleteTripArchiveSuccessful
+  (collection)=>collection.deleteDataSuccessful
 )
 
 export const selectUpdateTripArchiveSuccessful = createSelector(
-  [selectTripArchive],
+  [selctTripArchiveCol],
 
-  (tripArchive)=>tripArchive.updatingTripArchive
+  (collection)=>collection.updateDataSuccessful
 )
 
 export const selectUpdateTripArchiveError = createSelector(
-  [selectTripArchive],
+  [selctTripArchiveCol],
 
-  (tripArchive)=>tripArchive.updateTripArchiveError?tripArchive.updateTripArchiveError.message:null
+  (collection)=>collection.updateDataError?collection.updateDataError.message:null
 )
