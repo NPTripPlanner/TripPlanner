@@ -260,3 +260,8 @@ exports.triggerTripArchiveCreate = functions.firestore.document('tripArchive/{ar
 .onCreate(trigger.updateTagsOnCreated);
 exports.triggerTripArchiveChange = functions.firestore.document('tripArchive/{archive_id}')
 .onUpdate(trigger.updateTagsOnChanged);
+
+exports.triggerItineraryCreate = functions.firestore.document('tripArchive/{archive_id}/itineraries/{itinerary_id}')
+.onCreate(trigger.updateTagsOnCreated);
+exports.triggerItineraryChange = functions.firestore.document('tripArchive/{archive_id}/itineraries/{itinerary_id}')
+.onUpdate(trigger.updateTagsOnChanged);

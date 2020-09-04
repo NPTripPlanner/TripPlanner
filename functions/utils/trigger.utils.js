@@ -1,5 +1,10 @@
 const commonUtils = require('./commom.utils');
 
+/**
+ * On document created
+ * update search tags base on name
+ * @param {*} docSnapshot 
+ */
 exports.updateTagsOnCreated = async (docSnapshot)=>{
     try{
         const name = docSnapshot?docSnapshot.get('name'):null;
@@ -12,6 +17,11 @@ exports.updateTagsOnCreated = async (docSnapshot)=>{
     }
 }
 
+/**
+ * On document changed 
+ * update search tags base on name
+ * @param {*} change 
+ */
 exports.updateTagsOnChanged = async (change)=>{
     try{
         const nameBefore = change.before?change.before.get('name'):null;
