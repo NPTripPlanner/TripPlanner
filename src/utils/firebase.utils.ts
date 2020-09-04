@@ -572,6 +572,12 @@ export const DeleteTripArchive = async (userId:string, archiveId:string)=>{
   }
 }
 
+/**
+ * Delete a itinerary
+ * @param userId user id
+ * @param archiveId  trip archive id that itinerary should be deleted under
+ * @param itineraryId itinerary id
+ */
 export const DeleteItinerary = async (
   userId:string,
   archiveId:string,

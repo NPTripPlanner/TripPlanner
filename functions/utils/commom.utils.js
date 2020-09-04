@@ -40,9 +40,35 @@ const getTagsfromName = (name, splitBy=' ')=>{
     return result?result:[];
 }
 
+/**
+ * Convert date time to UTC
+ * @param {*} datetime string format is like 2013-02-04T10:35:24-08:00
+ */
+const convertLocalToUTC = (datetime)=>{
+    const convertUTC = moment.utc(datetime);
+    return convertUTC;
+}
+
+/**
+ * Get total days from start to end 
+ * @param {*} start Moment object
+ * @param {*} end  Moment object
+ * 
+ * @returns total days in number
+ */
+const getTotalDays = (start, end)=>{
+    const diffDays = end.diff(start, 'days');
+    if(diffDays < 0) throw new Error('start date is after end date');
+    const totalDays = diffDays + 1;
+
+    return totalDays;
+}
+
 module.exports = {
     addCreateDateToObject,
     addModifyDateToObject,
     getTagsfromName,
     convertToServerTimestamp,
+    convertLocalToUTC,
+    getTotalDays,
 }

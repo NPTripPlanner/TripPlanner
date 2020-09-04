@@ -199,12 +199,12 @@ exports.createItineraryForTripArchive = functions.https.onCall(
     }
 );
 
-exports.updateItineraryName = functions.https.onCall(
+exports.updateItinerary = functions.https.onCall(
     async (data, context)=>{
         try{
             validateAuthFromFunctionContext(context, 'update itinerary name fail');
 
-            const {userId, tripArchiveId, itineraryId, name} = data;
+            const {userId, tripArchiveId, itineraryId, dataToUpdate} = data;
             const tripArchiveRef = await firestore.collection('tripArchive');
             const querySnapshots = await tripArchiveRef.where('ownerId', '==', userId)
             .where('id', '==', tripArchiveId)
@@ -214,8 +214,8 @@ exports.updateItineraryName = functions.https.onCall(
             if(!tripArchiveDocSnap.exists) throw new Error(`TripArchive ${tripArchiveId} do not exists`);
 
             const result = await firestore.runTransaction(async (trans)=>{
-                return await itinerary.updateItineraryName(
-                    tripArchiveDocSnap.ref, itineraryId, name, trans);
+                return await itinerary.updateItineraryData(
+                    tripArchiveDocSnap.ref, itineraryId, dataToUpdate, trans);
             });
 
             return result;
@@ -256,5 +256,7 @@ exports.deleteItinerary = functions.https.onCall(async (data, context)=>{
     }
 });
 
-exports.triggerTripArchiveUpdate = functions.firestore.document('tripArchive/{archive_id}')
-.onWrite(trigger.onUpdateTripArchive);
+exports.triggerTripArchiveCreate = functions.firestore.document('tripArchive/{archive_id}')
+.onCreate(trigger.updateTagsOnCreated);
+exports.triggerTripArchiveChange = functions.firestore.document('tripArchive/{archive_id}')
+.onUpdate(trigger.updateTagsOnChanged);

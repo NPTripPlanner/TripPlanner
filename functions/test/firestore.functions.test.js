@@ -139,12 +139,19 @@ describe('Firestore functions test', ()=>{
             expect(returnResut).toBeTruthy();
             expect(returnResut.tripArchiveId).toEqual(result.id);
 
-            wrapped = test.wrap(firestoreFunctions.updateItineraryName);
+            wrapped = test.wrap(firestoreFunctions.updateItinerary);
+            const changedStartDate = new Date();
+            const changedEndDate = new Date();
+            changedEndDate.setDate(changedEndDate.getDate()+10);
             const newResult = await wrapped({
                 userId: userData.id,
                 tripArchiveId: returnResut.tripArchiveId,
                 itineraryId: returnResut.id,
-                name: 'name has been changed',
+                dataToUpdate: {
+                    name: 'name and date has been changed, total days changed from 6 to 11',
+                    startDate: changedStartDate.toUTCString(),
+                    endDate: changedEndDate.toUTCString(),
+                }
             })
             return expect(newResult).toBeTruthy();
         })

@@ -59,13 +59,11 @@ exports.createItineraryForTripArchive = async (
     }
 
     //convert time to UTC
-    let startDateUTC = moment.utc(defaultStartDateLocal);
-    let endDateUTC = moment.utc(defaultEndDateLocal);
+    let startDateUTC = commonUtils.convertLocalToUTC(defaultStartDateLocal);
+    let endDateUTC = commonUtils.convertLocalToUTC(defaultEndDateLocal);
 
     //different days between start to end date
-    const diffDays = endDateUTC.diff(startDateUTC, 'days');
-    if(diffDays < 0) throw new Error('start date is after end date');
-    const totalDays = diffDays + 1;
+    const totalDays = commonUtils.getTotalDays(startDateUTC, endDateUTC);
 
     //convert to server timestamp
     startDateUTCTS = commonUtils.convertToServerTimestamp(startDateUTC.toDate());
@@ -88,17 +86,56 @@ exports.createItineraryForTripArchive = async (
     return itinerarydata.id;
 }
 
-exports.updateItineraryName = async (tripArchiveDocRef, itineraryId, itineraryName, writeHandler)=>{
+/**
+ * Update itinerary data
+ * @param {*} tripArchiveDocRef the ref of trip archive this itinerary stored under 
+ * @param {*} itineraryId itinerary id
+ * @param {*} dataToUpdate data to update
+ * 
+ * shape:
+ * {name, startDate, endDate} startDate and endDate are string in local time
+ * 
+ * @param {*} writeHandler a handler for write
+ * 
+ * accept transaction, batch or writebulk
+ */
+exports.updateItineraryData = async (tripArchiveDocRef, itineraryId, dataToUpdate, writeHandler)=>{
     const itinerariesRef = await tripArchiveDocRef.collection('itineraries');
     const itDocRef = await itinerariesRef.doc(`${itineraryId}`);
     const docSnapshot = await itDocRef.get();
 
     if(!docSnapshot.exists) throw new Error(`Itinerary ${itineraryId} do not exists`);
 
-    const data = {name: itineraryName};
-    itinerarydata = commonUtils.addModifyDateToObject(data);
+    const {name, startDate, endDate} = dataToUpdate;
 
-    writeHandler.update(docSnapshot.ref, data);
+    let updatedData = {};
+
+    if(name) updatedData = {...updatedData, name};
+
+    //update startDate, endDate and totalDays
+    if(startDate && endDate){
+        //convert time to UTC
+        let startDateUTC = commonUtils.convertLocalToUTC(startDate);
+        let endDateUTC = commonUtils.convertLocalToUTC(endDate);
+
+        //different days between start to end date
+        const totalDays = commonUtils.getTotalDays(startDateUTC, endDateUTC);
+
+        //convert to server timestamp
+        startDateUTCTS = commonUtils.convertToServerTimestamp(startDateUTC.toDate());
+        endDateUTCTS = commonUtils.convertToServerTimestamp(endDateUTC.toDate());
+
+        updatedData = {
+            ...updatedData,
+            startDateUTC: startDateUTCTS,
+            endDateUTC: endDateUTCTS,
+            totalDays,
+        };
+    }
+
+    itinerarydata = commonUtils.addModifyDateToObject(updatedData);
+
+    writeHandler.update(docSnapshot.ref, updatedData);
 
     return true;
 }

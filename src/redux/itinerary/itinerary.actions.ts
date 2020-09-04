@@ -47,3 +47,12 @@ export const StartDeleteItinerary = (tripArchiveId, itineraryId, itineraryName) 
 export const DeleteItineraryStateReset = () =>action(
     actionType.DELETE_ITINERARY_STATE_RESET,
 );
+
+export const StartUpdateItinerary = (tripArchiveId, itineraryId, itineraryName) =>action(
+    actionType.UPDATE_ITINERARY_START,
+    {tripArchiveId, itineraryId, itineraryName},
+);
+
+export const UpdateItineraryStateReset = () =>action(
+    actionType.UPDATE_ITINERARY_STATE_RESET,
+);
