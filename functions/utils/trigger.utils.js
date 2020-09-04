@@ -1,28 +1,5 @@
 const commonUtils = require('./commom.utils');
 
-exports.onUpdateTripArchive = async (change, _context)=>{
-    try{
-        const nameBefore = change.before?change.before.get('name'):null;
-        const nameAfter = change.after?change.after.get('name'):null;
-
-        console.log(nameBefore ,nameAfter);
-
-        //document deleted
-        if(!nameAfter) return null;
-
-        //to break infinite loop risk
-        if(nameBefore === nameAfter) return null;
-
-        const name = change.after.data().name;
-        const tags = commonUtils.getTagsfromName(name, ' ');
-        
-        return change.after.ref.update({tags});
-    }
-    catch(err){
-        console.log(err);
-    }
-}
-
 exports.updateTagsOnCreated = async (docSnapshot)=>{
     try{
         const name = docSnapshot?docSnapshot.get('name'):null;
@@ -58,16 +35,3 @@ exports.updateTagsOnChanged = async (change)=>{
         console.log(error);
     }
 }
-
-// exports.onCreateTripArchive = async (change, _context)=>{
-//     try{
-//         const name = change.data().name;
-//         const tags = commonUtils.getTagsfromName(name, ' ');
-
-//         if(!change.ref.exists) return;
-//         change.ref.update({tags});
-//     }
-//     catch(err){
-//         console.log(err);
-//     }
-// }
