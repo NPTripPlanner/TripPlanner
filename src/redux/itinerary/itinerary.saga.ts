@@ -6,7 +6,7 @@ import {
 } from "./itinerary.actions";
 import { selectUnderTripArchive, selectItineraryCol } from "./itinerary.selector";
 import { TripArchive, Itinerary } from "../../schema/firestore.schema";
-import { ConvertRepo, ConvertSearchKeywordToArray, GetDataByQuery, CreateItineraryForTripArchive, GetCurrentUser, DeleteItinerary } from "../../utils/firebase.utils";
+import { ConvertRepo, ConvertSearchKeywordToArray, GetDataByQuery, CreateItineraryForTripArchive, GetCurrentUser, DeleteItinerary, UpdateItinerary, IItineraryUpdateData } from "../../utils/firebase.utils";
 import ImprovedRepository from "../../schema/ImprovedRepository";
 import { PostNotification } from "../notification/notification.actions";
 import { IGenericState } from "../collection/collection.reducer";
@@ -227,6 +227,85 @@ export function* deleteItineraryStateReset(){
     }
 }
 
+export function* updateItineraryWorker(
+    userId,
+    tripArchiveId,
+    itineraryId,
+    itineraryName,
+    startDate,
+    endDate,
+    ){
+        const updateData:IItineraryUpdateData = {
+            name: itineraryName,
+            startDate: startDate,
+            endDate: endDate,
+        };
+
+        const itinerary = yield call(UpdateItinerary, userId, tripArchiveId, itineraryId, updateData);
+        return itinerary;
+}
+export function* doUpdateItinerary(action){
+    try{
+        const {
+            itineraryId,
+            itineraryName,
+            startDate,
+            endDate,
+        } = action.payload;
+
+        //prepare update
+        const state:IGenericState<Itinerary> = yield call(getItineraryCollectionState);
+        state.updatingData = itineraryName;
+        state.updateDataError = null;
+        state.updateDataSuccessful = false;
+        yield call(updateCollectionData, state);
+
+        const underTripArchive:TripArchive = yield select(selectUnderTripArchive);
+
+        const user = yield call(getCurrentUser);
+        //call worker
+        const itinerary:Itinerary = yield call(updateItineraryWorker, 
+            user.uid, underTripArchive.id, itineraryId, itineraryName, startDate, endDate
+        );
+        
+        //delete successful
+        state.updatingData = null;
+        state.updateDataError = null;
+        state.updateDataSuccessful = true;
+        state.dataArray = state.dataArray.map(it=>{
+            return itinerary.id===it.id?itinerary:it;
+        })
+
+        yield call(updateCollectionData, state);
+
+        yield put(PostNotification(`${itineraryName} has been updated`, 'success'));
+
+    }
+    catch(error){
+        const state:IGenericState<Itinerary> = yield call(getItineraryCollectionState);
+        state.updatingData = null;
+        state.updateDataError = error;
+        state.updateDataSuccessful = false;
+        yield call(updateCollectionData, state);
+
+        yield put(PostNotification(`Something went wrong (${error.message})`, 'error'));
+    }
+}
+
+export function* updateItinerary(){
+    yield takeLeading(actionType.UPDATE_ITINERARY_START, doUpdateItinerary);
+}
+
+export function* updateItineraryStateReset(){
+    while(true){
+        yield take(actionType.UPDATE_ITINERARY_STATE_RESET);
+
+        let state:IGenericState<Itinerary> = yield call(getItineraryCollectionState);
+        state = state.resetUpdateState(state);
+        yield call(updateCollectionData, state);
+    }
+}
+
 export default function* itinerarySaga(){
     yield all([
         call(setTripArchive),
@@ -237,5 +316,7 @@ export default function* itinerarySaga(){
         call(createItineraryStateReset),
         call(deleteItinerary),
         call(deleteItineraryStateReset),
+        call(updateItinerary),
+        call(updateItineraryStateReset),
     ]);
 }

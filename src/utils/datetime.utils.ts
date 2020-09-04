@@ -1,3 +1,4 @@
+import 'moment-timezone'
 import moment, { Moment } from 'moment';
 
 export const getDate = (format:string|null=null, incrementDays:number=0)=>{
@@ -17,4 +18,10 @@ export const totalDays = (from:Date, to:Date)=>{
 
 export const totalDaysInMoment = (from:Moment, to:Moment)=>{
     return to.diff(from, 'days') + 1;
+}
+
+export const getLocalDateFromUTC = (dateUTC:Date)=>{
+    const momentUTC = moment.utc(dateUTC);
+    const localDate = momentUTC.local().toDate();
+    return localDate;
 }

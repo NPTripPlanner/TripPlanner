@@ -17,6 +17,7 @@ import { Itinerary } from '../../schema/firestore.schema';
 import CreateItineraryForm from '../../forms/CreateItineraryForm';
 import { CreateDialog } from '../../dialogs/CreateDialog';
 import DeleteItineraryForm from '../../forms/DeleteItineraryForm';
+import UpdateItineraryForm from '../../forms/UpdateItineraryForm';
 
 const style= createStyles({
     main:{
@@ -129,8 +130,22 @@ const ItinerayManager = () => {
         );
     }
 
-    const handleUpdateItineraryName = (_itinerary)=>{
-        //TODO: handle update itinerary name
+    const updateForm = (itinerary:Itinerary)=>(
+        <UpdateItineraryForm
+        itinerary={itinerary}
+        onSuccess={()=>setDialog(null)}
+        />
+    );
+    const handleUpdateItineraryName = (itinerary)=>{
+        setDialog(
+            CreateDialog(
+                'Update itinerary',
+                updateForm(itinerary),
+                'lg',
+                [],
+                ()=>setDialog(null)
+            )
+        );
     }
 
     const additineraryFab = (

@@ -523,18 +523,30 @@ export const UpdateTripArchiveName = async (userId:string, archiveId:string, arc
   }
 }
 
-export const UpdateItineraryName = async (
+export interface IItineraryUpdateData{
+  name: string;
+  startDate: Date;
+  endDate: Date;
+}
+export const UpdateItinerary = async (
   userId:string,
   archiveId:string,
   itineraryId:string,
-  name:string)=>{
+  updateData: IItineraryUpdateData
+  )=>{
 
     try{
-      const result = await cloudFunctions.httpsCallable('updateItineraryName')({
+      const {name, startDate, endDate} = updateData;
+
+      const result = await cloudFunctions.httpsCallable('updateItinerary')({
         userId: userId,
         tripArchiveId: archiveId,
         itineraryId: itineraryId,
-        name: name,
+        dataToUpdate: {
+          name,
+          startDate: startDate.toUTCString(),
+          endDate: endDate.toUTCString(),
+        }
       });
       
       if(!result) throw new Error(

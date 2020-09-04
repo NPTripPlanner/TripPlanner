@@ -114,8 +114,8 @@ describe('Firestore functions test', ()=>{
         })
     })
 
-    describe('update itinerary name', ()=>{
-        it('test update itinerary name function', async ()=>{
+    describe('update itinerary', ()=>{
+        it('test update itinerary name and date function', async ()=>{
             let wrapped = test.wrap(firestoreFunctions.createTripArchive);
             const result = await wrapped({
                 userId: userData.id,
