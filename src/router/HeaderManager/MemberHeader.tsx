@@ -4,7 +4,7 @@ import { useHistory } from "react-router-dom";
 import { UserLogout } from '../../redux/user/user.actions';
 import Header from '../../components/Header/Header';
 import { Avatar, IconButton } from '@material-ui/core';
-import { Apps } from '@material-ui/icons';
+import { Apps, Home } from '@material-ui/icons';
 import AvatarDropDown from './AvatarDropDown';
 import { ReactComponent as Logo } from "../../assets/images/Logo/logo.svg";
 
@@ -47,6 +47,9 @@ const MemberHeader = (props:IProps)=>{
         rightButtons={[
             <IconButton onClick={() => history.push("/TripManager")}>
                 <Apps />
+            </IconButton>,
+            <IconButton onClick={() => history.push("/")}>
+              <Home />
             </IconButton>,
             <AvatarDropDown items={items} />,
         ]}

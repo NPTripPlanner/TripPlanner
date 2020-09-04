@@ -100,7 +100,7 @@ export function* doFetchTripArchives(action){
 }
 
 export function* fetchTripArchives() {
-  yield debounce(1500, actionType.FETCH_TRIP_ARCHIVES_START, doFetchTripArchives);
+  yield debounce(700, actionType.FETCH_TRIP_ARCHIVES_START, doFetchTripArchives);
 }
 
 export function* fetchMoreTripArchives() {

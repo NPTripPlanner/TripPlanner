@@ -5,6 +5,7 @@ import Header from '../../components/Header/Header';
 import { Avatar, IconButton } from '@material-ui/core';
 import { ReactComponent as Logo } from "../../assets/images/Logo/logo.svg";
 import { ReactComponent as Signin } from "../../assets/images/Landing/sign-in.svg";
+import { Home } from '@material-ui/icons';
 
 type IProps = {
     title: string;
@@ -39,6 +40,9 @@ const NonMemberHeader = (props:IProps)=>{
             }
             title={title}
             rightButtons={[
+            <IconButton onClick={() => history.push("/")}>
+                <Home />
+            </IconButton>,    
             <IconButton onClick={handleLogin}>
                 <Signin />
             </IconButton>,

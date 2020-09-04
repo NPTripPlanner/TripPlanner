@@ -102,7 +102,7 @@ function* doFetchItineraries(action){
 }
 
 function* fetchItineraries(){
-    yield debounce(1500, actionType.FETCH_ITINERARIES_START, doFetchItineraries);
+    yield debounce(700, actionType.FETCH_ITINERARIES_START, doFetchItineraries);
 }
 
 function* fetchMoreItineraries(){
