@@ -11,6 +11,9 @@
 # production
 /build
 
+#firestore export and import data for local emulator
+/savedData
+
 # firebase emulator suite
 database-debug.log
 firebase-debug.log
