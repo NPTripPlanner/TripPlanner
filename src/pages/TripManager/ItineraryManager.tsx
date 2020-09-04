@@ -16,6 +16,7 @@ import TripCollection from '../../components/TripCollection/TripCollection';
 import { Itinerary } from '../../schema/firestore.schema';
 import CreateItineraryForm from '../../forms/CreateItineraryForm';
 import { CreateDialog } from '../../dialogs/CreateDialog';
+import DeleteItineraryForm from '../../forms/DeleteItineraryForm';
 
 const style= createStyles({
     main:{
@@ -109,8 +110,23 @@ const ItinerayManager = () => {
         //TODO: handle itinerary click
     }
 
-    const handleDelete = (_itinerary)=>{
-        //TODO: handle itinerary delete
+    const deleteForm = (itinerary:Itinerary)=>(
+        <DeleteItineraryForm 
+        itinerary={itinerary}
+        onCancel={()=>setDialog(null)}
+        onSuccess={()=>setDialog(null)}
+        />
+    );
+    const handleDelete = (itinerary:Itinerary)=>{
+        setDialog(
+            CreateDialog(
+                'Delete itinerary',
+                deleteForm(itinerary),
+                'lg',
+                [],
+                ()=>setDialog(null)
+            )
+        );
     }
 
     const handleUpdateItineraryName = (_itinerary)=>{

@@ -16,7 +16,7 @@ import { CreateDialog } from '../../dialogs/CreateDialog';
 import Collection from '../../components/Collection/Collection';
 import TripCollection from '../../components/TripCollection/TripCollection';
 import CreateTripArchiveForm from '../../forms/CreateTripArchiveForm';
-import ConfirmDeleteForm from '../../forms/ConfirmDeleteForm';
+import DeleteTripArchiveForm from '../../forms/DeleteTripArchiveForm';
 import { StartChangeHeaderTitle } from '../../redux/header/header.actions';
 import {
     StartFetchTripArchives, ClearTripArchiveStart, StartFetchMoreTripArchives,
@@ -164,7 +164,7 @@ const ArchiveManager = () => {
     }
 
     const deleteForm = (tripArchive:TripArchive) => (
-        <ConfirmDeleteForm 
+        <DeleteTripArchiveForm 
         tripArchive={tripArchive} 
         onSuccess={()=>setDialog(null)}
         onCancel={()=>setDialog(null)}

@@ -23,7 +23,7 @@ type IProps = {
   onCancel?: ()=>void
 }
 
-const ConfirmDeleteForm = (props:IProps) => {
+const DeleteTripArchiveForm = (props:IProps) => {
   const {
     tripArchive,
     onSuccess = null,
@@ -109,4 +109,4 @@ const ConfirmDeleteForm = (props:IProps) => {
 };
 
 
-export default ConfirmDeleteForm;
+export default DeleteTripArchiveForm;

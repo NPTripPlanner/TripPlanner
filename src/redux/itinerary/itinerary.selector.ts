@@ -56,3 +56,23 @@ export const selectCreateItinerarySuccessful = createSelector(
 
     (collection)=>collection.createDataSuccessful
 )
+
+export const selectDeletingItinerary = createSelector(
+    [selectItineraryCol],
+
+    (collection)=>collection.deletingData
+)
+  
+export const selectDeleteItineraryError = createSelector(
+    [selectItineraryCol],
+
+    (collection)=>collection.deleteDataError?collection.deleteDataError.message:null
+)
+
+export const selectDeleteItinerarySuccessful = createSelector(
+    [selectItineraryCol],
+
+    (collection)=>collection.deleteDataSuccessful
+)
+
+

@@ -23,7 +23,6 @@ const ItineraryReducer : Reducer<IItinerayState> = (state=initState, action=null
             return {
                 ...state,
                 underTripArchive: null,
-                itieraries: null,
             }
         }
         default:{

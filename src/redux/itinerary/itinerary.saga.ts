@@ -6,7 +6,7 @@ import {
 } from "./itinerary.actions";
 import { selectUnderTripArchive, selectItineraryCol } from "./itinerary.selector";
 import { TripArchive, Itinerary } from "../../schema/firestore.schema";
-import { ConvertRepo, ConvertSearchKeywordToArray, GetDataByQuery, CreateItineraryForTripArchive, GetCurrentUser } from "../../utils/firebase.utils";
+import { ConvertRepo, ConvertSearchKeywordToArray, GetDataByQuery, CreateItineraryForTripArchive, GetCurrentUser, DeleteItinerary } from "../../utils/firebase.utils";
 import ImprovedRepository from "../../schema/ImprovedRepository";
 import { PostNotification } from "../notification/notification.actions";
 import { IGenericState } from "../collection/collection.reducer";
@@ -144,6 +144,8 @@ function* doCreateItinerary(action){
         state.dataArray = [itinerary, ...state.dataArray];
         yield call(updateCollectionData, state);
 
+        yield put(PostNotification(`${itineraryName} has been created`, 'success'));
+
     }
     catch(error){
         const state:IGenericState<Itinerary> = yield call(getItineraryCollectionState);
@@ -170,6 +172,61 @@ export function* createItineraryStateReset(){
     }
 }
 
+export function* deleteItineraryWorker(userId, tripArchiveId, itineraryId){
+    yield call(DeleteItinerary, userId, tripArchiveId, itineraryId);
+}
+
+export function* doDeleteItinerary(action){
+    try{
+        const {tripArchiveId, itineraryId, itineraryName} = action.payload;
+
+        //prepare create
+        const state:IGenericState<Itinerary> = yield call(getItineraryCollectionState);
+        state.deletingData = itineraryName;
+        state.deleteDataError = null;
+        state.deleteDataSuccessful = false;
+        yield call(updateCollectionData, state);
+
+        const user = yield call(getCurrentUser);
+        //call worker
+        yield call(deleteItineraryWorker, user.uid, tripArchiveId, itineraryId);
+
+        //delete successful
+        state.deletingData = null;
+        state.deleteDataError = null;
+        state.deleteDataSuccessful = true;
+        state.dataArray = state.dataArray.filter(itinerary=>{
+            return itineraryId !== itinerary.id;
+        })
+        yield call(updateCollectionData, state);
+
+        yield put(PostNotification(`${itineraryName} has been deleted`, 'success'));
+    }
+    catch(error){
+        const state:IGenericState<Itinerary> = yield call(getItineraryCollectionState);
+        state.deletingData = null;
+        state.deleteDataError = error;
+        state.deleteDataSuccessful = false;
+        yield call(updateCollectionData, state);
+
+        yield put(PostNotification(`Something went wrong (${error.message})`, 'error'));
+    }
+}
+
+export function* deleteItinerary(){
+    yield takeLeading(actionType.DELETE_ITINERARY_START, doDeleteItinerary);
+}
+
+export function* deleteItineraryStateReset(){
+    while(true){
+        yield take(actionType.DELETE_ITINERARY_STATE_RESET);
+
+        let state:IGenericState<Itinerary> = yield call(getItineraryCollectionState);
+        state = state.resetDeleteState(state);
+        yield call(updateCollectionData, state);
+    }
+}
+
 export default function* itinerarySaga(){
     yield all([
         call(setTripArchive),
@@ -178,5 +235,7 @@ export default function* itinerarySaga(){
         call(fetchMoreItineraries),
         call(createItinerary),
         call(createItineraryStateReset),
+        call(deleteItinerary),
+        call(deleteItineraryStateReset),
     ]);
 }
