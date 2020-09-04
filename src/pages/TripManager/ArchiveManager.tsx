@@ -43,7 +43,7 @@ const style = (theme) => createStyles({
         width: '100%',
         textAlign: 'center',
         paddingBottom: '1%',
-    }
+    },
 });
 
 const renderTripArchives = (
@@ -84,7 +84,7 @@ const renderTripArchives = (
             size="large"
             onClick={handleFetchMore}
             >
-                <Typography variant="h6">More Collections</Typography>
+                <Typography variant="h6">{'More Collections'}</Typography>
             </Button>
             </div>
             :

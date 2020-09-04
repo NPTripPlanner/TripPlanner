@@ -25,7 +25,7 @@ export const StartFetchItineraries = (amount=10, fromStart=true, keyword='') =>a
     {amount, fromStart, keyword},
 );
 
-export const StartFetchMore = (amount=10) =>action(
+export const StartFetchMoreItineraries = (amount=10) =>action(
     actionType.FETCH_MORE_ITINERARIES_START,
     {amount, fromStart:false, keyword:null},
 );

@@ -3,14 +3,14 @@ import { useDispatch, useSelector } from "react-redux";
 import {useHistory} from 'react-router-dom';
 import ManagerTool from './ManagerTool';
 import StaticBG from "../../components/StaticBG/StaticBG";
-import { Fab, CircularProgress} from '@material-ui/core';
+import { Fab, CircularProgress, Button, Typography} from '@material-ui/core';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 import { PostAdd, ArrowBack } from '@material-ui/icons';
 import { StartChangeHeaderTitle } from '../../redux/header/header.actions';
 import {motion} from 'framer-motion';
 import {slideInOut} from '../../motions/motions';
-import { selectUnderTripArchive, selectItineraries, selectFetchingItineraries } from '../../redux/itinerary/itinerary.selector';
-import {ClearAllItineraryState, StartFetchItineraries} from '../../redux/itinerary/itinerary.actions';
+import { selectUnderTripArchive, selectItineraries, selectFetchingItineraries, selectMoreItineraries } from '../../redux/itinerary/itinerary.selector';
+import {ClearAllItineraryState, StartFetchItineraries, StartFetchMoreItineraries} from '../../redux/itinerary/itinerary.actions';
 import Collection from '../../components/Collection/Collection';
 import TripCollection from '../../components/TripCollection/TripCollection';
 import { Itinerary } from '../../schema/firestore.schema';
@@ -23,33 +23,62 @@ const style= createStyles({
     main:{
         height:'100%',
     },
+    moreBtn:{
+        width: '100%',
+        textAlign: 'center',
+        paddingBottom: '1%',
+    }
 });
 
 const renderItineraries = (
-    fetching:boolean, itineraries:Array<Itinerary>,
+    fetching:boolean, 
+    itineraries:Array<Itinerary>,
+    moreItineraries:boolean,
     handleItineraryClick:(itinerary:Itinerary)=>void,
     handleDelete:(itinerary:Itinerary)=>void,
-    handleUpdateItineraryName:(itinerary:Itinerary)=>void
+    handleUpdateItineraryName:(itinerary:Itinerary)=>void,
+    handleFetchMore:()=>void
     )=>{
-    if(fetching) return (<CircularProgress color="secondary" />);
-    if(!itineraries) return null;
+
+    const classes = makeStyles(style)();
+
+    if(!itineraries && fetching) return (<CircularProgress color="secondary" />);
 
     return( 
         <Collection>
         {
-        itineraries.map((itinerary,i)=>{
-            return(
-                <TripCollection 
-                key={i}
-                title={itinerary.name}
-                onClick={()=>handleItineraryClick(itinerary)}
-                onDelete={()=>handleDelete(itinerary)}
-                onChangeName={
-                    ()=>handleUpdateItineraryName(itinerary)
-                }
-                />
-            );
-        })
+            itineraries.map((itinerary,i)=>{
+                return(
+                    <TripCollection 
+                    key={i}
+                    title={itinerary.name}
+                    onClick={()=>handleItineraryClick(itinerary)}
+                    onDelete={()=>handleDelete(itinerary)}
+                    onChangeName={
+                        ()=>handleUpdateItineraryName(itinerary)
+                    }
+                    />
+                );
+            })
+        }
+        {moreItineraries && !fetching?
+            <div className={classes.moreBtn}>
+            <Button
+            variant="contained"
+            color="secondary"
+            size="large"
+            onClick={handleFetchMore}
+            >
+                <Typography variant="h6">{'More Itineraries'}</Typography>
+            </Button>
+            </div>
+            :
+            fetching?
+            <div className={classes.moreBtn}>
+                <CircularProgress color="secondary" />
+            </div>
+            :
+            null 
         }
         </Collection>
     );
@@ -63,6 +92,7 @@ const ItinerayManager = () => {
     const underTripArchive = useSelector(selectUnderTripArchive);
     const fetching = useSelector(selectFetchingItineraries);
     const itineraries = useSelector(selectItineraries);
+    const moreItineraries = useSelector(selectMoreItineraries);
     const fetchAmount = 6;
     const [searchkeyword, setSearchKeyword] = React.useState(''); 
 
@@ -88,6 +118,10 @@ const ItinerayManager = () => {
 
     const handleGoBack = ()=>{
         history.push('/TripManager');
+    }
+
+    const handleFetchMore = ()=>{
+        dispatch(StartFetchMoreItineraries(fetchAmount));
     }
 
     const createform = (
@@ -174,8 +208,10 @@ const ItinerayManager = () => {
                 onSearchChanged={handleSearch}
                 />
                 {
-                renderItineraries(fetching,itineraries, handleItineraryClick,
-                    handleDelete, handleUpdateItineraryName
+                renderItineraries(fetching, itineraries,
+                    moreItineraries, handleItineraryClick,
+                    handleDelete, handleUpdateItineraryName,
+                    handleFetchMore
                 )
                 }
             </StaticBG>
