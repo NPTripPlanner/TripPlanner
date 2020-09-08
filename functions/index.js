@@ -147,7 +147,7 @@ exports.deleteTripArchive = functions.https.onCall(async (data, context)=>{
         if(docSnapshot.data().ownerId !== userId){
             throw new Error(`${tripArchiveId}'s ownerId do not match ${userId}`);
         }
-        
+
         const allDocRefs = await utils.getAllDocumentsPathUnder(docRef);
         await utils.deleteDocuments(allDocRefs);
         return true;

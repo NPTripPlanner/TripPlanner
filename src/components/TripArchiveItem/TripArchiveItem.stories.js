@@ -1,6 +1,6 @@
 import React from "react";
 
-import TripArchive from "./TripCollection";
+import TripArchiveItem from "./TripArchiveItem";
 import { ThemeProvider } from "@material-ui/core/styles";
 import theme from "../../themes/defaultTheme";
 
@@ -15,7 +15,7 @@ export default {
 export const Default = () => {
   return (
     <ThemeProvider theme={theme}>
-      <TripArchive title='My title'/>
+      <TripArchiveItem title='My title'/>
     </ThemeProvider>
   );
 };

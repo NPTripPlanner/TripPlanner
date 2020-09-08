@@ -26,7 +26,7 @@ const getAllDocumentsPathUnder = async (documentRef, includeSelf=true)=>{
     for (let col of listCols){
         const listDocRefs = await col.listDocuments();
         for(let docRef of listDocRefs){
-            const returnRefs = await this.getAllDocumentsPathUnder(docRef);
+            const returnRefs = await getAllDocumentsPathUnder(docRef);
             refs.push(returnRefs);
         }
     }

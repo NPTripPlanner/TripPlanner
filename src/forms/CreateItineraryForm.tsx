@@ -10,7 +10,7 @@ import { KeyboardDatePicker, MuiPickersUtilsProvider } from "@material-ui/picker
 import MomentUtils from '@date-io/moment';
 import * as Yup from 'yup';
 import { Typography, CircularProgress, Button } from "@material-ui/core";
-import { getDate, totalDays } from "../utils/datetime.utils";
+import { getDate, totalDays, getDateBaseOn } from "../utils/datetime.utils";
 
 type IProps = {
     onSuccess?: ()=>void
@@ -50,7 +50,6 @@ const CreateItineraryForm = (props:IProps) => {
             const start:Date = this.parent['startDate'];
             const end:Date = value;
             const days = totalDays(start, end);
-            console.log(days);
             return days>0?true:false;
         })
         .required('Required'),
@@ -106,6 +105,10 @@ const CreateItineraryForm = (props:IProps) => {
         onChange={date =>{
             formik.setFieldTouched('startDate', true);
             formik.setFieldValue('startDate', date.toDate(), true);
+            if(totalDays(date.toDate(), formik.values.endDate)<=0){
+                const fixedEndDate= getDateBaseOn(date.toDate(), 1);
+                formik.setFieldValue('endDate', fixedEndDate, true);
+            }
         }}
         onBlur={formik.handleBlur}
         disabled={formik.isSubmitting}

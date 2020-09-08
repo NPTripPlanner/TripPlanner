@@ -13,7 +13,7 @@ import {Delete, Edit} from '@material-ui/icons';
 
 import { makeStyles, createStyles } from "@material-ui/core/styles";
 
-import defaultImage from '../../assets/images/TripManage/trip-archive-box.svg';
+import defaultImage from '../../assets/images/TripManage/earth-pins.svg';
 
 type IProps = {
     maxWidth?: number;

@@ -14,7 +14,7 @@ import {createStyles} from '@material-ui/core/styles';
 import { AddBox } from '@material-ui/icons';
 import { CreateDialog } from '../../dialogs/CreateDialog';
 import Collection from '../../components/Collection/Collection';
-import TripCollection from '../../components/TripCollection/TripCollection';
+import TripArchiveItem from '../../components/TripArchiveItem/TripArchiveItem';
 import CreateTripArchiveForm from '../../forms/CreateTripArchiveForm';
 import DeleteTripArchiveForm from '../../forms/DeleteTripArchiveForm';
 import { StartChangeHeaderTitle } from '../../redux/header/header.actions';
@@ -64,7 +64,7 @@ const renderTripArchives = (
         {
             archives.map((tripArchive,i)=>{
                 return(
-                    <TripCollection 
+                    <TripArchiveItem 
                     key={i}
                     title={tripArchive.name}
                     onClick={()=>handleArchiveClick(tripArchive)}

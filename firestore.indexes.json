@@ -1,12 +1,4 @@
 {
-  "indexes": [
-    { 
-    "collectionGroup": "tripArchive",
-    "queryScope": "COLLECTION",
-    "fields": [
-      { "fieldPath": "createAt", "order": "DECENDING" }
-    ]
-  }
-],
+  "indexes": [],
   "fieldOverrides": []
 }

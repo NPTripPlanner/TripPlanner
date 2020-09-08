@@ -12,12 +12,13 @@ import {slideInOut} from '../../motions/motions';
 import { selectUnderTripArchive, selectItineraries, selectFetchingItineraries, selectMoreItineraries } from '../../redux/itinerary/itinerary.selector';
 import {ClearAllItineraryState, StartFetchItineraries, StartFetchMoreItineraries} from '../../redux/itinerary/itinerary.actions';
 import Collection from '../../components/Collection/Collection';
-import TripCollection from '../../components/TripCollection/TripCollection';
+import ItineraryItem from '../../components/ItineraryItem/ItineraryItem';
 import { Itinerary } from '../../schema/firestore.schema';
 import CreateItineraryForm from '../../forms/CreateItineraryForm';
 import { CreateDialog } from '../../dialogs/CreateDialog';
 import DeleteItineraryForm from '../../forms/DeleteItineraryForm';
 import UpdateItineraryForm from '../../forms/UpdateItineraryForm';
+import { getLocalDateFromUTCFormat } from '../../utils/datetime.utils';
 
 const style= createStyles({
     main:{
@@ -36,7 +37,7 @@ const renderItineraries = (
     moreItineraries:boolean,
     handleItineraryClick:(itinerary:Itinerary)=>void,
     handleDelete:(itinerary:Itinerary)=>void,
-    handleUpdateItineraryName:(itinerary:Itinerary)=>void,
+    handleItineraryUpdate:(itinerary:Itinerary)=>void,
     handleFetchMore:()=>void
     )=>{
 
@@ -49,13 +50,16 @@ const renderItineraries = (
         {
             itineraries.map((itinerary,i)=>{
                 return(
-                    <TripCollection 
+                    <ItineraryItem 
                     key={i}
+                    width={200}
                     title={itinerary.name}
+                    startDate={getLocalDateFromUTCFormat(itinerary.startDateUTC)}
+                    endDate={getLocalDateFromUTCFormat(itinerary.endDateUTC)}
                     onClick={()=>handleItineraryClick(itinerary)}
                     onDelete={()=>handleDelete(itinerary)}
-                    onChangeName={
-                        ()=>handleUpdateItineraryName(itinerary)
+                    onUpdate={
+                        ()=>handleItineraryUpdate(itinerary)
                     }
                     />
                 );
@@ -170,7 +174,7 @@ const ItinerayManager = () => {
         onSuccess={()=>setDialog(null)}
         />
     );
-    const handleUpdateItineraryName = (itinerary)=>{
+    const handleItineraryUpdate = (itinerary)=>{
         setDialog(
             CreateDialog(
                 'Update itinerary',
@@ -210,7 +214,7 @@ const ItinerayManager = () => {
                 {
                 renderItineraries(fetching, itineraries,
                     moreItineraries, handleItineraryClick,
-                    handleDelete, handleUpdateItineraryName,
+                    handleDelete, handleItineraryUpdate,
                     handleFetchMore
                 )
                 }

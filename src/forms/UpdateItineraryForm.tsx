@@ -9,7 +9,7 @@ import InputField from '../components/InputField/InputField';
 import * as Yup from 'yup';
 import { Itinerary } from '../schema/firestore.schema';
 import { selectUpdateItineraryError, selectUpdateItinerarySuccessful } from '../redux/itinerary/itinerary.selector';
-import { totalDays, getLocalDateFromUTC } from '../utils/datetime.utils';
+import { totalDays, getLocalDateFromUTC, getDateBaseOn } from '../utils/datetime.utils';
 import { KeyboardDatePicker, MuiPickersUtilsProvider } from "@material-ui/pickers";
 import MomentUtils from '@date-io/moment';
 import { StartUpdateItinerary, UpdateItineraryStateReset } from '../redux/itinerary/itinerary.actions';
@@ -55,7 +55,6 @@ const UpdateItineraryForm = (props:IProps) => {
             const start:Date = this.parent['startDate'];
             const end:Date = value;
             const days = totalDays(start, end);
-            console.log(days);
             return days>0?true:false;
         })
         .required('Required'),
@@ -113,6 +112,10 @@ const UpdateItineraryForm = (props:IProps) => {
             onChange={date =>{
                 formik.setFieldTouched('startDate', true);
                 formik.setFieldValue('startDate', date.toDate(), true);
+                if(totalDays(date.toDate(), formik.values.endDate)<=0){
+                  const fixedEndDate= getDateBaseOn(date.toDate(), 1);
+                  formik.setFieldValue('endDate', fixedEndDate, true);
+                }
             }}
             onBlur={formik.handleBlur}
             disabled={formik.isSubmitting}

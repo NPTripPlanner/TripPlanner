@@ -9,6 +9,12 @@ export const getDate = (format:string|null=null, incrementDays:number=0)=>{
     return now
 }
 
+export const getDateBaseOn = (date:Date, incrementDays:number=1)=>{
+    const baseDate = moment(date);
+    const fixedDate = baseDate.add(incrementDays, 'days');
+    return fixedDate.toDate();
+}
+
 export const totalDays = (from:Date, to:Date)=>{
     const fromMoment = moment(from);
     const toMoment = moment(to);
@@ -24,4 +30,10 @@ export const getLocalDateFromUTC = (dateUTC:Date)=>{
     const momentUTC = moment.utc(dateUTC);
     const localDate = momentUTC.local().toDate();
     return localDate;
+}
+
+export const getLocalDateFromUTCFormat = (dateUTC:Date, format:string='MMM-DD-YYYY')=>{
+    const momentUTC = moment.utc(dateUTC);
+    const localDate = momentUTC.local();
+    return localDate.format(format);
 }
