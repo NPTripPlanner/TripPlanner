@@ -25,8 +25,9 @@ const style = createStyles({
     alignItems: "center",
   },
   title: {
+    textAlign:'center',
     padding: "0 1%",
-    // flex: "1",
+    flex: "1",
   },
   brand: {
     flex: '1',
