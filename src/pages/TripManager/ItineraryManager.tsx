@@ -1,11 +1,11 @@
 import React from 'react';
 import { useDispatch, useSelector } from "react-redux";
 import {useHistory} from 'react-router-dom';
-import ManagerTool from './ManagerTool';
+import LayoutTool from './LayoutTool';
 import StaticBG from "../../components/StaticBG/StaticBG";
 import { Fab, CircularProgress, Button, Typography} from '@material-ui/core';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
-import { PostAdd, ArrowBack } from '@material-ui/icons';
+import { PostAdd, ArrowBack, Search } from '@material-ui/icons';
 import { StartChangeHeaderTitle } from '../../redux/header/header.actions';
 import {motion} from 'framer-motion';
 import {slideInOut} from '../../motions/motions';
@@ -19,6 +19,7 @@ import { CreateDialog } from '../../dialogs/CreateDialog';
 import DeleteItineraryForm from '../../forms/DeleteItineraryForm';
 import UpdateItineraryForm from '../../forms/UpdateItineraryForm';
 import { getLocalDateFromUTCFormat } from '../../utils/datetime.utils';
+import InputField from '../../components/InputField/InputField';
 
 const style= createStyles({
     main:{
@@ -117,7 +118,8 @@ const ItinerayManager = () => {
         return ()=>dispatch(ClearAllItineraryState());
     }, [dispatch]);
 
-    const handleSearch = (keyword)=>{
+    const handleSearch = (event)=>{
+        const keyword:string = event.target.value;
         if(searchkeyword !== keyword) setSearchKeyword(keyword);
     }
 
@@ -146,8 +148,8 @@ const ItinerayManager = () => {
         );
     }
 
-    const handleItineraryClick = (_itinerary)=>{
-        //TODO: handle itinerary click
+    const handleItineraryClick = (itinerary:Itinerary)=>{
+        history.push(`/TripManager/${underTripArchive.id}/${itinerary.id}`);
     }
 
     const deleteForm = (itinerary:Itinerary)=>(
@@ -198,6 +200,16 @@ const ItinerayManager = () => {
         </Fab>
     )
 
+    const searchInput = (
+        <InputField
+        placeholder="Trip name"
+        variant="outlined"
+        labelBgColor="rgba(0,0,0,0)"
+        startAdornment={<Search />}
+        onChange={handleSearch}
+        />
+    )
+
     return (
         <motion.div
         className={classes.main}
@@ -207,10 +219,10 @@ const ItinerayManager = () => {
         variants={slideInOut('x', 200, 20)} 
         >
             <StaticBG backgroundColor="rgba(166,166,166,0.5)">
-                <ManagerTool
-                rightToolButtons={[additineraryFab]}
-                leftToolButtons={[backFab]}
-                onSearchChanged={handleSearch}
+                <LayoutTool
+                rightTools={[additineraryFab]}
+                centerTools={[searchInput]}
+                leftTools={[backFab]}
                 />
                 {
                 renderItineraries(fetching, itineraries,

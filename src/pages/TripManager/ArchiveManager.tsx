@@ -8,10 +8,10 @@ import {
     selectTripArchives,
 } from '../../redux/tripArchive/tripArchive.selector';
 import StaticBG from "../../components/StaticBG/StaticBG";
-import ManagerTool from './ManagerTool';
+import LayoutTool from './LayoutTool';
 import { Fab, CircularProgress, makeStyles, Button, Typography } from '@material-ui/core';
 import {createStyles} from '@material-ui/core/styles';
-import { AddBox } from '@material-ui/icons';
+import { AddBox, Search } from '@material-ui/icons';
 import { CreateDialog } from '../../dialogs/CreateDialog';
 import Collection from '../../components/Collection/Collection';
 import TripArchiveItem from '../../components/TripArchiveItem/TripArchiveItem';
@@ -27,6 +27,7 @@ import { TripArchive } from '../../schema/firestore.schema';
 import {motion} from 'framer-motion';
 import {slideInOut, dropIn} from '../../motions/motions';
 import { SetTripArchive } from '../../redux/itinerary/itinerary.actions';
+import InputField from '../../components/InputField/InputField';
 
 const style = (theme) => createStyles({
     main:{
@@ -124,7 +125,8 @@ const ArchiveManager = () => {
         return ()=>dispatch(ClearTripArchiveStart());
     }, [dispatch])
 
-    const handleSearch = (keyword)=>{
+    const handleSearch = (event)=>{
+        const keyword:string = event.target.value;
         if(searchkeyword !== keyword) setSearchKeyword(keyword);
     }
 
@@ -197,6 +199,16 @@ const ArchiveManager = () => {
           <AddBox />
         </Fab>
     )
+
+    const searchInput = (
+        <InputField
+        placeholder="Trip name"
+        variant="outlined"
+        labelBgColor="rgba(0,0,0,0)"
+        startAdornment={<Search />}
+        onChange={handleSearch}
+        />
+    )
     
     return (
         <motion.div
@@ -214,9 +226,9 @@ const ArchiveManager = () => {
                 exit='exit' 
                 variants={dropIn(200, 13)}
                 >
-                    <ManagerTool
-                    rightToolButtons={[addArchiveFab]}
-                    onSearchChanged={handleSearch}
+                    <LayoutTool
+                    rightTools={[addArchiveFab]}
+                    centerTools={[searchInput]}
                     />
                 </motion.div>
                 {

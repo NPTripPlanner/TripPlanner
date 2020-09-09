@@ -1,14 +1,12 @@
 import React from 'react';
 
 import {makeStyles, createStyles} from '@material-ui/core/styles';
-import InputField from "../../components/InputField/InputField";
-import { Search } from "@material-ui/icons";
 import classNames from 'classnames';
 
 type IProps = {
-    onSearchChanged?:(keyword:string)=>void;
-    leftToolButtons?:Array<React.ReactNode>;
-    rightToolButtons?:Array<React.ReactNode>;
+    leftTools?:Array<React.ReactNode>;
+    centerTools:Array<React.ReactNode>;
+    rightTools?:Array<React.ReactNode>;
 }
 type Ref = HTMLDivElement;
 
@@ -52,50 +50,50 @@ const style = createStyles({
     },
 });
 
-const renderToolButtons = (buttons:React.ReactNode[], left:boolean)=>{
+const renderTools = (buttons:React.ReactNode[], padding:'left'|'right'|'both')=>{
     const classes = makeStyles(style)();
-    const cls = classNames(
-        left?classes.rPadding:classes.lPadding
-    )
+    const padBoth = classNames(classes.lPadding, classes.rPadding);
+
     return buttons.map((btn,i)=>{
-        return (<div className={cls} key={i}>{btn}</div>);
+        switch(padding){
+            case 'left':{
+                return (<div className={classes.lPadding} key={i}>{btn}</div>);
+            }
+            case 'right':{
+                return (<div className={classes.rPadding} key={i}>{btn}</div>);
+            }
+            default:{
+                return (<div className={padBoth} key={i}>{btn}</div>);
+            }
+        }
+        
     });
 }
 
-const ManagerTool = React.forwardRef<Ref, IProps>((props, ref) => {
+const LayoutTool = React.forwardRef<Ref, IProps>((props, ref) => {
 
     const {
-        onSearchChanged,
-        leftToolButtons=Array<React.ReactNode>(),
-        rightToolButtons=Array<React.ReactNode>(),
+        leftTools=Array<React.ReactNode>(),
+        centerTools,
+        rightTools=Array<React.ReactNode>(),
     } = props
     const classes = makeStyles(style)();
-
-    const handleInputChange = (evt)=>{
-        if(onSearchChanged) onSearchChanged(evt.target.value);
-    }
 
     return (
         <div ref={ref} className={classes.tool}>
             <div className={classes.toolArea}>
                 <div className={classes.leftTool}>
-                    {renderToolButtons(leftToolButtons, true)}
+                    {renderTools(leftTools, 'right')}
                 </div>
                 <div className={classes.centerTool}>
-                    <InputField
-                    placeholder="Trip name"
-                    variant="outlined"
-                    labelBgColor="rgba(0,0,0,0)"
-                    startAdornment={<Search />}
-                    onChange={handleInputChange}
-                    />
-            </div>
-            <div className={classes.rightTool}>
-                {renderToolButtons(rightToolButtons, false)}
-            </div>
+                {renderTools(centerTools, 'both')}
+                </div>
+                <div className={classes.rightTool}>
+                    {renderTools(rightTools, 'left')}
+                </div>
           </div>
         </div>
     );
 });
 
-export default ManagerTool;
+export default LayoutTool;
