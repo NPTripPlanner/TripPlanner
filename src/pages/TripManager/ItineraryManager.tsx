@@ -56,6 +56,7 @@ const renderItineraries = (
                     title={itinerary.name}
                     startDate={getLocalDateFromUTCFormat(itinerary.startDateUTC)}
                     endDate={getLocalDateFromUTCFormat(itinerary.endDateUTC)}
+                    totalDays={`${itinerary.totalDays.toString()} Days`}
                     onClick={()=>handleItineraryClick(itinerary)}
                     onDelete={()=>handleDelete(itinerary)}
                     onUpdate={

@@ -9,7 +9,7 @@ import {
     Typography,
     IconButton,
 } from "@material-ui/core";
-import {Delete, Edit, AirportShuttle, Home} from '@material-ui/icons';
+import {Delete, Edit, AirportShuttle, Home, DateRangeRounded} from '@material-ui/icons';
 
 import { makeStyles, createStyles } from "@material-ui/core/styles";
 
@@ -22,6 +22,7 @@ type IProps = {
     title: string;
     startDate: string;
     endDate: string;
+    totalDays: string;
     onClick?: ()=>void;
     onDelete: ()=>void;
     onUpdate: ()=>void;
@@ -60,6 +61,7 @@ const ItineraryItem = React.forwardRef<Ref,IProps>((props, ref) => {
         title,
         startDate = '',
         endDate = '',
+        totalDays = '',
         onClick = null,
         onDelete,
         onUpdate,
@@ -105,6 +107,10 @@ const ItineraryItem = React.forwardRef<Ref,IProps>((props, ref) => {
                             <div className={classes.date}>
                                 <Home />
                                 <Typography>{endDate}</Typography>
+                            </div>
+                            <div className={classes.date}>
+                                <DateRangeRounded />
+                                <Typography>{totalDays}</Typography>
                             </div>
                         </div>
                     </CardContent>
