@@ -4,6 +4,7 @@ import headerSaga from './header/header.saga';
 import notificationSaga from './notification/notification.saga';
 import itinerarySaga from './itinerary/itinerary.saga';
 import collectionSaga from './collection/collection.saga';
+import scheduleSaga from './schedule/schedule.saga';
 
 import { all, call } from "redux-saga/effects";
 
@@ -15,5 +16,6 @@ export default function* rootSaga() {
     call(notificationSaga),
     call(itinerarySaga),
     call(collectionSaga),
+    call(scheduleSaga),
   ]);
 }

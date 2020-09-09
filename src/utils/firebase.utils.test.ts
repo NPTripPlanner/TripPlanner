@@ -5,26 +5,27 @@ import {
   initializeUser,
   CreateTripArchive,
   DeleteTripArchive,
-  FetchTripArchive,
+  // FetchTripArchive,
   // FetchTripArchiveAfter,
   ListenToRepository,
   GetRepository,
   ListenToDocument,
-  GetTripArchive,
+  // GetTripArchive,
   UpdateTripArchiveName,
-  SearchTripArchive,
+  // SearchTripArchive,
   GetCollectionRef,
   GetDataByQuery,
   ConvertSearchKeywordToArray,
   CreateItineraryForTripArchive,
-  UpdateItineraryName,
+  // UpdateItinerary,
   DeleteItinerary,
   ConvertRepo,
+  CreateScheduleForItinerary,
 } from "./firebase.utils";
 
 import { TripArchive, Itinerary } from "../schema/firestore.schema";
 import ImprovedRepository from "../schema/ImprovedRepository";
-import {SortArray} from './utils';
+// import {SortArray} from './utils';
 
 describe("Firebase utility test", () => {
 
@@ -83,72 +84,73 @@ describe("Firebase utility test", () => {
     })
   })
 
+  //need to rewrite with GetDataByQuery
   describe('get trip archive', ()=>{
     afterAll(async (done) => {
       done();
     });
 
-    it('get specific trip archive', async ()=>{
-      const archiveName = 'special trip archive';
-      const result = await CreateTripArchive(fakeUser.uid, archiveName);
-      const archive = await GetTripArchive(fakeUser.uid, result.id);
+    // it('get specific trip archive', async ()=>{
+    //   const archiveName = 'special trip archive';
+    //   const result = await CreateTripArchive(fakeUser.uid, archiveName);
+    //   const archive = await GetTripArchive(fakeUser.uid, result.id);
 
-      expect(archive.ownerId).toEqual(result.ownerId);
-      return expect(archive.id).toEqual(result.id);
-    })
+    //   expect(archive.ownerId).toEqual(result.ownerId);
+    //   return expect(archive.id).toEqual(result.id);
+    // })
 
-    it('get all trip archive by user id', async ()=>{
-      expect(FetchTripArchive(fakeUser.uid))
-      .resolves
-      .not
-      .toThrowError()
+    // it('get all trip archive by user id', async ()=>{
+    //   expect(FetchTripArchive(fakeUser.uid))
+    //   .resolves
+    //   .not
+    //   .toThrowError()
 
-      const result = await FetchTripArchive(fakeUser.uid);
-      expect(result).not.toBeNull();
-      return expect(result[0].ownerId).toEqual(fakeUser.uid);
-    })
+    //   const result = await FetchTripArchive(fakeUser.uid);
+    //   expect(result).not.toBeNull();
+    //   return expect(result[0].ownerId).toEqual(fakeUser.uid);
+    // })
 
-    it('get trip archive in batch by 1', async ()=>{
-      expect(FetchTripArchive(fakeUser.uid))
-      .resolves
-      .not
-      .toThrowError();
+    // it('get trip archive in batch by 1', async ()=>{
+    //   expect(FetchTripArchive(fakeUser.uid))
+    //   .resolves
+    //   .not
+    //   .toThrowError();
 
-      let batch = await SearchTripArchive(fakeUser.uid, '', 1);
-      expect(batch.lastDocSnapshotCursor).not.toBeNull();
-      batch = await SearchTripArchive(fakeUser.uid, '', 1, batch.lastDocSnapshotCursor);
-      return expect(batch.lastDocSnapshotCursor).not.toBeNull();
-    })
+    //   let batch = await SearchTripArchive(fakeUser.uid, '', 1);
+    //   expect(batch.lastDocSnapshotCursor).not.toBeNull();
+    //   batch = await SearchTripArchive(fakeUser.uid, '', 1, batch.lastDocSnapshotCursor);
+    //   return expect(batch.lastDocSnapshotCursor).not.toBeNull();
+    // })
 
-    it('get trip archive in batch by 2', async ()=>{
-      expect(FetchTripArchive(fakeUser.uid))
-      .resolves
-      .not
-      .toThrowError();
+    // it('get trip archive in batch by 2', async ()=>{
+    //   expect(FetchTripArchive(fakeUser.uid))
+    //   .resolves
+    //   .not
+    //   .toThrowError();
 
-      let batch = await SearchTripArchive(fakeUser.uid, '',2);
-      expect(batch.results.length).toEqual(2);
+    //   let batch = await SearchTripArchive(fakeUser.uid, '',2);
+    //   expect(batch.results.length).toEqual(2);
 
-      batch = await SearchTripArchive(fakeUser.uid, '',2, batch.lastDocSnapshotCursor);
-      return expect(batch.results.length).toEqual(2);
-    })
+    //   batch = await SearchTripArchive(fakeUser.uid, '',2, batch.lastDocSnapshotCursor);
+    //   return expect(batch.results.length).toEqual(2);
+    // })
 
-    it('get trip archive without batch', async ()=>{
-      expect(FetchTripArchive(fakeUser.uid))
-      .resolves
-      .not
-      .toThrowError();
+    // it('get trip archive without batch', async ()=>{
+    //   expect(FetchTripArchive(fakeUser.uid))
+    //   .resolves
+    //   .not
+    //   .toThrowError();
 
-      let batch = await SearchTripArchive(fakeUser.uid, '',4);
+    //   let batch = await SearchTripArchive(fakeUser.uid, '',4);
 
-      const sortedResults = SortArray(batch.results, 'createAt');
-      // sortedResults.map((val)=>{
-      //   console.log(val.metadata.createAt, val);
-      //   return val;
-      // })
+    //   const sortedResults = SortArray(batch.results, 'createAt');
+    //   // sortedResults.map((val)=>{
+    //   //   console.log(val.metadata.createAt, val);
+    //   //   return val;
+    //   // })
 
-      return expect(sortedResults.length).toEqual(4);
-    })
+    //   return expect(sortedResults.length).toEqual(4);
+    // })
 
   })
 
@@ -285,39 +287,40 @@ describe("Firebase utility test", () => {
     })
   });
 
+  //need to rewrite with GetDataByQuery
   describe('search trip archive', ()=>{
     afterAll(async (done) => {
       done();
     });
 
-    beforeAll(async ()=>{
-      await CreateTripArchive(fakeUser.uid, 'my trip to nowhere');
-      await CreateTripArchive(fakeUser.uid, 'Fun in Italy');
-      await CreateTripArchive(fakeUser.uid, 'trip to france');
-      await CreateTripArchive(fakeUser.uid, '100 100 100');
-      await CreateTripArchive(fakeUser.uid, '200 200 200');
-    })
+    // beforeAll(async ()=>{
+    //   await CreateTripArchive(fakeUser.uid, 'my trip to nowhere');
+    //   await CreateTripArchive(fakeUser.uid, 'Fun in Italy');
+    //   await CreateTripArchive(fakeUser.uid, 'trip to france');
+    //   await CreateTripArchive(fakeUser.uid, '100 100 100');
+    //   await CreateTripArchive(fakeUser.uid, '200 200 200');
+    // })
 
-    it('search trip archive by name', async ()=>{
+    // it('search trip archive by name', async ()=>{
 
-      const result = await SearchTripArchive(fakeUser.uid,'france', 10);
-      expect(result.results).toHaveLength(1);
+    //   const result = await SearchTripArchive(fakeUser.uid,'france', 10);
+    //   expect(result.results).toHaveLength(1);
 
-      const moreResult = await SearchTripArchive(fakeUser.uid, 'trip to france', 10);
-      expect(moreResult.results.length).toBeGreaterThan(1);
+    //   const moreResult = await SearchTripArchive(fakeUser.uid, 'trip to france', 10);
+    //   expect(moreResult.results.length).toBeGreaterThan(1);
 
-      const fetch1 = await SearchTripArchive(fakeUser.uid, 'trip', 2);
-      expect(fetch1.results).toHaveLength(2);
+    //   const fetch1 = await SearchTripArchive(fakeUser.uid, 'trip', 2);
+    //   expect(fetch1.results).toHaveLength(2);
 
-      const fetch2 = await SearchTripArchive(fakeUser.uid, 'trip', 2, fetch1.lastDocSnapshotCursor);
-      expect(fetch2.results).toHaveLength(2);
+    //   const fetch2 = await SearchTripArchive(fakeUser.uid, 'trip', 2, fetch1.lastDocSnapshotCursor);
+    //   expect(fetch2.results).toHaveLength(2);
 
-      const noKeyWords = await SearchTripArchive(fakeUser.uid, '', 5, fetch1.lastDocSnapshotCursor);
-      expect(noKeyWords.results).toHaveLength(5);
+    //   const noKeyWords = await SearchTripArchive(fakeUser.uid, '', 5, fetch1.lastDocSnapshotCursor);
+    //   expect(noKeyWords.results).toHaveLength(5);
 
-      const onlytwo = await SearchTripArchive(fakeUser.uid, '100 200', 0);
-      return expect(onlytwo.results).toHaveLength(2);
-    })
+    //   const onlytwo = await SearchTripArchive(fakeUser.uid, '100 200', 0);
+    //   return expect(onlytwo.results).toHaveLength(2);
+    // })
   })
 
   describe('get data by query', ()=>{
@@ -411,16 +414,16 @@ describe("Firebase utility test", () => {
         fakeUser.uid,
         tripArchive.id,
         'it name',
-        startDate.toUTCString(),
-        endDate.toUTCString()
+        startDate,
+        endDate
       );
 
       const it = await CreateItineraryForTripArchive(
         fakeUser.uid,
         tripArchive.id,
         name,
-        startDate.toUTCString(),
-        endDate.toUTCString()
+        startDate,
+        endDate
       );
       expect(it).not.toBeNull();
       expect(it.tripArchiveId).toEqual(tripArchive.id);
@@ -428,40 +431,41 @@ describe("Firebase utility test", () => {
     })
   })
 
+  //Need to rewrite with UpdateItinerary
   describe('update itinerary', ()=>{
     afterAll(async (done) => {
       done();
     });
 
-    let tripArchive: TripArchive = null;
-    beforeAll(async ()=>{
-      tripArchive = await CreateTripArchive(fakeUser.uid, 'update itinerary');
-    })
+    // let tripArchive: TripArchive = null;
+    // beforeAll(async ()=>{
+    //   tripArchive = await CreateTripArchive(fakeUser.uid, 'update itinerary');
+    // })
 
-    it('update an itinerary name', async ()=>{
-      const startDate = new Date();
-      const endDate = new Date();
-      endDate.setDate(startDate.getDate()+3);
-      const oldName = 'you see this, something went wrong';
-      const newName = 'itinerary name has been changed';
+    // it('update an itinerary name', async ()=>{
+    //   const startDate = new Date();
+    //   const endDate = new Date();
+    //   endDate.setDate(startDate.getDate()+3);
+    //   const oldName = 'you see this, something went wrong';
+    //   const newName = 'itinerary name has been changed';
 
-      const it = await CreateItineraryForTripArchive(
-        fakeUser.uid,
-        tripArchive.id,
-        oldName,
-        startDate.toUTCString(),
-        endDate.toUTCString()
-      );
+    //   const it = await CreateItineraryForTripArchive(
+    //     fakeUser.uid,
+    //     tripArchive.id,
+    //     oldName,
+    //     startDate.toUTCString(),
+    //     endDate.toUTCString()
+    //   );
 
-      expect(it).not.toBeNull();
-      expect(it.tripArchiveId).toEqual(tripArchive.id);
+    //   expect(it).not.toBeNull();
+    //   expect(it.tripArchiveId).toEqual(tripArchive.id);
       
-      const updatedIt = await UpdateItineraryName(fakeUser.uid, tripArchive.id, it.id, newName);
-      expect(updatedIt).not.toBeNull();
-      expect(updatedIt.tripArchiveId).toEqual(tripArchive.id);
-      expect(updatedIt.id).toEqual(it.id);
-      return expect(updatedIt.name).toEqual(newName);
-    })
+    //   const updatedIt = await UpdateItineraryName(fakeUser.uid, tripArchive.id, it.id, newName);
+    //   expect(updatedIt).not.toBeNull();
+    //   expect(updatedIt.tripArchiveId).toEqual(tripArchive.id);
+    //   expect(updatedIt.id).toEqual(it.id);
+    //   return expect(updatedIt.name).toEqual(newName);
+    // })
   })
 
   describe('delete itinerary', ()=>{
@@ -484,8 +488,8 @@ describe("Firebase utility test", () => {
         fakeUser.uid,
         tripArchive.id,
         name,
-        startDate.toUTCString(),
-        endDate.toUTCString()
+        startDate,
+        endDate
       );
 
       expect(it).not.toBeNull();
@@ -522,8 +526,8 @@ describe("Firebase utility test", () => {
           fakeUser.uid,
           tripArchive.id,
           name,
-          startDate.toUTCString(),
-          endDate.toUTCString()
+          startDate,
+          endDate
         );
       }
     })
@@ -535,6 +539,36 @@ describe("Firebase utility test", () => {
       const results = await GetDataByQuery(repo, query, 0);
       console.log(results);
       return expect(results.results).toHaveLength(12);
+    })
+  })
+
+  describe('create schedule', ()=>{
+    afterAll(async (done) => {
+      done();
+    });
+
+    let tripArchive: TripArchive = null;
+    let itinerary: Itinerary = null;
+    beforeAll(async ()=>{
+      tripArchive = await CreateTripArchive(fakeUser.uid, 'has itinerary and schedule');
+
+      const startDate = new Date();
+      const endDate = new Date();
+      endDate.setDate(startDate.getDate()+3);
+      const itName = 'has schedule';
+
+      itinerary = await CreateItineraryForTripArchive(
+        fakeUser.uid,
+        tripArchive.id,
+        itName,
+        startDate,
+        endDate
+      );
+    });
+
+    it('create a schedule', async ()=>{
+      const newSchedule = await CreateScheduleForItinerary(itinerary, new Date(), 'note for schedule');
+      return expect(newSchedule).toBeTruthy();
     })
   })
 });

@@ -2,7 +2,7 @@ import actionType from "./itinerary.actionType";
 
 import {call, all, put, take, select, debounce, takeLeading} from 'redux-saga/effects';
 import { 
-    SetTripArchiveSuccessful,
+    SetTripArchiveSuccessful, ClearAllItineraryStateSuccessful,
 } from "./itinerary.actions";
 import { selectUnderTripArchive, selectItineraryCol } from "./itinerary.selector";
 import { TripArchive, Itinerary } from "../../schema/firestore.schema";
@@ -41,6 +41,7 @@ function* clearAllItineraryState(){
 
         let state:IGenericState<Itinerary> = yield call(getItineraryCollectionState);
         state = state.getInitSate();
+        yield put(ClearAllItineraryStateSuccessful());
         yield call(updateCollectionData, state);
     }
 }

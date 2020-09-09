@@ -4,11 +4,12 @@ import 'firebase/functions';
 import 'firebase/firestore';
 import getErrorMsg from "./firebase.errors.utils";
 import * as fireorm from 'fireorm';
-import {TripArchive, TripArchiveRepository } from '../schema/firestore.schema';
+import {TripArchive, TripArchiveRepository, Itinerary, Schedule } from '../schema/firestore.schema';
 import { QueryDocumentSnapshot, DocumentReference, CollectionReference, DocumentSnapshot, QuerySnapshot, Query } from "@google-cloud/firestore";
 import ImprovedRepository from "../schema/ImprovedRepository";
 import { BaseRepository } from "fireorm/lib/src/BaseRepository";
 import { IEntity } from "fireorm";
+import { getDate } from "./datetime.utils";
 
 export type FirebaseUser = firebasePro.User;
 
@@ -375,6 +376,8 @@ export const SearchTripArchive = async (
 
 //#region Firestore Read
 /**
+ * Deprecated use GetDataByQuery instead
+ * 
  * Return all trip archives under user id
  * @param userId user id to fetch trip archive from
  */
@@ -443,6 +446,9 @@ export const GetTripArchive = async (userId:string, archiveId:string)=>{
 //#region Firestore write
 /**
  * Create a new trip archive in firestore through cloud function
+ * 
+ * Call cloud function
+ * 
  * @param userId user id the new trip archive will be created under
  * @param archiveName trip archive name
  */
@@ -465,6 +471,9 @@ export const CreateTripArchive = async (userId:string, archiveName:string)=>{
 
 /**
  * Create an itinerary under trip archive
+ * 
+ * Call cloud function
+ * 
  * @param userId user id
  * @param archiveId archive id that itinerary will be created under
  * @param itineraryName name for itinerary
@@ -479,7 +488,6 @@ export const CreateItineraryForTripArchive = async (
   endDate:Date
   )=>{
     try{
-      console.log(startDate, endDate, itineraryName);
       const start = startDate.toUTCString();
       const end = endDate.toUTCString();
       const result = await cloudFunctions.httpsCallable('createItineraryForTripArchive')({
@@ -498,6 +506,26 @@ export const CreateItineraryForTripArchive = async (
       console.log(err)
       throw Error(getErrorMsg(err.code));
     }
+}
+
+/**
+ * Create a new schedule under itinerary
+ * 
+ * @param itinerary the itinerary this schedule to be created under
+ * @param date date for schedule
+ * @param note note for schedule
+ */
+export const CreateScheduleForItinerary = async (itinerary:Itinerary, date:Date, note:string='')=>{
+
+  const repo = await ConvertRepo<Schedule>(itinerary.schedules);
+  const newSchedule = new Schedule();
+  newSchedule.createAt = getDate(0, false).toDate();
+  newSchedule.modifyAt = getDate(0, false).toDate();
+  newSchedule.date = date;
+  newSchedule.note = note;
+  const createdSchedule = await repo.create(newSchedule);
+
+  return createdSchedule;
 }
 //#endregion Firestore write
 
@@ -567,6 +595,9 @@ export const UpdateItinerary = async (
 //#region Firestore delete
 /**
  * Delete a trip archive
+ * 
+ * Call cloud function
+ * 
  * @param userId user id the trip archive will be deleted under
  * @param archiveId trip archive Id
  */
@@ -585,7 +616,10 @@ export const DeleteTripArchive = async (userId:string, archiveId:string)=>{
 }
 
 /**
- * Delete a itinerary
+ * Delete an itinerary
+ * 
+ * Call cloud function
+ * 
  * @param userId user id
  * @param archiveId  trip archive id that itinerary should be deleted under
  * @param itineraryId itinerary id

@@ -1,12 +1,18 @@
 import 'moment-timezone'
 import moment, { Moment } from 'moment';
 
-export const getDate = (format:string|null=null, incrementDays:number=0)=>{
-    const dateFormat = format?format:'MM-DD-YYYY';
-    let now = moment(new Date(), dateFormat);
-    now = now.hours(0).minutes(0).seconds(0).milliseconds(0);
+export const getDate = (incrementDays:number=0, zeroOutTime:boolean=true)=>{
+    let now = moment(new Date());
+    if(zeroOutTime){
+        now = now.hours(0).minutes(0).seconds(0).milliseconds(0);
+    }
     now.add(incrementDays, 'days');
     return now
+}
+
+export const getDateFormat = (format:string='MMM-DD-YYYY', date:Date)=>{
+    const momentDate = moment(date);
+    return momentDate.format(format);
 }
 
 export const getDateBaseOn = (date:Date, incrementDays:number=1)=>{

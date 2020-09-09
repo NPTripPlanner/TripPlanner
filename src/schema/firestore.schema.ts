@@ -6,6 +6,15 @@ import {
 } from 'fireorm';
 import ImprovedRepository from './ImprovedRepository';
 
+export class Schedule{
+    id: string;
+    createAt: Date;
+    modifyAt: Date;
+    date: Date;
+    note: string;
+}
+
+@Collection('itineraries')
 export class Itinerary{
     id: string;
     createAt: Date;
@@ -15,6 +24,9 @@ export class Itinerary{
     endDateUTC: Date;
     totalDays: number;
     tripArchiveId: string;
+
+    @SubCollection(Schedule, 'schedules')
+    schedules?:ISubCollection<Schedule>;
 }
 
 @Collection('tripArchive')
@@ -36,4 +48,7 @@ export class TripArchiveRepository extends ImprovedRepository<TripArchive>{}
 
 @CustomRepository(Itinerary)
 export class ItineraryRepository extends ImprovedRepository<Itinerary>{}
+
+@CustomRepository(Schedule)
+export class ScheduleRepository extends ImprovedRepository<Schedule>{}
 
