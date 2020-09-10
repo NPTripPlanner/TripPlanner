@@ -59,7 +59,7 @@ const CreateItineraryForm = (props:IProps) => {
         initialValues:{
         itineraryName: '',
         startDate: getDate().toDate(),
-        endDate: getDate(null, 2).toDate(),
+        endDate: getDate(2).toDate(),
         },
         validationSchema: validation,
         onSubmit:(values,{setSubmitting}) => {
