@@ -21,10 +21,15 @@ import {
   DeleteItinerary,
   ConvertRepo,
   CreateScheduleForItinerary,
+  DeleteSchedule,
+  GetScheduls,
+  GetScheduleById,
+  UpdateSchedule,
 } from "./firebase.utils";
 
 import { TripArchive, Itinerary } from "../schema/firestore.schema";
 import ImprovedRepository from "../schema/ImprovedRepository";
+import { CloneObject } from "./utils";
 // import {SortArray} from './utils';
 
 describe("Firebase utility test", () => {
@@ -537,25 +542,24 @@ describe("Firebase utility test", () => {
       const repo = await ConvertRepo<Itinerary>(tripArchive.itineraries);
       let query = repo.getCollectionReference().orderBy('createAt', 'desc');
       const results = await GetDataByQuery(repo, query, 0);
-      console.log(results);
       return expect(results.results).toHaveLength(12);
     })
   })
 
-  describe('create schedule', ()=>{
+  describe('Schedule CRUD', ()=>{
     afterAll(async (done) => {
       done();
     });
 
-    let tripArchive: TripArchive = null;
-    let itinerary: Itinerary = null;
+    let tripArchive = null;
+    let itinerary = null;
     beforeAll(async ()=>{
-      tripArchive = await CreateTripArchive(fakeUser.uid, 'has itinerary and schedule');
+      tripArchive = await CreateTripArchive(fakeUser.uid, 'Schedule CRUD');
 
       const startDate = new Date();
       const endDate = new Date();
       endDate.setDate(startDate.getDate()+3);
-      const itName = 'has schedule';
+      const itName = 'Schedule CRUD';
 
       itinerary = await CreateItineraryForTripArchive(
         fakeUser.uid,
@@ -567,8 +571,60 @@ describe("Firebase utility test", () => {
     });
 
     it('create a schedule', async ()=>{
+
       const newSchedule = await CreateScheduleForItinerary(itinerary, new Date(), 'note for schedule');
       return expect(newSchedule).toBeTruthy();
+    })
+
+    it('get all schedules', async ()=>{
+      const firstSchedule = await CreateScheduleForItinerary(itinerary, new Date(), 'first schedule');
+      expect(firstSchedule).toBeTruthy();
+      const secondSchedule = await CreateScheduleForItinerary(itinerary, new Date(), 'second schedule');
+      expect(secondSchedule).toBeTruthy();
+
+      const schedules = await GetScheduls(itinerary);
+      return expect(schedules.length).toBeGreaterThan(2);
+    })
+
+    it('get schedule by id', async ()=>{
+      const schedule = await CreateScheduleForItinerary(itinerary, new Date(), 'schedule note');
+      expect(schedule).toBeTruthy();
+
+      const foundSchedule = await GetScheduleById(itinerary, schedule.id);
+      expect(foundSchedule).toBeTruthy();
+
+      return expect(foundSchedule.id).toEqual(schedule.id);
+    })
+
+    it('delete a schedule', async ()=>{
+
+      const newSchedule = await CreateScheduleForItinerary(itinerary, new Date(), 'note for schedule');
+      expect(newSchedule).toBeTruthy();
+      await DeleteSchedule(itinerary, newSchedule);
+      const notfoundSchedule = await GetScheduleById(itinerary, newSchedule.id);
+
+      return expect(notfoundSchedule).toBeNull();
+    })
+
+    it('update a schedule', async ()=>{
+
+      const newSchedule = await CreateScheduleForItinerary(itinerary, new Date(), 'note for schedule');
+      expect(newSchedule).toBeTruthy();
+      
+      const now = new Date();
+      const future = new Date();
+      future.setDate(now.getDate()+3);
+      const newNote = 'This is new note';
+
+      const clonedSchedule = CloneObject(newSchedule);
+      clonedSchedule.note = newNote;
+      clonedSchedule.date = future;
+
+      const updateSchedule = await UpdateSchedule(itinerary, clonedSchedule);
+
+      expect(updateSchedule).toBeTruthy();
+      expect(updateSchedule.id).toEqual(clonedSchedule.id);
+      return expect(updateSchedule.note).toEqual(newNote);
     })
   })
 });

@@ -27,3 +27,8 @@ export const SortArray = (array:Array<any>, objectPath:string)=>{
   const result = ArraySort(array, objectPath);
   return result;
 }
+
+export const CloneObject = <T>(obj:T):T=>{
+  const clone = Object.assign(Object.create(Object.getPrototypeOf(obj)), obj) as T;
+  return clone;
+}

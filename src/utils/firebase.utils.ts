@@ -393,38 +393,9 @@ export const FetchTripArchive = async (userId:string)=>{
 }
 
 /**
- * Get trip archives under user id after certain document
+ * Deprecated use GetDataByQuery instead
  * 
- * This fetch is for pagination use
- * @param userId user id to fetch trip archive from
- * @param amount how many to fetch at a time, default is 10
- * @param startAfter a particualr document snapshot, usually from the last fetch, if null fetch will
- * start from the begining
- */
-// export const FetchTripArchiveAfter = async (userId:string, 
-//   amount:number=10,
-//   startAfter:null|QueryDocumentSnapshot=null,
-//   )=>{
-//   try{
-//     // const tripArchiveRepo = (await fireorm.getRepository(TripArchive)) as TripArchiveRepository;
-//     const tripArchiveRepo = await GetRepository<TripArchive, TripArchiveRepository>(TripArchive);
-//     tripArchiveRepo.qeryAfterSnap(startAfter);
-//     const results = await tripArchiveRepo.whereEqualTo('ownerId', userId)
-//     .orderByDescending('createAt')
-//     .limit(amount)
-//     .find();
-//     return {
-//       lastDocSnap: tripArchiveRepo.getLastDocQuerySnap(),
-//       results: results,
-//     }
-//   }
-//   catch(err){
-//     throw Error(getErrorMsg(err.code));
-//   }
-// }
-
-/**
- * Return trip archive under user with archive id
+ * Return specific trip archive under user with archive id
  * @param userId user id to get trip archive from
  * @param archiveId trip archive id
  */
@@ -441,9 +412,38 @@ export const GetTripArchive = async (userId:string, archiveId:string)=>{
     throw Error(getErrorMsg(err.code));
   }
 }
+
+/**
+ * Get all schedules under an itinerary
+ * @param itinerary itinerary that schedules live under 
+ */
+export const GetScheduls = async (itinerary:Itinerary)=>{
+  try{
+    return await itinerary.schedules.find();
+  }
+  catch(err){
+    console.log(err);
+    throw Error(getErrorMsg(err.code));
+  }
+}
+
+/**
+ * Get a specific schedule by id
+ * @param itinerary itinerary this schedules live under 
+ * @param scheduleId id of schedule
+ */
+export const GetScheduleById = async (itinerary:Itinerary, scheduleId:string)=>{
+  try{
+    return await itinerary.schedules.findById(scheduleId);
+  }
+  catch(err){
+    console.log(err);
+    throw Error(getErrorMsg(err.code));
+  }
+}
 //#endregion Firestore Read
 
-//#region Firestore write
+//#region Firestore Create
 /**
  * Create a new trip archive in firestore through cloud function
  * 
@@ -517,17 +517,23 @@ export const CreateItineraryForTripArchive = async (
  */
 export const CreateScheduleForItinerary = async (itinerary:Itinerary, date:Date, note:string='')=>{
 
-  const repo = await ConvertRepo<Schedule>(itinerary.schedules);
-  const newSchedule = new Schedule();
-  newSchedule.createAt = getDate(0, false).toDate();
-  newSchedule.modifyAt = getDate(0, false).toDate();
-  newSchedule.date = date;
-  newSchedule.note = note;
-  const createdSchedule = await repo.create(newSchedule);
-
-  return createdSchedule;
+  try{
+    const repo = await ConvertRepo<Schedule>(itinerary.schedules);
+    const newSchedule = new Schedule();
+    newSchedule.createAt = getDate(0, false).toDate();
+    newSchedule.modifyAt = getDate(0, false).toDate();
+    newSchedule.date = date;
+    newSchedule.note = note;
+    const createdSchedule = await repo.create(newSchedule);
+  
+    return createdSchedule;
+  }
+  catch(err){
+    console.log(err)
+    throw Error(getErrorMsg(err.code));
+  }
 }
-//#endregion Firestore write
+//#endregion Firestore Create
 
 //#region Firestore update
 export const UpdateTripArchiveName = async (userId:string, archiveId:string, archiveName:string)=>{
@@ -590,6 +596,16 @@ export const UpdateItinerary = async (
       throw Error(getErrorMsg(err.code));
     }
 }
+
+/**
+ * Update a schedule
+ * @param itinerary itinerary that schedule live under
+ * @param newSchedule new schedule 
+ */
+export const UpdateSchedule = async (itinerary:Itinerary, newSchedule:Schedule)=>{
+  newSchedule.modifyAt = getDate(0, false).toDate();
+  return await itinerary.schedules.update(newSchedule);
+}
 //#endregion Firestore update
 
 //#region Firestore delete
@@ -641,6 +657,17 @@ export const DeleteItinerary = async (
     catch(err){
       throw Error(getErrorMsg(err.code));
     }
+}
+
+export const DeleteSchedule = async (itinerary:Itinerary, schedule:Schedule)=>{
+  try{
+    await itinerary.schedules.delete(schedule.id);
+    return true;
+  }
+  catch(err){
+    console.log(err)
+    throw Error(getErrorMsg(err.code));
+  }
 }
 //#endregion Firestore delete
 
