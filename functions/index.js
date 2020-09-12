@@ -78,10 +78,10 @@ exports.initUser = functions.https.onCall(async (data, context) => {
         // }
     
         //test
-        const itBatch = firestore.batch();
-        //create trip under a trip archive
-        await itinerary.createItineraryForTripArchive(archiveId, null, null, null, itBatch);
-        await itBatch.commit();
+        // const itBatch = firestore.batch();
+        // //create trip under a trip archive
+        // await itinerary.createItineraryForTripArchive(archiveId, null, null, null, itBatch);
+        // await itBatch.commit();
         
         return true;
     }

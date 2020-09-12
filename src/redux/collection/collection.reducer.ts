@@ -1,6 +1,6 @@
 import actionType from "./collection.actionType";
 import { Reducer } from "redux";
-import { TripArchive, Itinerary } from "../../schema/firestore.schema";
+import { TripArchive, Itinerary, Schedule } from "../../schema/firestore.schema";
 import StateKeys from './collection.stateKeys';
 
 export interface IGenericState<T>{
@@ -26,6 +26,7 @@ export interface IGenericState<T>{
 export interface ICollectionState{
     [StateKeys.TRIP_ARCHIVE]:IGenericState<TripArchive>;
     [StateKeys.ITINERARY]:IGenericState<Itinerary>;
+    [StateKeys.SCHEDULE]:IGenericState<Schedule>;
 }
 
 export const getInitialState = <T>():IGenericState<T>=>({
@@ -68,6 +69,7 @@ export const getInitialState = <T>():IGenericState<T>=>({
 const initState = {
     [StateKeys.TRIP_ARCHIVE]:getInitialState<TripArchive>(),
     [StateKeys.ITINERARY]:getInitialState<Itinerary>(),
+    [StateKeys.SCHEDULE]:getInitialState<Schedule>(),
 }
 
 const collectionReducer: Reducer<ICollectionState> = (state=initState, action)=>{

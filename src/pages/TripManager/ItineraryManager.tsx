@@ -20,6 +20,7 @@ import DeleteItineraryForm from '../../forms/DeleteItineraryForm';
 import UpdateItineraryForm from '../../forms/UpdateItineraryForm';
 import { getLocalDateFromUTCFormat } from '../../utils/datetime.utils';
 import InputField from '../../components/InputField/InputField';
+import { SetItinerary } from '../../redux/schedule/schedule.actions';
 
 const style= createStyles({
     main:{
@@ -149,6 +150,7 @@ const ItinerayManager = () => {
     }
 
     const handleItineraryClick = (itinerary:Itinerary)=>{
+        dispatch(SetItinerary(itinerary));
         history.push(`/TripManager/${underTripArchive.id}/${itinerary.id}`);
     }
 

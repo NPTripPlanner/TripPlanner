@@ -38,8 +38,43 @@ export const getLocalDateFromUTC = (dateUTC:Date)=>{
     return localDate;
 }
 
-export const getLocalDateFromUTCFormat = (dateUTC:Date, format:string='MMM-DD-YYYY')=>{
+export const getLocalDateFromUTCFormat = (dateUTC:Date, format:string='MMM/DD/YYYY')=>{
     const momentUTC = moment.utc(dateUTC);
     const localDate = momentUTC.local();
     return localDate.format(format);
+}
+
+/**
+ * Is date a before date b
+ * @param a 
+ * @param b 
+ */
+export const dateBefore = (a:Date, b:Date)=>{
+    const aMoment = moment(a);
+    const bMoment = moment(b);
+    const result = aMoment.isBefore(bMoment);
+    console.log(aMoment, bMoment, result);
+    return result;
+}
+
+/**
+ * Is date a as same as date b
+ * @param a 
+ * @param b 
+ */
+export const dateSame = (a:Date, b:Date)=>{
+    const aMoment = moment(a);
+    const bMoment = moment(b);
+    return aMoment.isSame(bMoment);
+}
+
+export const sortDate = (a:Date, b:Date)=>{
+    const aMoment = moment(a);
+    const bMoment = moment(b);
+    
+    if(aMoment.isSame(bMoment)) return 0;
+    if(aMoment.isBefore(bMoment)) return -1;
+    if(aMoment.isAfter(bMoment)) return 1;
+
+    return -1;
 }

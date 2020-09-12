@@ -19,3 +19,15 @@ export const ClearAllScheduleState = ()=>action(
 export const ClearAllScheduleStateSuccessful = ()=>action(
     actionType.CLEAR_ALL_SCHEDULE_STATE_SUCCESSFUL,
 );
+
+export const CreateSchedule = ()=>action(
+    actionType.CREATE_SCHEDULE,
+)
+
+export const StartListenOnSchedules = ()=>action(
+    actionType.LISTEN_ON_SCHEDULES_START,
+)
+
+export const StopListenOnSchedules = ()=>action(
+    actionType.LISTEN_ON_SCHEDULES_STOP,
+)

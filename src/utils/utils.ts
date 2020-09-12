@@ -28,6 +28,11 @@ export const SortArray = (array:Array<any>, objectPath:string)=>{
   return result;
 }
 
+export const SrotArray = <T>(array:Array<T>, fn:(a:T, b:T)=>-1|0|1):T[]=>{
+  const result = ArraySort(array, fn);
+  return result;
+}
+
 export const CloneObject = <T>(obj:T):T=>{
   const clone = Object.assign(Object.create(Object.getPrototypeOf(obj)), obj) as T;
   return clone;
