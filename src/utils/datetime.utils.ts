@@ -53,7 +53,6 @@ export const dateBefore = (a:Date, b:Date)=>{
     const aMoment = moment(a);
     const bMoment = moment(b);
     const result = aMoment.isBefore(bMoment);
-    console.log(aMoment, bMoment, result);
     return result;
 }
 
