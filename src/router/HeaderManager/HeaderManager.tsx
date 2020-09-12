@@ -34,4 +34,4 @@ const HeaderManager = () => {
     return user?<MemberHeader title={title} />:<NonMemberHeader title={title} />;
 };
 
-export default HeaderManager;
+export default React.memo(HeaderManager);

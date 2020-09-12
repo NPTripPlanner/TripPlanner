@@ -46,4 +46,9 @@ const AvatarDropDown = (props:IProps) => {
     );
 };
 
-export default AvatarDropDown;
+const CheckMemo = (preProps, nextProps)=>{
+  if(preProps.items.length !== nextProps.items.length) return false;
+  return true;
+}
+
+export default React.memo(AvatarDropDown, CheckMemo);

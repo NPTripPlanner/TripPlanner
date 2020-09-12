@@ -58,4 +58,4 @@ const MemberHeader = (props:IProps)=>{
     );
 }
 
-export default MemberHeader;
+export default React.memo(MemberHeader);

@@ -54,4 +54,4 @@ const NonMemberHeader = (props:IProps)=>{
     );
 }
 
-export default NonMemberHeader
+export default React.memo(NonMemberHeader);

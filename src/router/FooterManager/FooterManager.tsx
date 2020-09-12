@@ -39,4 +39,4 @@ const FooterManager = () => {
     return <Footer sections={footerContent()} />;
 };
 
-export default FooterManager;
+export default React.memo(FooterManager);

@@ -89,4 +89,4 @@ const Header = React.forwardRef<any, IProps>((props, ref) => {
   );
 });
 
-export default Header;
+export default Header
